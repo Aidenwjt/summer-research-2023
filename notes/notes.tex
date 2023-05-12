@@ -1,5 +1,5 @@
 \documentclass[11pt]{article}
-\setlength{\textwidth}{430pt}\setlength{\oddsidemargin}{11pt}
+%\setlength{\textwidth}{430pt}\setlength{\oddsidemargin}{11pt}
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{amsmath}
@@ -10,10 +10,51 @@
 \begin{document}
 \pagestyle{fancy}
 \fancyhead{}
-\fancyhead[C]{\textbf{Document Title}}
+\fancyhead[C]{\textbf{2023 Summer Research Notes}}
 \tableofcontents
 \newpage
-\section{Section Name}
-\subsection{Subsection Name}
-Some text
+\section{Prior Concepts to Know}
+\subsection{$L^p$ Spaces}
+\subsection{Hilbert Spaces}
+\subsection{Linear Spaces}
+\subsection{Normed Linear Spaces}
+\subsection{Metric Spaces}
+\subsection{Banach Spaces}
+\subsection{Weak Derivatives}
+\subsection{Mollifiers}
+\subsection{Partition of Unity}
+
+\newpage
+
+\section{Hölder Spaces}
+\subsection{Hölder Continuous Functions}
+\subsection{Hölder Spaces are Banach Spaces}
+
+\newpage
+
+\section{Sobolev Spaces}
+
+\newpage
+
+\section{Notation}
+\begin{enumerate}[(i)]
+\item A multiindex is a vector $\alpha = (\alpha_1, \dots, \alpha_n)$ where each component $\alpha_i \in \mathbb{N}_0$.
+A multiindex has an order defined by
+\[|\alpha| = \alpha_1 + \dots + \alpha_n.\]
+
+\item Using our definition of a multiindex and letting $u(x)$ be some function, we define
+\[D^{\alpha}u(x) = \frac{\partial^{|\alpha|}u(x)}{\partial x_1^{\alpha_1} \dots \partial x_n^{\alpha_n}} = \partial_{x_1}^{\alpha_1}\dots\partial_{x_n}^{\alpha_n}u(x).\]
+
+\item Let $U,V \subset \mathbb{R}^n$. Then define
+\[V \subset\subset U\]
+to be when $V \subset \overline{V} \subset U$ and $\overline{V}$ is compact. In plain english this means $V$ is \textit{compactly conatined} in $U$.
+
+\item Let $f$ and $g$ be functions. Then define $*$ to be the Convolution operator where
+\[(f*g)(x) = \int_{-\infty}^{\infty}{f(\tau)g(x - \tau)d\tau} = \int_{-\infty}^{\infty}{f(x - \tau)g(\tau)d\tau}\]
+is the Convolution of the functions $f$ and $g$ which results in a third function that expresses
+how one of the functions modifies the other. Note that I am assuming $f$ and $g$ are both supported on an
+infinite interval, which may not always be the case.
+\end{enumerate}
+
+
 \end{document}
