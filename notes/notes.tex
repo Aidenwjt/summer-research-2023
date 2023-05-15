@@ -8,8 +8,8 @@
 \usepackage[bottom=0.9in,top=0.9in]{geometry}
 
 \theoremstyle{definition}
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{definition}[theorem]{Definition}
+\newtheorem*{theorem}{Theorem}
+\newtheorem*{definition}{Definition}
 \newtheorem*{remark}{Remark}
 \newtheorem*{motivation}{Motivation}
 
@@ -42,10 +42,40 @@
 \subsection{Sobolev Inequalities}
 \begin{motivation}
 The main goal of Sobolev inequalities is to find embeddings of Sobolev spaces in other spaces that may be easier to work with, more desirable,
-or simply imply nice properties. Following Evans we will first consider functions in the space $W^{1,p}$, which gives rise to three cases being
-$1 \leq p < n$, $p=n$, or $n < p \leq \infty$.
+or simply imply nice properties. The following will be some note worthy Theorems from Evans.
 \end{motivation}
+\begin{theorem}[Gagliardo-Nirenberg-Sobolev Inequality]
+Suppose $1\leq p < n$. There exists a constant $C > 0$, depending only on $p$ and $n$, such that
+	\[\|u\|_{L^{p^*}(\mathbb{R}^n)} \leq C\|Du\|_{L^{p}(\mathbb{R}^n)},\]
+for all $u \in C_{c}^{1}(\mathbb{R}^n)$.
+\end{theorem}
+\begin{remark}
+Not much to say about this Theorem other than the fact it is very important for the proof of the next Theorem.
+\end{remark}
 
+\begin{theorem}[Estimates for $W^{1,p}$, where $1 \leq p < n$]
+Let $U \subset \mathbb{R}^n$ be a bounded open set, and suppose $\partial U$ is $C^1$.
+Suppose $u \in W^{1,p}(U)$ for some $1 \leq p < n$. It then follows that $u \in L^{p^*}$, with the estimate that
+	\[\|u\|_{L^{p^*}(U)} \leq C\|u\|_{W^{1,p}(U)},\]
+where $C > 0$ is constant and only depending on $p$, $n$, and $U$.
+\end{theorem}
+\begin{remark}
+This Theorem provides a nice estimate for functions in Sobolev spaces where $u$ has weak derivatives of order $k = 1$,
+but where $p$ is less than the dimension of $U \subset \mathbb{R}^n$.
+\end{remark}
+
+\begin{theorem}[Estimates for $W_{0}^{1,p}$, where $1 \leq p < n$]
+Let $U \subset \mathbb{R}^n$ be a bounded open set.
+	Suppose $u \in W_{0}^{1,p}(U)$ for some $1 \leq p < n$. Then we get the estimate
+	\[\|u\|_{L^{q}(U)} \leq C\|Du\|_{L^{p}(U)},\]
+for all $1 \leq q \leq p^*$, where $C > 0$ is constant and only depending on $p$, $q$, $n$, and $U$.
+\end{theorem}
+\begin{remark}
+This Theorem gives a nice estimate for the closure of $C_{c}^{\infty}(U)$ in $W^{1,p}(U)$,
+	where derivatives of functions of certain orders in $W^{1,p}(U)$ evaluate to zero on $\partial U$.
+	Also, if $U$ is bounded as we supposed, then on $W_{0}^{1,p}$ the norm $\|Du\|_{L^{p}} \equiv \|u\|_{W^{1,p}(U)}$
+	meaning this is still an estimate for functions in Sobolev spaces.
+\end{remark}
 
 \newpage
 
