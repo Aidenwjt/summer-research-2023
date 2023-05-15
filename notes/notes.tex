@@ -7,6 +7,12 @@
 \usepackage{fancyhdr}
 \usepackage[bottom=0.9in,top=0.9in]{geometry}
 
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem*{remark}{Remark}
+\newtheorem*{motivation}{Motivation}
+
 \begin{document}
 \pagestyle{fancy}
 \fancyhead{}
@@ -33,6 +39,13 @@
 \newpage
 
 \section{Sobolev Spaces}
+\subsection{Sobolev Inequalities}
+\begin{motivation}
+The main goal of Sobolev inequalities is to find embeddings of Sobolev spaces in other spaces that may be easier to work with, more desirable,
+or simply imply nice properties. Following Evans we will first consider functions in the space $W^{1,p}$, which gives rise to three cases being
+$1 \leq p < n$, $p=n$, or $n < p \leq \infty$.
+\end{motivation}
+
 
 \newpage
 
