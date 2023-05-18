@@ -22,12 +22,12 @@
 \tableofcontents
 \newpage
 \section{Prior Concepts to Know}
-\subsection{$L^p$ Spaces}
-\subsection{Hilbert Spaces}
 \subsection{Linear Spaces}
 \subsection{Normed Linear Spaces}
 \subsection{Metric Spaces}
 \subsection{Banach Spaces}
+\subsection{$L^p$ Spaces}
+\subsection{Hilbert Spaces}
 \subsection{Weak Derivatives}
 \subsection{Mollifiers}
 \subsection{Partition of Unity}
@@ -52,11 +52,6 @@ Suppose $1\leq p < n$. There exists a constant $C > 0$, depending only on $p$ an
 	\[\|u\|_{L^{p^*}(\mathbb{R}^n)} \leq C\|Du\|_{L^{p}(\mathbb{R}^n)},\]
 for all $u \in C_{c}^{1}(\mathbb{R}^n)$.
 \end{theorem}
-\begin{remark}
-This Theorem proves the inequalitiy
-	\[\|u\|_{L^{q}(\mathbb{R}^n)} \leq C\|Du\|_{L^{p}(\mathbb{R}^n)},\]
-which can only be possible if $q=p*$ ($p*$ being the Sobolev conjugate of $p$).
-\end{remark}
 
 \begin{theorem}[Estimates for $W^{1,p}$, where $1 \leq p < n$]
 Let $U \subset \mathbb{R}^n$ be a bounded open set, and suppose $\partial U$ is $C^1$.
@@ -64,10 +59,6 @@ Suppose $u \in W^{1,p}(U)$ for some $1 \leq p < n$. It then follows that $u \in 
 	\[\|u\|_{L^{p^*}(U)} \leq C\|u\|_{W^{1,p}(U)},\]
 where $C > 0$ is constant and only depending on $p$, $n$, and $U$.
 \end{theorem}
-\begin{remark}
-This Theorem provides a nice estimate for functions in Sobolev spaces where $u$ has weak derivatives of order $k = 1$,
-but where $p$ is less than the dimension of $U \subset \mathbb{R}^n$.
-\end{remark}
 
 \begin{theorem}[Estimates for $W_{0}^{1,p}$, where $1 \leq p < n$]
 Let $U \subset \mathbb{R}^n$ be a bounded open set.
@@ -76,9 +67,7 @@ Let $U \subset \mathbb{R}^n$ be a bounded open set.
 for all $1 \leq q \leq p^*$, where $C > 0$ is constant and only depending on $p$, $q$, $n$, and $U$.
 \end{theorem}
 \begin{remark}
-This Theorem gives a nice estimate for the closure of $C_{c}^{\infty}(U)$ in $W^{1,p}(U)$,
-where derivatives of functions of certain orders in $W^{1,p}(U)$ evaluate to zero on $\partial U$.
-Also, if $U$ is bounded as we supposed, then on $W_{0}^{1,p}$ the norm $\|Du\|_{L^{p}} \equiv \|u\|_{W^{1,p}(U)}$,
+If $U$ is bounded as we supposed, then on $W_{0}^{1,p}$, the norm $\|Du\|_{L^{p}} \equiv \|u\|_{W^{1,p}(U)}$,
 meaning this is still an estimate for functions in Sobolev spaces.
 \end{remark}
 
@@ -87,10 +76,6 @@ Suppose $n < p \leq \infty$. Then there exists a constant $C > 0$, depending onl
 	\[\|u\|_{C^{0,\gamma}(\mathbb{R}^n)} \leq C\|u\|_{W^{1,p}(\mathbb{R}^n)},\]
 for all $u \in W^{1,p}(U)$ with $u \in C^1(\mathbb{R}^n)$, where $\gamma = 1 - \frac{n}{p}$.
 \end{theorem}
-\begin{remark}
-Since $n < p \leq \infty$ and $u \in W^{1,p}(U)$ it follows that $u$ is H\"{o}lder continuous allowing us
-	to use the H\"{o}lder norm to get a nice estimate.
-\end{remark}
 
 \begin{theorem}[Estimates for $W^{1,p}$, where $n < p \leq \infty$]
 Let $U \subset \mathbb{R}^n$ be a bounded open set, and suppose $\partial U$ is $C^1$.
@@ -99,16 +84,12 @@ where $\gamma = 1 - \frac{n}{p}$, with the estimate that
 	\[\|u^*\|_{C^{0,\gamma}(\overline{U})} \leq C\|u\|_{W^{1,p}(U)},\]
 where $C > 0$ is constant and only depending on $p$, $n$, and $U$.
 \end{theorem}
-\begin{remark}
-	Again, this Theorem provides a nice estimate using the H\"{o}lder norm and a continuous version of the said function,
-	essentially allowing us to estimate the function in the Sobolev space with continuous functions.
-\end{remark}
 
 \newpage
 
 \section{Notation}
 \begin{enumerate}[(i)]
-\item A multiindex is a vector $\alpha = (\alpha_1, \dots, \alpha_n)$ where each component $\alpha_i \in \mathbb{N}_0$.
+	\item A \textit{multiindex} is a vector $\alpha = (\alpha_1, \dots, \alpha_n)$ where each component $\alpha_i \in \mathbb{N}_0$.
 A multiindex has an order defined by
 \[|\alpha| = \alpha_1 + \dots + \alpha_n.\]
 
@@ -119,11 +100,14 @@ A multiindex has an order defined by
 \[V \subset\subset U\]
 to be when $V \subset \overline{V} \subset U$ and $\overline{V}$ is compact. In plain english this means $V$ is \textit{compactly conatined} in $U$.
 
-\item Let $f$ and $g$ be functions. Then define $*$ to be the Convolution operator where
+\item Let $f$ and $g$ be functions. Then define $*$ to be the \textit{convolution operator} where
 \[(f*g)(x) = \int_{-\infty}^{\infty}{f(\tau)g(x - \tau)d\tau} = \int_{-\infty}^{\infty}{f(x - \tau)g(\tau)d\tau}\]
-is the Convolution of the functions $f$ and $g$ which results in a third function that expresses
+is the \textit{convolution} of the functions $f$ and $g$ which results in a third function that expresses
 how one of the functions modifies the other. Note that I am assuming $f$ and $g$ are both supported on an
 infinite interval, which may not always be the case.
+
+\item Let $u(x)$ be a function where $x \in \mathbb{R}^n$. Then the \textit{gradient vector} of $u$ is 
+	\[Du(x_1,\dots,x_n) = (u_{x_1},...,u_{x_n}).\]
 \end{enumerate}
 
 
