@@ -41,6 +41,23 @@
 \newpage
 
 \section{Sobolev Spaces}
+
+\subsection{Approximation}
+\begin{motivation}
+The main motivation of studying Sobolev spaces in general is that functions in these spaces can be approximated by smooth functions.
+These approximations can be done locally, globally up until the boundary, and globally up to and including the boundary.
+As expected these require three different Theorems (taken from Evans) which increase in difficulty to prove.
+\end{motivation}
+\begin{theorem}[Local approximation by smooth functions]
+Suppose $u \in W^{k,p}(U)$ for some $1 \leq p < \infty$, and set
+	\[u^{\epsilon} = \eta_{\epsilon} * u \text{ in } U_{\epsilon}.\]
+Then
+	\begin{enumerate}[(i)]
+		\item $u^{\epsilon} \in C^{\infty}(U_{\epsilon}) \,\,\, \forall \, \epsilon > 0$, and
+		\item $u^{\epsilon} \rightarrow u \text{ in } W_{\text{loc}}^{k,p}(U)$, as $\epsilon \rightarrow 0$.
+	\end{enumerate}
+\end{theorem}
+
 \subsection{Sobolev Inequalities}
 \begin{motivation}
 The main goal of Sobolev inequalities is to find embeddings of Sobolev spaces in other spaces that may be easier to work with, more desirable,
