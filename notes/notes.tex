@@ -17,10 +17,14 @@
 
 \begin{document}
 \pagestyle{fancy}
-\fancyhead{}
+\fancyhead[L]{}
+\fancyhead[R]{}
 \fancyhead[C]{\textbf{2023 Summer Research Notes}}
 \tableofcontents
 \newpage
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\rightmark}
+\fancyhead[C]{}
 \section{Prior Concepts to Know}
 \subsection{Linear Spaces}
 \subsection{Normed Linear Spaces}
@@ -42,14 +46,17 @@
 
 \section{Sobolev Spaces}
 
+\newpage
+
 \subsection{Approximation}
 \begin{motivation}
 The main motivation of studying Sobolev spaces in general is that functions in these spaces can be approximated by smooth functions.
-These approximations can be done locally, globally up until the boundary, and globally up to and including the boundary.
+These approximations can be done locally, globally, and globally up to and including the boundary.
 As expected these require three different Theorems (taken from Evans) which increase in difficulty to prove.
 \end{motivation}
+
 \begin{theorem}[Local approximation by smooth functions]
-Suppose $u \in W^{k,p}(U)$ for some $1 \leq p < \infty$, and set
+Let $U \subset \mathbb{R}^n$ be a bounded open set. Suppose $u \in W^{k,p}(U)$ for some $1 \leq p < \infty$, and set
 	\[u^{\epsilon} = \eta_{\epsilon} * u \text{ in } U_{\epsilon}.\]
 Then
 	\begin{enumerate}[(i)]
@@ -57,6 +64,23 @@ Then
 		\item $u^{\epsilon} \rightarrow u \text{ in } W_{\text{loc}}^{k,p}(U)$, as $\epsilon \rightarrow 0$.
 	\end{enumerate}
 \end{theorem}
+
+\begin{theorem}[Global approximation by smooth functions]
+	Let $U \subset \mathbb{R}^n$ be a bounded open set. Suppose $u \in W^{k,p}(U)$ for some $1 \leq p < \infty$. Then there exists functions $u_m \in C^{\infty}(U)\cap W^{k,p}(U)$ such that
+	\[u_m \rightarrow u \text{ in } W^{k,p}(U).\]
+\end{theorem}
+\begin{remark}
+	Since $U \subset \mathbb{R}^n$ is a bounded open set, this Theorem says
+	nothing about the smoothness of the boundary of $U$, which is the goal of the next Theorem.
+\end{remark}
+
+\begin{theorem}[Global approximation by functions smooth up to the boundary]
+	Let $U \subset \mathbb{R}^n$ be a bounded open set. Suppose $\partial U$ is $C^1$ and suppose $u \in W^{k,p}(U)$ for some $1 \leq p < \infty$.
+	Then there exists functions $u_m \in C^{\infty}(\overline{U})$ such that
+	\[u_m \rightarrow u \text{ in } W^{k,p}(U).\]
+\end{theorem}
+
+\newpage
 
 \subsection{Sobolev Inequalities}
 \begin{motivation}
