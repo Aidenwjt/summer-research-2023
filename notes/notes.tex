@@ -82,6 +82,31 @@ Then
 
 \newpage
 
+\subsection{Extensions}
+\begin{motivation}
+The motivation here is the desire to extend functions in $W^{k,p}(U)$ to functions in $W^{k,p}(\mathbb{R}^n)$.
+Evans discusses and proves extending functions in $W^{1,p}(U)$ to functions in $W^{1,p}(\mathbb{R}^n)$ which becomes
+useful for some of the Sobolev approximation proofs.
+\end{motivation}
+
+\begin{theorem}
+	Suppose $1 \leq p \leq \infty$.
+Let $U \subset \mathbb{R}^n$ be a bounded opend set, where $\partial U$ is $C^1$.
+Let $V \subset \mathbb{R}^n$ be a bounded open set such that $U \subset\subset V$.
+Then there exists a bounded linear operator
+	\[E: W^{1,p}(U) \rightarrow W^{1,p}(\mathbb{R}^n)\]
+such that $\forall u \in W^{1,p}(U)$:
+	\begin{enumerate}[(i)]
+		\item $Eu = u$ a.e. in $U$,
+		\item $Eu$ has support within $V$, and
+		\item \[\|Eu\|_{W^{1,p}(\mathbb{R}^n)} \leq C\|u\|_{W^{1,p}(U)},\]
+		with $C$ depending only on $p$, $U$, and $V$.
+	\end{enumerate}
+\end{theorem}
+
+
+\newpage
+
 \subsection{Sobolev Inequalities}
 \begin{motivation}
 The main goal of Sobolev inequalities is to find embeddings of Sobolev spaces in other spaces that may be easier to work with, more desirable,
