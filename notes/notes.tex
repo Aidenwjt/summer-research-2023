@@ -26,21 +26,66 @@
 \fancyhead[R]{\rightmark}
 \fancyhead[C]{}
 \section{Prior Concepts to Know}
-\subsection{Linear Spaces}
-\subsection{Normed Linear Spaces}
-\subsection{Metric Spaces}
-\subsection{Banach Spaces}
-\subsection{$L^p$ Spaces}
-\subsection{Hilbert Spaces}
-\subsection{Weak Derivatives}
-\subsection{Mollifiers}
-\subsection{Partition of Unity}
+\subsection{Important inequalities}
+\begin{theorem}[H\"{o}lder's inequality]
+Assume $1 \leq p$, $q \leq \infty$, and $\frac{1}{p} + \frac{1}{p} = 1$. If $u \in L^p(\mathbb{R}^n)$ and $v \in L^q(\mathbb{R}^n)$, then
+	\[\int_{\mathbb{R}^n}|uv|dx \leq \|u\|_{L^p(\mathbb{R}^n)}\|v\|_{L^q(\mathbb{R}^n)}.\]
+\end{theorem}
+\begin{proof}
+	Letting $0 < t \in \mathbb{R}$, we can say
+	\[|uv| = |ut||v/t|,\]
+	and by Young's inequality
+	\[|uv| = |ut||v/t| \leq \frac{|ut|^p}{p} + \frac{|v/t|^q}{q} = \frac{|u|^pt^p}{p} + \frac{|u|^q}{qt^q}.\]
+	Now integrating with respect to $x \in \mathbb{R}^n$, results in
+	\begin{equation}
+		\int_{\mathbb{R}^n}|uv|dx \leq  \int_{\mathbb{R}^n}\left(\frac{|u|^pt^p}{p} + \frac{|u|^q}{qt^q}\right)dx
+		= \frac{t^p}{p}\int_{\mathbb{R}^n}|u|^pdx + \frac{1}{qt^q}\int_{\mathbb{R}^n}|v|^qdx = g(t).
+	\end{equation}
+	For the sake of simplicity, let
+	\[a = \int_{\mathbb{R}^n}|u|^pdx, \text{ and } b = \int_{\mathbb{R}^n}|v|^qdx.\]
+	Now we wish to find the smallest $t > 0$ that satisfies (1). To do this we can employ Calculus, which says the minimum $t$
+	we are looking for, denoted $t_0$, satisfies $g^{\prime}(t_0) = 0$. First, we need to compute $g^{\prime}(t)$ as follows
+	\[g^{\prime}(t) = \frac{d}{dt}\left(\frac{t^p}{p}a + \frac{1}{qt^q}b\right) = t^{p-1}a - \frac{b}{t^{q+1}}.\]
+	Then, let $g^{\prime}(t) = 0$ and solve for $t$ as follows
+	\begin{equation*}
+		\begin{aligned}
+			&g^{\prime}(t) = t^{p-1}a - \frac{b}{t^{q+1}} = 0 \\
+			&\Rightarrow t^{p-1}a = \frac{b}{t^{q+1}} \\
+			&\Rightarrow t^{p-1}t^{q+1} = \frac{b}{a} \\
+			&\Rightarrow t^{p+q} = \frac{b}{a} \\
+			&\Rightarrow t = \left(\frac{b}{a}\right)^{\frac{1}{p+q}} = t_0.
+		\end{aligned}
+	\end{equation*}
+	Finally, compute $g(t_0)$ as follows
+	\begin{equation*}
+		\begin{aligned}
+			g(t_0) &= \frac{\left(\left(\frac{b}{a}\right)^{\frac{1}{p+q}}\right)^pa}{p} + \frac{b}{q\left(\left(\frac{b}{a}\right)^{\frac{1}{p+q}}\right)^q}b \\
+			       &= \frac{\left(\frac{b}{a}\right)^{\frac{p}{p+q}}a}{p} + \frac{b}{q\left(\frac{b}{a}\right)^{\frac{q}{p+q}}} \\
+			       &= \frac{\left(\frac{b}{a}\right)^{\frac{p-1}{p}}a}{p} + \frac{b}{q\left(\frac{b}{a}\right)^{\frac{1}{p}}} \\
+			       &= \frac{b^{\frac{1}{q}}a^{\frac{1}{p}}}{p} + \frac{b^{\frac{1}{q}}a^{\frac{1}{p}}}{q} \\
+			       &= b^{\frac{1}{q}}a^{\frac{1}{p}}\left(\frac{1}{p} + \frac{1}{q}\right) \\
+			       &= b^{\frac{1}{q}}a^{\frac{1}{p}} \\
+			       &= \left(\int_{\mathbb{R}^n}|v|^qdx\right)^{\frac{1}{q}}\left(\int_{\mathbb{R}^n}|u|^pdx\right)^{\frac{1}{p}} \\
+			       &= \|u\|_{L^p(\mathbb{R}^n)}\|v\|_{L^q(\mathbb{R}^n)}.
+		\end{aligned}
+	\end{equation*}
+	
+\end{proof}
+%\subsection{Linear Spaces}
+%\subsection{Normed Linear Spaces}
+%\subsection{Metric Spaces}
+%\subsection{Banach Spaces}
+%\subsection{$L^p$ Spaces}
+%\subsection{Hilbert Spaces}
+%\subsection{Weak Derivatives}
+%\subsection{Mollifiers}
+%\subsection{Partition of Unity}
 
 \newpage
 
 \section{H\"{o}lder Spaces}
-\subsection{H\"{o}lder Continuous Functions}
-\subsection{H\"{o}lder Spaces are Banach Spaces}
+\subsection{H\"{o}lder continuous functions}
+\subsection{H\"{o}lder spaces are Banach spaces}
 
 \newpage
 
@@ -107,7 +152,7 @@ such that $\forall u \in W^{1,p}(U)$:
 
 \newpage
 
-\subsection{Sobolev Inequalities}
+\subsection{Sobolev inequalities}
 \begin{motivation}
 The main goal of Sobolev inequalities is to find embeddings of Sobolev spaces in other spaces that may be easier to work with, more desirable,
 or simply imply nice properties. These inequalities essentially provide estimates for functions in Sobolev spaces using other
@@ -164,7 +209,7 @@ A multiindex has an order defined by
 
 \item Let $U,V \subset \mathbb{R}^n$. Then define
 \[V \subset\subset U\]
-to be when $V \subset \overline{V} \subset U$ and $\overline{V}$ is compact. In plain english this means $V$ is \textit{compactly conatined} in $U$.
+to be when $V \subset \overline{V} \subset U$ and $\overline{V}$ is compact. In plain english this means $V$ is \textit{compactly contained} in $U$.
 
 \item Let $f$ and $g$ be functions. Then define $*$ to be the \textit{convolution operator} where
 \[(f*g)(x) = \int_{-\infty}^{\infty}{f(\tau)g(x - \tau)d\tau} = \int_{-\infty}^{\infty}{f(x - \tau)g(\tau)d\tau}\]
