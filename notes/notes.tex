@@ -27,6 +27,22 @@
 \fancyhead[C]{}
 \section{Prior Concepts to Know}
 \subsection{Important inequalities}
+\begin{theorem}[Young's inequality]
+Let $p > 1$, $q < \infty$, and $\frac{1}{p}+\frac{1}{q} = 1$. Then
+\[ab \leq \frac{a^p}{p} + \frac{b^q}{q}.\]
+\end{theorem}
+\begin{proof}
+Suppose we $t = \frac{1}{q}$ and $(1-t)=\frac{1}{p}$, implying $t \in (0,1)$. Then since we know $\ln$ is a concave function, we have
+	\begin{equation*}
+		\begin{aligned}
+			\ln{((1-t)a^p + tb^q)} &\geq (t-1)\ln{(a^p)} + t\ln{(b^q)} \\
+					       &= p(t-1)\ln{(a)} + qt\ln{(b)} \\
+					       &= \ln{(a)} + \ln{(b)} \\
+					       &= \ln{(ab)}.
+		\end{aligned}
+	\end{equation*}
+\end{proof}
+
 \begin{theorem}[H\"{o}lder's inequality]
 Assume $1 \leq p$, $q \leq \infty$, and $\frac{1}{p} + \frac{1}{p} = 1$. If $u \in L^p(\mathbb{R}^n)$ and $v \in L^q(\mathbb{R}^n)$, then
 	\[\int_{\mathbb{R}^n}|uv|dx \leq \|u\|_{L^p(\mathbb{R}^n)}\|v\|_{L^q(\mathbb{R}^n)}.\]
