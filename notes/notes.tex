@@ -87,6 +87,44 @@ Assume $1 \leq p$, $q \leq \infty$, and $\frac{1}{p} + \frac{1}{p} = 1$. If $u \
 	\end{equation*}
 	
 \end{proof}
+
+\subsection{H\"{o}lder Spaces}
+\begin{definition}[H\"{o}lder continuous functions]
+Assume $U \subset \mathbb{R}^n$ is open and $0 < \gamma \leq 1$.
+\textit{Lipschitz continuous functions} $u : U \rightarrow \mathbb{R}$
+satisfy the estimate
+\[|u(x) - u(y)| \leq C|x-y|\]
+where $x,y \in U$ and $C$ is some constant.
+Now with the same assumtions, consider the variant
+\[|u(x) - u(y)| \leq C|x-y|^{\gamma},\]
+where $u$ is now said to be \textit{H\"{o}lder continuous with exponent $\gamma$}.
+\end{definition}
+
+\begin{definition}[Supremum norm and $\gamma^{th}$-H\"{o}lder seminorm]
+\begin{enumerate}[(i)]
+\item If $u : U \rightarrow \mathbb{R}$ is bounded and continuous, the supremum norm is denoted
+\[\|u\|_{C(\overline{U})} = \sup_{x \in U}{|u(x)|}.\]
+
+\item The $\gamma^{th}$-H\"{o}lder seminorm of $u : U \rightarrow \mathbb{R}$ is
+\[[u]_{C^{0,\gamma}(\overline{U})} = \sup_{x,y\in U, x\not= y}\left\{\frac{|u(x) - u(y)|}{|x-y|^{\gamma}}\right\},\]
+and the $\gamma^{th}$-H\"{o}lder norm is
+\[\|u\|_{C^{0,\gamma}(\overline{U})} = \|u\|_{C(\overline{U})} + [u]_{C^{0,\gamma}(\overline{U})}.\]
+\end{enumerate}
+\end{definition}
+
+\begin{definition}[H\"{o}lder space]
+The H\"{o}lder space $C^{k,\gamma}(\overline{U})$ consists of all functions $u \in C^k(\overline{U})$,
+where the norm
+\[\|u\|_{C^{k,\gamma}(\overline{U})} = \sum_{|\alpha| \leq k}\|D^{\alpha}u\|_{C(\overline{U})} + \sum_{|\alpha| = k}[D^{\alpha}u]_{C^{0,\gamma}(\overline{U})} < \infty.\]
+\end{definition}
+
+\begin{theorem}[H\"{o}lder spaces as function spaces]
+The space of functions $C^{k,\gamma}(\overline{U})$ is a Banach space.
+\end{theorem}
+\begin{proof}
+\href{https://github.com/Aidenwjt/some-math-notes/blob/master/exercises/evans/exercises.pdf}{Problem 5.1.}
+\end{proof}
+
 %\subsection{Linear Spaces}
 %\subsection{Normed Linear Spaces}
 %\subsection{Metric Spaces}
@@ -99,9 +137,7 @@ Assume $1 \leq p$, $q \leq \infty$, and $\frac{1}{p} + \frac{1}{p} = 1$. If $u \
 
 \newpage
 
-\section{H\"{o}lder Spaces}
-\subsection{H\"{o}lder continuous functions}
-\subsection{H\"{o}lder spaces are Banach spaces}
+
 
 \newpage
 
