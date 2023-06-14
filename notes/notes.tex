@@ -143,6 +143,7 @@ The space of functions $C^{k,\gamma}(\overline{U})$ is a Banach space.
 
 \section{Sobolev Spaces}
 
+
 \newpage
 
 \subsection{Approximation}
@@ -206,11 +207,12 @@ such that $\forall u \in W^{1,p}(U)$:
 
 \subsection{Sobolev inequalities}
 \begin{motivation}
-The main goal of Sobolev inequalities is to find embeddings of Sobolev spaces in other spaces that may be easier to work with, more desirable,
+The motivation of Sobolev inequalities is to find embeddings of Sobolev spaces in other spaces that may be easier to work with, more desirable,
 or simply imply nice properties. These inequalities essentially provide estimates for functions in Sobolev spaces using other
 well know function spaces. Many of the following proofs are taken from Evans.
 \end{motivation}
-\begin{theorem}[Gagliardo-Nirenberg-Sobolev Inequality]
+
+\begin{theorem}[Gagliardo-Nirenberg-Sobolev inequality]
 Suppose $1\leq p < n$. There exists a constant $C > 0$, depending only on $p$ and $n$, such that
 	\[\|u\|_{L^{p^*}(\mathbb{R}^n)} \leq C\|Du\|_{L^{p}(\mathbb{R}^n)},\]
 for all $u \in C_{c}^{1}(\mathbb{R}^n)$.
@@ -234,7 +236,7 @@ If $U$ is bounded as we supposed, then on $W_{0}^{1,p}$, the norm $\|Du\|_{L^{p}
 meaning this is still an estimate for functions in Sobolev spaces.
 \end{remark}
 
-\begin{theorem}[Morrey's Inequality]
+\begin{theorem}[Morrey's inequality]
 Suppose $n < p \leq \infty$. Then there exists a constant $C > 0$, depending only on $p$ and $n$, such that
 	\[\|u\|_{C^{0,\gamma}(\mathbb{R}^n)} \leq C\|u\|_{W^{1,p}(\mathbb{R}^n)},\]
 for all $u \in W^{1,p}(U)$ with $u \in C^1(\mathbb{R}^n)$, where $\gamma = 1 - \frac{n}{p}$.
