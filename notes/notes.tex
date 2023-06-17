@@ -54,13 +54,14 @@ Assume $1 \leq p$, $q \leq \infty$, and $\frac{1}{p} + \frac{1}{p} = 1$. If $u \
 	\[|uv| = |ut||v/t| \leq \frac{|ut|^p}{p} + \frac{|v/t|^q}{q} = \frac{|u|^pt^p}{p} + \frac{|u|^q}{qt^q}.\]
 	Now integrating with respect to $x \in \mathbb{R}^n$, results in
 	\begin{equation}
+	\label{eq:1}
 		\int_{\mathbb{R}^n}|uv|dx \leq  \int_{\mathbb{R}^n}\left(\frac{|u|^pt^p}{p} + \frac{|u|^q}{qt^q}\right)dx
 		= \frac{t^p}{p}\int_{\mathbb{R}^n}|u|^pdx + \frac{1}{qt^q}\int_{\mathbb{R}^n}|v|^qdx = g(t).
 	\end{equation}
-	For the sake of simplicity, let
+	For the sake of simplicity let
 	\[a = \int_{\mathbb{R}^n}|u|^pdx, \text{ and } b = \int_{\mathbb{R}^n}|v|^qdx.\]
-	Now we wish to find the smallest $t > 0$ that satisfies (1). To do this we can employ Calculus, which says the minimum $t$
-	we are looking for, denoted $t_0$, satisfies $g^{\prime}(t_0) = 0$. First, we need to compute $g^{\prime}(t)$ as follows
+	Now we wish to find the smallest $t > 0$ that satisfies \href{eq:1}. To do this we can employ Calculus, which says the minimum $t$
+	we are looking for, which we denote as $t_0$, satisfies $g^{\prime}(t_0) = 0$. First, we need to compute $g^{\prime}(t)$ as follows
 	\[g^{\prime}(t) = \frac{d}{dt}\left(\frac{t^p}{p}a + \frac{1}{qt^q}b\right) = t^{p-1}a - \frac{b}{t^{q+1}}.\]
 	Then, let $g^{\prime}(t) = 0$ and solve for $t$ as follows
 	\begin{equation*}
@@ -75,55 +76,19 @@ Assume $1 \leq p$, $q \leq \infty$, and $\frac{1}{p} + \frac{1}{p} = 1$. If $u \
 	Finally, compute $g(t_0)$ as follows
 	\begin{equation*}
 		\begin{aligned}
-			g(t_0) &= \frac{\left(\left(\frac{b}{a}\right)^{\frac{1}{p+q}}\right)^pa}{p} + \frac{b}{q\left(\left(\frac{b}{a}\right)^{\frac{1}{p+q}}\right)^q}b \\
+			g(t_0) &= \frac{\left(\left(\frac{b}{a}\right)^{\frac{1}{p+q}}\right)^p}{p}a + \frac{1}{q\left(\left(\frac{b}{a}\right)^{\frac{1}{p+q}}\right)^q}b \\
 			       &= \frac{\left(\frac{b}{a}\right)^{\frac{p}{p+q}}a}{p} + \frac{b}{q\left(\frac{b}{a}\right)^{\frac{q}{p+q}}} \\
 			       &= \frac{\left(\frac{b}{a}\right)^{\frac{p-1}{p}}a}{p} + \frac{b}{q\left(\frac{b}{a}\right)^{\frac{1}{p}}} \\
 			       &= \frac{b^{\frac{1}{q}}a^{\frac{1}{p}}}{p} + \frac{b^{\frac{1}{q}}a^{\frac{1}{p}}}{q} \\
 			       &= b^{\frac{1}{q}}a^{\frac{1}{p}}\left(\frac{1}{p} + \frac{1}{q}\right) \\
 			       &= b^{\frac{1}{q}}a^{\frac{1}{p}} \\
 			       &= \left(\int_{\mathbb{R}^n}|v|^qdx\right)^{\frac{1}{q}}\left(\int_{\mathbb{R}^n}|u|^pdx\right)^{\frac{1}{p}} \\
-			       &= \|u\|_{L^p(\mathbb{R}^n)}\|v\|_{L^q(\mathbb{R}^n)}.
+			       &= \|v\|_{L^q(\mathbb{R}^n)}\|u\|_{L^p(\mathbb{R}^n)}.
 		\end{aligned}
 	\end{equation*}
 	
 \end{proof}
 
-\subsection{H\"{o}lder Spaces}
-\begin{definition}[H\"{o}lder continuous functions]
-Assume $U \subset \mathbb{R}^n$ is open and $0 < \gamma \leq 1$.
-\textit{Lipschitz continuous functions} $u : U \rightarrow \mathbb{R}$
-satisfy the estimate
-\[|u(x) - u(y)| \leq C|x-y|\]
-where $x,y \in U$ and $C$ is some constant.
-Now with the same assumtions, consider the variant
-\[|u(x) - u(y)| \leq C|x-y|^{\gamma},\]
-where $u$ is now said to be \textit{H\"{o}lder continuous with exponent $\gamma$}.
-\end{definition}
-
-\begin{definition}[Supremum norm and $\gamma^{th}$-H\"{o}lder seminorm]
-\begin{enumerate}[(i)]
-\item If $u : U \rightarrow \mathbb{R}$ is bounded and continuous, the supremum norm is denoted
-\[\|u\|_{C(\overline{U})} = \sup_{x \in U}{|u(x)|}.\]
-
-\item The $\gamma^{th}$-H\"{o}lder seminorm of $u : U \rightarrow \mathbb{R}$ is
-\[[u]_{C^{0,\gamma}(\overline{U})} = \sup_{x,y\in U, x\not= y}\left\{\frac{|u(x) - u(y)|}{|x-y|^{\gamma}}\right\},\]
-and the $\gamma^{th}$-H\"{o}lder norm is
-\[\|u\|_{C^{0,\gamma}(\overline{U})} = \|u\|_{C(\overline{U})} + [u]_{C^{0,\gamma}(\overline{U})}.\]
-\end{enumerate}
-\end{definition}
-
-\begin{definition}[H\"{o}lder space]
-The H\"{o}lder space $C^{k,\gamma}(\overline{U})$ consists of all functions $u \in C^k(\overline{U})$,
-where the norm
-\[\|u\|_{C^{k,\gamma}(\overline{U})} = \sum_{|\alpha| \leq k}\|D^{\alpha}u\|_{C(\overline{U})} + \sum_{|\alpha| = k}[D^{\alpha}u]_{C^{0,\gamma}(\overline{U})} < \infty.\]
-\end{definition}
-
-\begin{theorem}[H\"{o}lder spaces as function spaces]
-The space of functions $C^{k,\gamma}(\overline{U})$ is a Banach space.
-\end{theorem}
-\begin{proof}
-\href{https://github.com/Aidenwjt/some-math-notes/blob/master/exercises/evans/exercises.pdf}{Problem 5.1.}
-\end{proof}
 
 %\subsection{Linear Spaces}
 %\subsection{Normed Linear Spaces}
@@ -143,13 +108,57 @@ The space of functions $C^{k,\gamma}(\overline{U})$ is a Banach space.
 
 \section{Sobolev Spaces}
 
+\newpage
+
+\subsection{H\"{o}lder spaces}
+\begin{motivation}
+H\"{o}lder spaces are function spaces which contain well-behaved functions, and where the function space itself is a Banach space.
+Functions being well-behaved in this case just means they are differentiable and continuous to certain degrees.
+H\"{o}lder spaces become relevant when discussing Sobolev inequalities.
+\end{motivation}
+
+\begin{definition}[H\"{o}lder continuous functions]
+Assume $U \subset \mathbb{R}^n$ is open and $0 < \gamma \leq 1$.
+\textit{Lipschitz continuous functions} $u : U \rightarrow \mathbb{R}$
+satisfy the estimate
+\[|u(x) - u(y)| \leq C|x-y|\]
+where $x,y \in U$ and $C$ is some constant.
+Now with the same assumptions, consider the variant
+\[|u(x) - u(y)| \leq C|x-y|^{\gamma},\]
+where $u$ is now said to be \textit{H\"{o}lder continuous with exponent $\gamma$}.
+\end{definition}
+
+\begin{definition}[Supremum norm and $\gamma^{th}$-H\"{o}lder seminorm]
+\begin{enumerate}[(i)]
+\item If $u : U \rightarrow \mathbb{R}$ is bounded and continuous, the supremum norm is denoted
+\[\|u\|_{C(\overline{U})} = \sup_{x \in U}{|u(x)|}.\]
+
+\item The $\gamma^{th}$-H\"{o}lder seminorm of $u : U \rightarrow \mathbb{R}$ is
+\[[u]_{C^{0,\gamma}(\overline{U})} = \sup_{\substack{x,y\in U \\ x\not= y}}\left\{\frac{|u(x) - u(y)|}{|x-y|^{\gamma}}\right\},\]
+and the $\gamma^{th}$-H\"{o}lder norm is
+\[\|u\|_{C^{0,\gamma}(\overline{U})} = \|u\|_{C(\overline{U})} + [u]_{C^{0,\gamma}(\overline{U})}.\]
+\end{enumerate}
+\end{definition}
+
+\begin{definition}[H\"{o}lder spaces]
+The H\"{o}lder space $C^{k,\gamma}(\overline{U})$ consists of all functions $u \in C^k(\overline{U})$,
+where the norm
+\[\|u\|_{C^{k,\gamma}(\overline{U})} = \sum_{|\alpha| \leq k}\|D^{\alpha}u\|_{C(\overline{U})} + \sum_{|\alpha| = k}[D^{\alpha}u]_{C^{0,\gamma}(\overline{U})} < \infty.\]
+\end{definition}
+
+\begin{theorem}[H\"{o}lder spaces as function spaces]
+The space of functions $C^{k,\gamma}(\overline{U})$ is a Banach space.
+\end{theorem}
+\begin{proof}
+\href{https://github.com/Aidenwjt/some-math-notes/blob/master/exercises/evans/exercises.pdf}{Problem 5.1.}
+\end{proof}
 
 \newpage
 
 \subsection{Approximation}
 \begin{motivation}
-The main motivation of studying Sobolev spaces in general is that functions in these spaces can be approximated by smooth functions.
-These approximations can be done locally, globally, and globally up to and including the boundary.
+Sobolev spaces are nice function spaces as we find that elements in Sobolev spaces can be approximated by sequences of smooth functions.
+These approximations can be done locally, globally up to and excluding the boundary, and globally up to and including the boundary.
 As expected these require three different Theorems (taken from Evans) which increase in difficulty to prove.
 \end{motivation}
 
@@ -162,34 +171,41 @@ Then
 		\item $u^{\epsilon} \rightarrow u \text{ in } W_{\text{loc}}^{k,p}(U)$, as $\epsilon \rightarrow 0$.
 	\end{enumerate}
 \end{theorem}
+\begin{proof}
+In progress...
+\end{proof}
 
 \begin{theorem}[Global approximation by smooth functions]
 	Let $U \subset \mathbb{R}^n$ be a bounded open set. Suppose $u \in W^{k,p}(U)$ for some $1 \leq p < \infty$. Then there exists functions $u_m \in C^{\infty}(U)\cap W^{k,p}(U)$ such that
 	\[u_m \rightarrow u \text{ in } W^{k,p}(U).\]
 \end{theorem}
-\begin{remark}
-	Since $U \subset \mathbb{R}^n$ is a bounded open set, this Theorem says
-	nothing about the smoothness of the boundary of $U$, which is the goal of the next Theorem.
-\end{remark}
+\begin{proof}
+In progress...
+\end{proof}
+
+Since $U \subset \mathbb{R}^n$ is a bounded open set, this Theorem says
+nothing about the smoothness of the boundary of $U$, which is the goal of the next Theorem.
 
 \begin{theorem}[Global approximation by functions smooth up to the boundary]
 	Let $U \subset \mathbb{R}^n$ be a bounded open set. Suppose $\partial U$ is $C^1$ and suppose $u \in W^{k,p}(U)$ for some $1 \leq p < \infty$.
 	Then there exists functions $u_m \in C^{\infty}(\overline{U})$ such that
 	\[u_m \rightarrow u \text{ in } W^{k,p}(U).\]
 \end{theorem}
+\begin{proof}
+In progress...
+\end{proof}
 
 \newpage
 
 \subsection{Extensions}
 \begin{motivation}
-The motivation here is the desire to extend functions in $W^{k,p}(U)$ to functions in $W^{k,p}(\mathbb{R}^n)$.
-Evans discusses and proves extending functions in $W^{1,p}(U)$ to functions in $W^{1,p}(\mathbb{R}^n)$ which becomes
-useful for some of the Sobolev approximation proofs.
+Naturally we should desire to extend functions in $W^{k,p}(U)$ to functions in $W^{k,p}(\mathbb{R}^n)$.
+Evans discusses and proves this extension which becomes useful for some of the Sobolev inequalities proofs.
 \end{motivation}
 
 \begin{theorem}
 	Suppose $1 \leq p \leq \infty$.
-Let $U \subset \mathbb{R}^n$ be a bounded opend set, where $\partial U$ is $C^1$.
+Let $U \subset \mathbb{R}^n$ be a bounded open set, where $\partial U$ is $C^1$.
 Let $V \subset \mathbb{R}^n$ be a bounded open set such that $U \subset\subset V$.
 Then there exists a bounded linear operator
 	\[E: W^{1,p}(U) \rightarrow W^{1,p}(\mathbb{R}^n)\]
@@ -197,58 +213,75 @@ such that $\forall u \in W^{1,p}(U)$:
 	\begin{enumerate}[(i)]
 		\item $Eu = u$ a.e. in $U$,
 		\item $Eu$ has support within $V$, and
-		\item \[\|Eu\|_{W^{1,p}(\mathbb{R}^n)} \leq C\|u\|_{W^{1,p}(U)},\]
-		with $C$ depending only on $p$, $U$, and $V$.
+		\item $\|Eu\|_{W^{1,p}(\mathbb{R}^n)} \leq C(p,U,V)\|u\|_{W^{1,p}(U)}.$
 	\end{enumerate}
 \end{theorem}
+\begin{proof}
+In progress...
+\end{proof}
 
 
 \newpage
 
 \subsection{Sobolev inequalities}
 \begin{motivation}
-The motivation of Sobolev inequalities is to find embeddings of Sobolev spaces in other spaces that may be easier to work with, more desirable,
-or simply imply nice properties. These inequalities essentially provide estimates for functions in Sobolev spaces using other
-well know function spaces. Many of the following proofs are taken from Evans.
+Sobolev inequalities are useful for finding embeddings of Sobolev spaces in other function spaces that may be easier to work with, more desirable,
+or simply imply nice properties. Many of the following theorems are taken from Evans.
 \end{motivation}
 
 \begin{theorem}[Gagliardo-Nirenberg-Sobolev inequality]
-Suppose $1\leq p < n$. There exists a constant $C > 0$, depending only on $p$ and $n$, such that
-	\[\|u\|_{L^{p^*}(\mathbb{R}^n)} \leq C\|Du\|_{L^{p}(\mathbb{R}^n)},\]
+Suppose $1\leq p < n$. There exists a constant $C(p,n) > 0$ such that
+	\[\|u\|_{L^{p^*}(\mathbb{R}^n)} \leq C(p,n)\|Du\|_{L^{p}(\mathbb{R}^n)},\]
 for all $u \in C_{c}^{1}(\mathbb{R}^n)$.
 \end{theorem}
+\begin{proof}
+In progress...
+\end{proof}
 
 \begin{theorem}[Estimates for $W^{1,p}$, where $1 \leq p < n$]
 Let $U \subset \mathbb{R}^n$ be a bounded open set, and suppose $\partial U$ is $C^1$.
 Suppose $u \in W^{1,p}(U)$ for some $1 \leq p < n$. It then follows that $u \in L^{p^*}$, with the estimate that
-	\[\|u\|_{L^{p^*}(U)} \leq C\|u\|_{W^{1,p}(U)},\]
-where $C > 0$ is constant and only depending on $p$, $n$, and $U$.
+	\[\|u\|_{L^{p^*}(U)} \leq C(p,n,U)\|u\|_{W^{1,p}(U)},\]
+where $C(p,n,U) > 0$ is a constant.
 \end{theorem}
+\begin{proof}
+In progress...
+\end{proof}
 
 \begin{theorem}[Estimates for $W_{0}^{1,p}$, where $1 \leq p < n$]
 Let $U \subset \mathbb{R}^n$ be a bounded open set.
 	Suppose $u \in W_{0}^{1,p}(U)$ for some $1 \leq p < n$. Then we get the estimate
-	\[\|u\|_{L^{q}(U)} \leq C\|Du\|_{L^{p}(U)},\]
-for all $1 \leq q \leq p^*$, where $C > 0$ is constant and only depending on $p$, $q$, $n$, and $U$.
+	\[\|u\|_{L^{q}(U)} \leq C(p,q,n,U)\|Du\|_{L^{p}(U)},\]
+for all $1 \leq q \leq p^*$, where $C(p,q,n,U) > 0$ is a constant.
 \end{theorem}
+\begin{proof}
+In progress...
+\end{proof}
+
 \begin{remark}
 If $U$ is bounded as we supposed, then on $W_{0}^{1,p}$, the norm $\|Du\|_{L^{p}} \equiv \|u\|_{W^{1,p}(U)}$,
 meaning this is still an estimate for functions in Sobolev spaces.
 \end{remark}
 
 \begin{theorem}[Morrey's inequality]
-Suppose $n < p \leq \infty$. Then there exists a constant $C > 0$, depending only on $p$ and $n$, such that
-	\[\|u\|_{C^{0,\gamma}(\mathbb{R}^n)} \leq C\|u\|_{W^{1,p}(\mathbb{R}^n)},\]
+Suppose $n < p \leq \infty$. Then there exists a constant $C(p,n) > 0$ such that
+	\[\|u\|_{C^{0,\gamma}(\mathbb{R}^n)} \leq C(p,n)\|u\|_{W^{1,p}(\mathbb{R}^n)},\]
 for all $u \in W^{1,p}(U)$ with $u \in C^1(\mathbb{R}^n)$, where $\gamma = 1 - \frac{n}{p}$.
 \end{theorem}
+\begin{proof}
+In progress...
+\end{proof}
 
 \begin{theorem}[Estimates for $W^{1,p}$, where $n < p \leq \infty$]
 Let $U \subset \mathbb{R}^n$ be a bounded open set, and suppose $\partial U$ is $C^1$.
 	Suppose $u \in W^{1,p}(U)$ for some $n < p \leq \infty$. It then follows that a continuous version $u^* \in C^{0,\gamma}(\overline{U})$,
 where $\gamma = 1 - \frac{n}{p}$, with the estimate that
-	\[\|u^*\|_{C^{0,\gamma}(\overline{U})} \leq C\|u\|_{W^{1,p}(U)},\]
-where $C > 0$ is constant and only depending on $p$, $n$, and $U$.
+	\[\|u^*\|_{C^{0,\gamma}(\overline{U})} \leq C(p,n,U)\|u\|_{W^{1,p}(U)},\]
+where $C(p,n,U) > 0$ is a constant.
 \end{theorem}
+\begin{proof}
+In progress...
+\end{proof}
 
 \newpage
 
