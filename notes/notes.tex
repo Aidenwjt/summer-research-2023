@@ -26,6 +26,10 @@
 \fancyhead[R]{\rightmark}
 \fancyhead[C]{}
 \section{Prior Concepts to Know}
+The following are just some concepts, ideas, and interesting topics (mainly in analysis) that help in understanding these notes.
+Much of the content is taken from L.C. Evans' Partial Differential Equations, but there is also some content from Gilbarg and Trudinger,
+as well as various online resources.
+
 \subsection{Important inequalities}
 \begin{theorem}[Young's inequality]
 Let $p > 1$, $q < \infty$, and $\frac{1}{p}+\frac{1}{q} = 1$. Then
@@ -89,27 +93,6 @@ Assume $1 \leq p$, $q \leq \infty$, and $\frac{1}{p} + \frac{1}{p} = 1$. If $u \
 	
 \end{proof}
 
-
-%\subsection{Linear Spaces}
-%\subsection{Normed Linear Spaces}
-%\subsection{Metric Spaces}
-%\subsection{Banach Spaces}
-%\subsection{$L^p$ Spaces}
-%\subsection{Hilbert Spaces}
-%\subsection{Weak Derivatives}
-%\subsection{Mollifiers}
-%\subsection{Partition of Unity}
-
-\newpage
-
-
-
-\newpage
-
-\section{Sobolev Spaces}
-
-\newpage
-
 \subsection{H\"{o}lder spaces}
 \begin{motivation}
 H\"{o}lder spaces are function spaces which contain well-behaved functions, and where the function space itself is a Banach space.
@@ -153,12 +136,64 @@ The space of functions $C^{k,\gamma}(\overline{U})$ is a Banach space.
 \href{https://github.com/Aidenwjt/some-math-notes/blob/master/exercises/evans/exercises.pdf}{Problem 5.1.}
 \end{proof}
 
+
+%\subsection{Linear Spaces}
+%\subsection{Normed Linear Spaces}
+%\subsection{Metric Spaces}
+%\subsection{Banach Spaces}
+%\subsection{$L^p$ Spaces}
+%\subsection{Hilbert Spaces}
+%\subsection{Weak Derivatives}
+%\subsection{Mollifiers}
+%\subsection{Partition of Unity}
+
 \newpage
+
+
+
+\newpage
+
+\section{Sobolev Spaces}
+Sobolev spaces are motivated by the study of elliptic PDEs, for example, the Poisson equation
+\[\Delta{u} = f.\]
+Multiplying this equation on both sides by $\phi \in C_{c}^{\infty}$, then integrating both sides, then integrating the left side by parts, results in
+\begin{equation*}
+	\begin{aligned}
+		\int \phi \Delta u &= \int \phi f \\
+		\Rightarrow \int \phi \nabla^2 u &= \int \phi f \\
+		\Rightarrow \phi \nabla u - \int \phi \nabla u &= \int \phi f \\ 
+		\Rightarrow - \int \phi \nabla u &= \int \phi f.
+	\end{aligned}
+\end{equation*}
+It can then be shown that for any $u \in C^2$, if the above integral relation holds, then $u$ is a classical solution of the original equation.
+However, one may notice that the integral relation only needs $\nabla u \in L^p$, for some fixed $p$, to be satisfied.
+Also, one may notice the similarity of the integral relation to the definition of weak derivatives. Both these observations lead to a more generalized
+case where $u \in L^1_{\text{loc}}$ and $u \not\in C^1$, only requiring that the $\alpha^{th}$-weak partial derivative of $u$ belong to $L^p$, for some fixed $p$.
+This more generalized case gives rise to our formal definition of Sobolev spaces.
+
+\subsection{Definition of the $W^{k,p}$ spaces}
+Fix $1 \leq p \leq \infty$, let $k \in \mathbb{N}$, and let $U \subset \mathbb{R}^n$ be a bounded open set.
+\begin{definition}
+	The Sobolev space
+	\[W^{k,p}(U) = \{u \in L^1_{\text{loc}}(U) \, | \, D^{\alpha}u \text{ exists in the weak sense, and } D^{\alpha}u \in L^p(U) \, \forall \, |\alpha| \leq k\},\]
+	consists of all locally summable functions $u : U \rightarrow \mathbb{R}$ such that for each $|\alpha| \leq k$, $D^{\alpha}u$ exists in the weak sense
+	and belongs to $L^p(U)$.
+\end{definition}
+\begin{remark}
+	When $p=2$ we will instead use the notation
+	\[W^{k,2}(U) = H^k(U),\]
+	because this Sobolev space is also a Hilbert space.
+\end{remark}
+\begin{definition}
+	If $u \in W^{k,p}(U)$, we define its norm to be
+	\[\|u\|_{W^{k,p}(U)} = \sum_{|\alpha| \leq k} \|D^{\alpha}u\|_{L^p(U)}.\]
+\end{definition}
+
 
 \subsection{Approximation}
 \begin{motivation}
 Sobolev spaces are nice function spaces as we find that elements in Sobolev spaces can be approximated by sequences of smooth functions.
-These approximations can be done locally, globally up to and excluding the boundary, and globally up to and including the boundary.
+These approximations can be done locally, globally up to but excluding the boundary, and globally up to and including the boundary.
 As expected these require three different Theorems (taken from Evans) which increase in difficulty to prove.
 \end{motivation}
 
@@ -195,8 +230,6 @@ nothing about the smoothness of the boundary of $U$, which is the goal of the ne
 In progress...
 \end{proof}
 
-\newpage
-
 \subsection{Extensions}
 \begin{motivation}
 Naturally we should desire to extend functions in $W^{k,p}(U)$ to functions in $W^{k,p}(\mathbb{R}^n)$.
@@ -220,8 +253,6 @@ such that $\forall u \in W^{1,p}(U)$:
 In progress...
 \end{proof}
 
-
-\newpage
 
 \subsection{Sobolev inequalities}
 \begin{motivation}
