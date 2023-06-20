@@ -64,7 +64,7 @@ Assume $1 \leq p$, $q \leq \infty$, and $\frac{1}{p} + \frac{1}{p} = 1$. If $u \
 	\end{equation}
 	For the sake of simplicity let
 	\[a = \int_{\mathbb{R}^n}|u|^pdx, \text{ and } b = \int_{\mathbb{R}^n}|v|^qdx.\]
-	Now we wish to find the smallest $t > 0$ that satisfies \href{eq:1}. To do this we can employ Calculus, which says the minimum $t$
+	Now we wish to find the smallest $t > 0$ that satisfies equation \ref{eq:1}. To do this we can employ Calculus, which says the minimum $t$
 	we are looking for, which we denote as $t_0$, satisfies $g^{\prime}(t_0) = 0$. First, we need to compute $g^{\prime}(t)$ as follows
 	\[g^{\prime}(t) = \frac{d}{dt}\left(\frac{t^p}{p}a + \frac{1}{qt^q}b\right) = t^{p-1}a - \frac{b}{t^{q+1}}.\]
 	Then, let $g^{\prime}(t) = 0$ and solve for $t$ as follows
@@ -92,6 +92,8 @@ Assume $1 \leq p$, $q \leq \infty$, and $\frac{1}{p} + \frac{1}{p} = 1$. If $u \
 	\end{equation*}
 	
 \end{proof}
+
+\newpage
 
 \subsection{H\"{o}lder spaces}
 \begin{motivation}
@@ -123,7 +125,7 @@ and the $\gamma^{th}$-H\"{o}lder norm is
 \end{enumerate}
 \end{definition}
 
-\begin{definition}[H\"{o}lder spaces]
+\begin{definition}
 The H\"{o}lder space $C^{k,\gamma}(\overline{U})$ consists of all functions $u \in C^k(\overline{U})$,
 where the norm
 \[\|u\|_{C^{k,\gamma}(\overline{U})} = \sum_{|\alpha| \leq k}\|D^{\alpha}u\|_{C(\overline{U})} + \sum_{|\alpha| = k}[D^{\alpha}u]_{C^{0,\gamma}(\overline{U})} < \infty.\]
@@ -171,6 +173,8 @@ Also, one may notice the similarity of the integral relation to the definition o
 case where $u \in L^1_{\text{loc}}$ and $u \not\in C^1$, only requiring that the $\alpha^{th}$-weak partial derivative of $u$ belong to $L^p$, for some fixed $p$.
 This more generalized case gives rise to our formal definition of Sobolev spaces.
 
+\newpage
+
 \subsection{Definition of the $W^{k,p}$ spaces}
 Fix $1 \leq p \leq \infty$, let $k \in \mathbb{N}$, and let $U \subset \mathbb{R}^n$ be a bounded open set.
 \begin{definition}
@@ -188,7 +192,14 @@ Fix $1 \leq p \leq \infty$, let $k \in \mathbb{N}$, and let $U \subset \mathbb{R
 	If $u \in W^{k,p}(U)$, we define its norm to be
 	\[\|u\|_{W^{k,p}(U)} = \sum_{|\alpha| \leq k} \|D^{\alpha}u\|_{L^p(U)}.\]
 \end{definition}
+\begin{theorem}[Sobolev spaces as function spaces]
+	For each $k \in \mathbb{N}$ and $1 \leq p \leq \infty$, the Sobolev space $W^{k,p}(U)$ is a Banach space.
+\end{theorem}
+\begin{proof}
+	In progress...
+\end{proof}
 
+\newpage
 
 \subsection{Approximation}
 \begin{motivation}
@@ -230,6 +241,8 @@ nothing about the smoothness of the boundary of $U$, which is the goal of the ne
 In progress...
 \end{proof}
 
+\newpage
+
 \subsection{Extensions}
 \begin{motivation}
 Naturally we should desire to extend functions in $W^{k,p}(U)$ to functions in $W^{k,p}(\mathbb{R}^n)$.
@@ -253,6 +266,7 @@ such that $\forall u \in W^{1,p}(U)$:
 In progress...
 \end{proof}
 
+\newpage
 
 \subsection{Sobolev inequalities}
 \begin{motivation}
