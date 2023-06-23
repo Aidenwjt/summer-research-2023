@@ -93,7 +93,6 @@ Assume $1 \leq p$, $q \leq \infty$, and $\frac{1}{p} + \frac{1}{p} = 1$. If $u \
 			       &= \|v\|_{L^q(\mathbb{R}^n)}\|u\|_{L^p(\mathbb{R}^n)}.
 		\end{aligned}
 	\end{equation*}
-	
 \end{proof}
 
 \newpage
@@ -128,6 +127,52 @@ a lot of nice properties.
 \begin{definition}
 	A \textit{Banach space} is a complete normed linear space.
 \end{definition}
+
+\newpage
+
+\subsection{Hilbert spaces}
+Let $H$ be a real linear space.
+\begin{definition}
+	A mapping $(\cdot , \cdot) : H \times H \rightarrow \mathbb{R}$ is called an \textit{inner product} if
+	\begin{enumerate}
+		\item $(u,v) = (v,u)$ for all $u,v \in H$,
+		\item $u \mapsto (u,v)$ is linear for each $v \in H$,
+		\item $(u,v) \geq 0$ for all $v \in H$,
+		\item $(u,u) = 0$ if and only if $u = 0$.
+	\end{enumerate}
+\end{definition}
+\begin{definition}
+	The inner product is also related to the norm of $H$ as
+	\begin{equation}
+		\label{eq:2}
+		\|u\| = (u,u)^{1/2},
+	\end{equation}
+	and by the Cauchy-Schwarz inequality, we have
+	\begin{equation}
+		\label{eq:3}
+		|(u,v)| \leq \|u\|\|v\|
+	\end{equation}
+	for all $u,v \in H$. Equation \ref{eq:3} verifies that equation \ref{eq:2} defines a norm on $H$. 
+\end{definition}
+\begin{definition}
+	A \textit{Hilbert space} $H$ is a Banach space equipped with an inner product which defines the norm on $H$.
+\end{definition}
+
+\begin{theorem}[Riesz Representation Theorem]
+	For every bounded linear functional $F$ on a Hilbert space $H$, there exists a uniquely determined element $f \in H$
+	such that $F(x) = (x,f)$ for all $x \in H$. Furthermore, $\|F\|_{\text{op}} = \|f\|_H$.
+\end{theorem}
+\begin{proof}
+	In progress...
+\end{proof}
+
+\begin{theorem}[Lax-Milgram Theorem]
+	Let $B$ be a bounded, coercive bilinear form on a Hilbert space $H$. Then for every bounded linear functional $F$ on $H$
+	there exists a uniquely determined element $f\in H$ such that $B(x,f) = F(x)$ for all $x \in H$.
+\end{theorem}
+\begin{proof}
+	In progress...
+\end{proof}
 
 \newpage
 
