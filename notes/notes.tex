@@ -98,7 +98,7 @@ Assume $1 \leq p$, $q \leq \infty$, and $\frac{1}{p} + \frac{1}{p} = 1$. If $u \
 \newpage
 
 \subsection{Banach Spaces}
-Banach spaces are very important for the study of Sobolev spaces as Sobelev spaces themselves are Banach spaces, which will be proven later on.
+Banach spaces are very important for the study of Sobolev spaces as Sobolev spaces themselves are Banach spaces.
 Being able to prove some space is a Banach space is very helpful as Banach spaces are very nice mathematical structures that imply
 a lot of nice properties.
 \begin{definition}
@@ -131,9 +131,10 @@ a lot of nice properties.
 \newpage
 
 \subsection{Hilbert spaces}
-Let $H$ be a real linear space.
+Hilbert spaces are important in the study of Sobolev spaces as in certain cases Sobolev spaces are themselves Hilbert spaces.
+There are also a few important representation theorems involving Hilbert spaces that are very useful for certain boundary value problems.
 \begin{definition}
-	A mapping $(\cdot , \cdot) : H \times H \rightarrow \mathbb{R}$ is called an \textit{inner product} if
+	Let $H$ be a real linear space. A mapping $(\cdot , \cdot) : H \times H \rightarrow \mathbb{R}$ is called an \textit{inner product} if
 	\begin{enumerate}
 		\item $(u,v) = (v,u)$ for all $u,v \in H$,
 		\item $u \mapsto (u,v)$ is linear for each $v \in H$,
@@ -163,7 +164,44 @@ Let $H$ be a real linear space.
 	such that $F(x) = (x,f)$ for all $x \in H$. Furthermore, $\|F\|_{\text{op}} = \|f\|_H$.
 \end{theorem}
 \begin{proof}
-	In progress...
+	For the case when $H = N(F) = \{x \in H \, | \, F(x) = 0\}$ we find that our uniquely determined element is $f=0$ as the zero vector is
+	orthogonal to everything including itself, implying $F(x) = 0 = (x,0)$ for all $x \in H$. However, assume $H \not= N(F)$.
+	$N(F)$ is now a closed subspace of $H$, which by virtue of the Projection Theorem implies there exists non-zero elements in $N(F)^{\bot}$.
+	Take $z \in N(F)^{\bot}$ such that $z \not= 0$, where it follows that $(u,z) = 0$ for all $u \in N(F)$. Furthermore, $F(z) \not= 0$ and for any $x \in H$
+	\[F\left(x - \frac{F(x)}{F(z)}z\right) = F(x) - \frac{F(x)}{F(z)}F(z) = 0,\]
+	implying that $x - \frac{F(x)}{F(z)}z \in N(F)$, which further implies that $\left(x - \frac{F(x)}{F(z)}z, z\right) = 0$.
+	Now by definition of inner products, we have
+	\begin{equation*}
+		\begin{aligned}
+			(x,z) &= \left(x - \frac{F(x)}{F(z)}z,z\right) + \left(\frac{F(x)}{F(z)}z,z\right) \\
+			      &= \left(\frac{F(x)}{F(z)}z,z\right) \\
+			      &= \frac{F(x)}{F(z)}(z,z) \\
+			      &= \frac{F(x)}{F(z)}(z,z)^{1/2}(z,z)^{1/2} \\
+			      &= \frac{F(x)}{F(z)}\|z\|^2
+		\end{aligned}
+	\end{equation*}
+	for any $x \in H$. Rearranging the above equation results in 
+	\[F(x) = (x,z)\frac{F(z)}{\|z\|^2} = \left(x,\frac{F(z)}{\|z\|^2}z\right),\]
+	where we now just need to show $f = \frac{F(z)}{\|z\|^2}z$ is unique.
+	To prove the uniqueness of $f$ assume there exists $f_1,f_2 \in H$ such that $F(x) = (x,f_1) = (x,f_2)$ for all $x \in H$,
+	and assume we have $x \in H$ such that $\|x\| > 0$. We can see that this implies
+	\begin{equation*}
+		0 = |F(x) - F(x)| = |(x,f_1) - (x,f_2)| = |(x,f_1-f_2)| \leq \|x\|\|f_1 - f_2\|.
+	\end{equation*}
+	This implies $\|f_1-f_2\| = 0$, which futher implies $f_1-f_2= 0$, proving the uniqueness of $f$.
+	Finally, to show $\|F\|_{\text{op}} = \|f\|_H$ we can use the fact that
+	\begin{equation*}
+		\|F\|_{\text{op}} = \sup\left\{\frac{\|F(x)\|_{\mathbb{R}}}{\|x\|_H}\, : \, x \not= 0 \text{ and } x \in H\right\}
+	\end{equation*}
+	to say
+	\begin{equation*}
+		\|F\|_{\text{op}} = \sup_{x\not=0}{\frac{\|F(x)\|_{\mathbb{R}}}{\|x\|_H}} = \sup_{x\not=0}{\frac{|F(x)|}{\|x\|_H}} = \sup_{x\not=0}{\frac{|(x,f)|}{\|x\|_H}} \leq \sup_{x\not=0}{\frac{\|x\|_H\|f\|_H}{\|x\|_H}} = \|f\|_H.
+	\end{equation*}
+	We can also say
+	\begin{equation*}
+		\|f\|_H^2 = \|f\|_H\|f\|_H = (f,f)^{1/2}(f,f)^{1/2} = (f,f) = F(f) \leq \|F(f)\|_{\text{op}}\|f\|_H.
+	\end{equation*}
+	These inequalities imply that $\|F\|_{\text{op}} \leq \|f\|_H$ and $\|f\|_H \leq \|F\|_{\text{op}}$, respectively, which can only be true if $\|F\|_{\text{op}} = \|f\|_H$.
 \end{proof}
 
 \begin{theorem}[Lax-Milgram Theorem]
