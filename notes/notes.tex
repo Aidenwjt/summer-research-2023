@@ -26,14 +26,16 @@
 \fancyhead[R]{\rightmark}
 \fancyhead[C]{}
 \section{Prior Concepts to Know}
+\begin{motivation}
 The following are just some concepts, ideas, and interesting topics (mainly in analysis) that help in understanding these notes.
 The main focus here is on background material required for studying Sobolev spaces and adaptive finite element methods.
-
-\newpage
+\end{motivation}
 
 \subsection{Important inequalities}
-A lot of analysis proofs in general can be boiled down to finding out if some element is smaller than, bigger than, or equal to some other element.
+\begin{motivation}
+A lot of analysis proofs in general can be boiled down to figuring out if some element is smaller than, bigger than, or equal to some other element.
 For this reason, it is very helpful to know some of these important inequalities. 
+\end{motivation}
 \begin{theorem}[Young's inequality]
 Let $p > 1$, $q < \infty$, and $\frac{1}{p}+\frac{1}{q} = 1$. Then
 \[ab \leq \frac{a^p}{p} + \frac{b^q}{q}.\]
@@ -98,9 +100,11 @@ Assume $1 \leq p$, $q \leq \infty$, and $\frac{1}{p} + \frac{1}{p} = 1$. If $u \
 \newpage
 
 \subsection{Banach Spaces}
-Banach spaces are very important for the study of Sobolev spaces as Sobelev spaces themselves are Banach spaces, which will be proven later on.
-Being able to prove some space is a Banach space is very helpful as Banach spaces are very nice mathematical structures that imply
-a lot of nice properties.
+\begin{motivation}
+Banach spaces are very important in the study of Sobolev spaces as Sobelev spaces themselves are Banach spaces, which will be proven later on.
+Being able to prove a space is a Banach space is very helpful because Banach spaces are very nice mathematical structures that imply
+a lot of nice properties, as we will see.
+\end{motivation}
 \begin{definition}
 	A \textit{linear space} over a field $F$ (usually a subfield of the complex numbers) is a non-empty set $X$ equipped with a special element 0, 
 	three operations, and a set of
@@ -131,6 +135,10 @@ a lot of nice properties.
 \newpage
 
 \subsection{Hilbert spaces}
+\begin{motivation}
+	Hilbert spaces are important in the study of Sobolev spaces as some Sobolev spaces are themselves Hilbert spaces.
+	Hilbert spaces are also important as there are some very important representation theorems for boundary value problems that involve Hilbert spaces.
+\end{motivation}
 Let $H$ be a real linear space.
 \begin{definition}
 	A mapping $(\cdot , \cdot) : H \times H \rightarrow \mathbb{R}$ is called an \textit{inner product} if
