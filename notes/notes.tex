@@ -263,10 +263,48 @@ The space of functions $C^{k,\gamma}(\overline{U})$ is a Banach space.
 \href{https://github.com/Aidenwjt/some-math-notes/blob/master/exercises/evans/exercises.pdf}{Problem 5.1.}
 \end{proof}
 
+\newpage
+
+\subsection{Weak Derivatives}
+\begin{motivation}
+	The motivation for weak derivatives in our case comes from the desire to satisfy certain integral relations given by the integration by parts formula.
+	Let $U \subset \mathbb{R}^n$ be an open set and let $u\in C^1(U)$. Then if $\phi \in C_{c}^{\infty}(U)$, we can see that
+	\begin{equation*}
+		\int_U u\phi_{x_i}dx = [u\phi]_U - \int_U \phi u_{x_i}dx = - \int_U \phi u_{x_i}dx
+	\end{equation*}
+	when we use the integration by parts formula. Now letting $k\in \mathbb{N}$, $u \in C^k(U)$, and $\alpha$ be a multi-index, we find that
+	\begin{equation*}
+		\begin{aligned}
+			\int_U u D^{\alpha}\phi dx &= \int_U u \frac{\partial^{\alpha_1}}{\partial x_1^{\alpha_1}}\dots\frac{\partial^{\alpha_n}}{\partial x_n^{\alpha_n}}\phi dx \\
+						   &= - \int_U \frac{\partial^{\alpha_n}}{\partial x_n^{\alpha_n}}u \frac{\partial^{\alpha_1}}{\partial x_1^{\alpha_1}}\dots\frac{\partial^{\alpha_{n-1}}}{\partial x_{n-1}^{\alpha_{n-1}}}\phi dx \\
+						   &= \quad\qquad\qquad\vdots \\ 
+						   &= (-1)^{|\alpha|}\int_U \phi\frac{\partial^{\alpha_1}}{\partial x_1^{\alpha_1}}\dots\frac{\partial^{\alpha_n}}{\partial x_n^{\alpha_n}}u dx \\
+						   &= (-1)^{|\alpha|}\int_U \phi D^{\alpha}u dx.
+		\end{aligned}
+	\end{equation*}
+	This gives us the relation
+	\begin{equation}
+		\label{eq:4}
+		\int_U u D^{\alpha}\phi dx = (-1)^{|\alpha|}\int_U D^{\alpha}u\phi  dx
+	\end{equation}
+	where the LHS of equation \ref{eq:4} also holds if $u\in L_{\text{loc}}^1(U)$.
+	The question now is ``does $u$ need to be k-times partially differentiable, or can we replace $D^{\alpha}u$ with something that also satisfies
+	equation \ref{eq:4}, but is just locally summable instead?''.
+\end{motivation}
+\begin{definition}
+	Let $u,v \in L_{\text{loc}}^1(U)$ and let $\alpha$ be a multi-index. Then we say that $v$ is the 
+	\textit{$\alpha^{th}$ weak partial derivative of $u$} provided
+	\begin{equation*}
+		\int_U u D^{\alpha}\phi dx = (-1)^{|\alpha|}\int_U v \phi dx.
+	\end{equation*}
+	In this case, we also say $D^{\alpha}u = v$ ``in the weak sense.''
+\end{definition}
+\begin{definition}
+	The space of k-times weakly differentiable functions is denoted $W^k(U)$, where clearly $C^k(U) \subset W^k(U)$.
+\end{definition}
 
 %\subsection{$L^p$ Spaces}
 %\subsection{Hilbert Spaces}
-%\subsection{Weak Derivatives}
 %\subsection{Mollifiers}
 %\subsection{Partition of Unity}
 
