@@ -99,6 +99,52 @@ Assume $1 \leq p$, $q \leq \infty$, and $\frac{1}{p} + \frac{1}{p} = 1$. If $u \
 
 \newpage
 
+\begin{theorem}[Cauchy-Schwarz inequality]
+	Let $u$ and $v$ be arbitrary vectors in an inner product space over the scalar field $\mathbb{F}$,
+	where $\mathbb{F}$ is either $\mathbb{R}$ or $\mathbb{C}$. Then
+	\begin{equation*}
+		|(u,v)| \leq \|u\|\|v\|
+	\end{equation*}
+	with equality holding (``='') if and only if $u$ and $v$ are linearly dependent.
+	Moreover, if $|(u,v)| = \|u\|\|v\|$ and $v\not=0$, then
+	\begin{equation*}
+		u = \frac{(u,v)}{\|v\|^2}v.
+	\end{equation*}
+\end{theorem}
+\begin{proof}
+	When $u=0$ or $v=0$ then the inequality is trivial, so assume $v\not=0$.
+	Let
+	\begin{equation*}
+		z = u - \frac{(u,v)}{(v,v)}v,
+	\end{equation*}
+	then it follows from the linearity of the inner product that
+	\begin{equation*}
+		(z,v) = \left(u - \frac{(u,v)}{(v,v)}v\right) = (u,v) - \left(\frac{(u,v)}{(v,v)}v,v\right) = (u,v) - \frac{(u,v)}{(v,v)}(v,v) = 0.
+	\end{equation*}
+	This implies $z$ is orthogonal to $v$. Now applying Pythagorean's Theorem to
+	\begin{equation*}
+		u = \frac{(u,v)}{(v,v)}v + z
+	\end{equation*}
+	results in
+	\begin{equation*}
+		\begin{aligned}
+			\|u\|^2 &= \left\|\frac{(u,v)}{(v,v)}v\right\|^2 + \|z\|^2 \\
+				&= \left|\frac{(u,v)}{(v,v)}\right|^2 \|v\|^2 + \|z\|^2 \\
+				&= \frac{|(u,v)|^2}{|(v,v)^{1/2}(v,v)^{1/2}|^2}\|v\|^2 + \|z\|^2 \\
+				&= \frac{|(u,v)|^2}{|\|v\||^2}\|v\|^2 + \|z\|^2 \\
+				&= \frac{|u,v)|^2}{\|v\|^2} + \|z\|^2 \\
+				&\geq \frac{|u,v)|^2}{\|v\|^2}.
+		\end{aligned}
+	\end{equation*}
+	Multiplying through by $\|v\|^2$ results in our desired inequality. We can also observe if $z=0$, we get
+	\begin{equation*}
+		u = \frac{(u,v)}{(v,v)}v = \frac{(u,v)}{(v,v)^{1/2}(v,v)^{1/2}}v = \frac{(u,v)}{\|v\|^2}v,
+	\end{equation*}
+	as desired.
+\end{proof}
+
+\newpage
+
 \subsection{Banach Spaces}
 \begin{motivation}
 Banach spaces are very important in the study of Sobolev spaces as Sobelev spaces themselves are Banach spaces, which will be proven later on.
