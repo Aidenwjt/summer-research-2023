@@ -112,7 +112,7 @@ Assume $1 \leq p$, $q \leq \infty$, and $\frac{1}{p} + \frac{1}{p} = 1$. If $u \
 	\end{equation*}
 \end{theorem}
 \begin{proof}
-	When $u=0$ or $v=0$ then the inequality is trivial, so assume $v\not=0$.
+	When $u=0$ or $v=0$ then the inequality is trivial, so assume WLOG that $v\not=0$.
 	Let
 	\begin{equation*}
 		z = u - \frac{(u,v)}{(v,v)}v,
@@ -131,9 +131,9 @@ Assume $1 \leq p$, $q \leq \infty$, and $\frac{1}{p} + \frac{1}{p} = 1$. If $u \
 			\|u\|^2 &= \left\|\frac{(u,v)}{(v,v)}v\right\|^2 + \|z\|^2 \\
 				&= \left|\frac{(u,v)}{(v,v)}\right|^2 \|v\|^2 + \|z\|^2 \\
 				&= \frac{|(u,v)|^2}{|(v,v)^{1/2}(v,v)^{1/2}|^2}\|v\|^2 + \|z\|^2 \\
-				&= \frac{|(u,v)|^2}{|\|v\||^2}\|v\|^2 + \|z\|^2 \\
-				&= \frac{|u,v)|^2}{\|v\|^2} + \|z\|^2 \\
-				&\geq \frac{|u,v)|^2}{\|v\|^2}.
+				&= \frac{|(u,v)|^2}{|\|v\|^2|^2}\|v\|^2 + \|z\|^2 \\
+				&= \frac{|(u,v)|^2}{\|v\|^2} + \|z\|^2 \\
+				&\geq \frac{|(u,v)|^2}{\|v\|^2}.
 		\end{aligned}
 	\end{equation*}
 	Multiplying through by $\|v\|^2$ results in our desired inequality. We can also observe if $z=0$, we get
