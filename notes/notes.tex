@@ -259,10 +259,140 @@ Let $H$ be a real linear space.
 
 \begin{theorem}[Lax-Milgram Theorem]
 	Let $B$ be a bounded, coercive bilinear form on a Hilbert space $H$. Then for every bounded linear functional $F$ on $H$
-	there exists a uniquely determined element $f\in H$ such that $B(x,f) = F(x)$ for all $x \in H$.
+	there exists a uniquely determined element $f\in H$ such that
+	\begin{equation*}
+		B(x,f) = F(x)
+	\end{equation*}
+	for all $x \in H$.
 \end{theorem}
 \begin{proof}
-	In progress...
+	For any $f \in H$, define the mapping 
+	\begin{equation}
+		\label{eq:5}
+		f \mapsto (F = B(\cdot, f)).
+	\end{equation}
+	Then since $F = B(\cdot, f) \in H^*$, we can use the Riesz Representation Theorem (RRT) to  define another mapping
+	\begin{equation}
+		\label{eq:6}
+		(F = B(\cdot,f)) \stackrel{RRT}{\mapsto} \tilde{f},
+	\end{equation}
+	where $\tilde{f}$ is defined to be a uniquely determined element in $H$.
+	Combining mappings \ref{eq:5} and \ref{eq:6} allows us to define one more mapping
+	\begin{equation}
+		\label{eq:7}
+		f \mapsto \tilde{f},
+	\end{equation}
+	where we denote this mapping as $T$ such that $Tf = \tilde{f}$.
+	With these mapping we now have
+	\begin{equation*}
+		F(z) = B(z,f) = (z,Tf)
+	\end{equation*}
+	for any $z \in H$.
+	This may look like we are done, but notice that we have no idea if $f$ is unique or not.
+	So our goal now is to show that $T$ is a bijective bounded linear operator from $H$ to $H$,
+	which will allow us to use the Bounded Inverse Theorem to say $T^{-1}$ exists and is also bounded.
+	Firstly, by the linearity and bilinearity of the inner product and the bilinear form $B$, respectively,
+	we can say that for all $x,y,z \in H$ and $\lambda, \mu \in \mathbb{C}$, we have
+	\begin{equation*}
+		\begin{aligned}
+			(z,T(\lambda x + \mu y)) &= B(z, \lambda x + \mu y) \\
+						 &= B(z,\lambda x) + B(z, \mu y) \\
+						 &= \lambda B(z,x) + \mu B(z,y) \\
+						 &= \lambda (z,Tx) + \mu (z,Ty) \\
+						 &= (z,\lambda Tx) + (z, \mu Ty) \\
+						 &= (z, \lambda Tx + \mu Ty),
+		\end{aligned}
+	\end{equation*}
+	implying that $T(\lambda x + \mu y) = \lambda Tx + \mu Ty$, which is the definition of a linear operator.
+	Next, for any $z \in H$, we have
+	\begin{equation*}
+		|(z,Tf)| = |B(z,f)| \leq k\|z\|\|f\|
+	\end{equation*}
+	for some $k>0$, where letting $z = Tf$ results in
+	\begin{equation*}
+		\|Tf\|^2 = |(Tf,Tf)| = |B(Tf,f)| \leq k\|Tf\|\|f\|,
+	\end{equation*}
+	implying that
+	\begin{equation}
+		\label{eq:8}
+		\|Tf\| \leq k\|f\|.
+	\end{equation}
+	Thus, $T$ is bounded. Now, also note that since
+	\begin{equation*}
+		(z,Tf) = B(z,f)
+	\end{equation*}
+	it follows that we can use the Cauchy-Schwarz inequality and the coercivity of $B$ to say that if $z=f$, then
+	\begin{equation}
+		\label{eq:9}
+		\|f\|\|Tf\| \geq |(f,Tf)| = |B(f,f)| \geq |\nu \|f\|^2| = \nu \|f\|^2
+	\end{equation}
+	for some $\nu > 0$. Inequalities \ref{eq:8} and \ref{eq:9} imply
+	\begin{equation}
+		\label{eq:10}
+		\nu \|f\| \leq \|Tf\| \leq k \|f\|
+	\end{equation}
+	for some $\nu >0$ and $k >0$.
+	By definition $T$ is injective provided that for any $x,y \in H$, if $Tx = Ty$, then $x=y$.
+	But note that the linearity of $T$ implies that we can instead say ``$T$ is injective provided that
+	for all $w \in H$, if $Tw = 0$, the $w = 0$ .'' It is then easy to see that inequality \ref{eq:10}
+	satisfies this definition, and thus $T$ is injective.
+	Now to prove that $T$ is also surjective, we first need to prove that $T$ has a closed range so that
+	we can invoke the Hilbert Projection Theorem. To prove this, let $T(H)$ denote the range of $T$.
+	Then since $T(H)$ is a subspace of a Hilbert space we know that there exists a Cauchy sequence $\{\tilde{f}_k\}_{k=1}^{\infty} \subset H$
+	such that $\tilde{f}_k \rightarrow \tilde{f}$ in $T(H)$, as $k\rightarrow \infty$. Then, since $T$ is injective, there exists a unique
+	sequence $\{f_k\}_{k=1}^{\infty} \subset H$ such that $\tilde{f}_k = Tf_k$, for all $k \in \mathbb{N}$. Now $\{\tilde{f}_k\}_{k=1}^{\infty}$
+	being Cauchy implies that for any $\epsilon > 0$ there exists $N >0$ such that
+	\begin{equation*}
+		\epsilon > \|\tilde{f}_k - \tilde{f}_{\ell}\| = \|Tf_k - Tf_{\ell}\| = \|T(f_k - f_{\ell})\| \geq \nu \|f_k - f_{\ell}\|
+	\end{equation*}
+	for any $k,\ell \in \mathbb{N}$ and some $\nu >0$.
+	This implies $\{f_k\}_{k=1}^{\infty}$ is also Cauchy, further implying there exists a unqiue $f \in H$ such that
+	$f_k \rightarrow f$ in $H$, as $k \rightarrow \infty$.
+	Finally, to show $Tf = \tilde{f}$, observe that
+	\begin{equation*}
+		Tf = \lim_{k\rightarrow \infty}{Tf_k} = \lim_{k\rightarrow \infty}{\tilde{f}_k} = \tilde{f}.
+	\end{equation*}
+	Thus, $T$ has a closed range. Now to prove $T$ is surjective, suppose by contradiction that $T$ is not surjective.
+	Then this implies $T(H)$ is a closed proper subspace of $H$, where we know by the Hilbert Projection Theorem that
+	there exists non-zero elements $z \in T(H)^{\bot}$ such that $(z,Tf) = 0$. Letting $f = z$ results in
+	\begin{equation*}
+		0 = |(z,Tz)| = |B(z,z)| \geq \nu \|z\|^2 \geq 0
+	\end{equation*}
+	which can only be true if $z = 0$. Thus, $T$ must be surjective.
+	Collecting ourselves, we have now proven that $T$ is a bijective bounded linear operator with a closed range.
+	This means by virtue of the Bounded Inverse Theorem, $T^{-1}$ exists and is bounded.
+	Then invoking the RRT again, we can say for any $F \in H^*$, there exists a uniquely determined element $\hat{f} \in H$ such that
+	\begin{equation*}
+		F(z) = (z,\hat{f})
+	\end{equation*}
+	for any $z \in H$. Now since we know
+	\begin{equation*}
+		F = B(\cdot,f)
+	\end{equation*}
+	for any $f \in H$, we can say for any $z \in H$
+	\begin{equation*}
+		F(z) = (z, TT^{-1}\hat{f}) = B(z,T^{-1}\hat{f})
+	\end{equation*}
+	because we have proven that $T$ is a bijection. Letting $T^{-1}\hat{f} = g$ results in
+	\begin{equation*}
+		F(z) = B(z,g)
+	\end{equation*}
+	for any $z \in H$. Now all that is left is to prove the uniqueness of $g$.
+	Suppose we have $g_1,g_2 \in H$ such that $Tg_1$ and $Tg_2$ are unique elements satisfying
+	the RRT. This means
+	\begin{equation*}
+		\begin{aligned}
+			&B(z,g_1) = F(z) = B(z,g_2) \\
+			&\Rightarrow B(z,g_1) = B(z,g_2) \\
+			&\Rightarrow B(z,g_1) - B(z,g_2) = 0 \\
+			&\Rightarrow B(z,g_1 - g_2) = 0.
+		\end{aligned}
+	\end{equation*}
+	Letting $z= g_1 - g_2$ results in
+	\begin{equation*}
+		0 = B(g_1 - g_2, g_1 - g_2) \geq \nu \|g_1 - g_2\|^2 \geq 0
+	\end{equation*}
+	for some $\nu >0$. This can only be true if $g_1 - g_2 = 0$, proving the uniqueness of $g$.
 \end{proof}
 
 \newpage
@@ -372,7 +502,7 @@ Multiplying this equation on both sides by $\phi \in C_{c}^{\infty}$, then integ
 It can then be shown that for any $u \in C^2$, if the above integral relation holds, then $u$ is a classical solution of the original equation.
 However, one may notice that the integral relation only needs $\nabla u \in L^p$, for some fixed $p$, to be satisfied.
 Also, one may notice the similarity of the integral relation to the definition of weak derivatives. Both these observations lead to a more generalized
-case where $u \in L^1_{\text{loc}}$ and $u \not\in C^1$, only requiring that the $\alpha^{th}$-weak partial derivative of $u$ belong to $L^p$, for some fixed $p$.
+case where $u \in L^1_{\text{loc}}$ and $u \not\in C^1$, only requiring that the $\alpha^{th}$ weak partial derivative of $u$ belong to $L^p$, for some fixed $p$.
 A space of functions like this is very useful as the functions in these spaces don't necessarily have to be continuous or totally differentiable,
 yet they still satisfy the above relation. 
 \end{motivation}
