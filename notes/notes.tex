@@ -403,7 +403,7 @@ Let $H$ be a real linear space.
 	Functions being well-behaved in this case just means they are differentiable and continuous to certain degrees.
 	H\"{o}lder spaces become relevant when discussing Sobolev inequalities.
 \end{motivation}
-Let $U \subset \mathbb{R}^n$ be an open set and $0 < \gamma \leq 1$.
+Let $U \subset \mathbb{R}^n$ be a bounded open set and $0 < \gamma \leq 1$.
 \begin{definition}[H\"{o}lder continuous functions]
 \textit{Lipschitz continuous functions} $u : U \rightarrow \mathbb{R}$
 satisfy the estimate
@@ -414,7 +414,7 @@ Now with the same assumptions, consider the variant
 where $u$ is now said to be \textit{H\"{o}lder continuous with exponent $\gamma$}.
 \end{definition}
 
-\begin{definition}[Supremum norm and $\gamma^{th}$-H\"{o}lder seminorm]
+\begin{definition}[Supremum norm and $\gamma^{th}$-H\"{o}lder seminorm]~ 
 \begin{enumerate}[(i)]
 \item If $u : U \rightarrow \mathbb{R}$ is bounded and continuous, the supremum norm is denoted
 \[\|u\|_{C(\overline{U})} = \sup_{x \in U}{|u(x)|}.\]
@@ -444,7 +444,7 @@ The space of functions $C^{k,\gamma}(\overline{U})$ is a Banach space.
 \subsection{Weak Derivatives}
 \begin{motivation}
 	The motivation for weak derivatives in our case comes from the desire to satisfy certain integral relations given by the integration by parts formula.
-	Let $U \subset \mathbb{R}^n$ be an open set and let $u\in C^1(U)$. Then if $\phi \in C_{c}^{\infty}(U)$, we can see that
+	Let $U \subset \mathbb{R}^n$ be a bounded open set and let $u\in C^1(U)$. Then if $\phi \in C_{c}^{\infty}(U)$, we can see that
 	\begin{equation*}
 		\int_U u\phi_{x_i}dx = [u\phi]_U - \int_U \phi u_{x_i}dx = - \int_U \phi u_{x_i}dx
 	\end{equation*}
@@ -479,9 +479,68 @@ The space of functions $C^{k,\gamma}(\overline{U})$ is a Banach space.
 	The space of k-times weakly differentiable functions is denoted $W^k(U)$, where clearly $C^k(U) \subset W^k(U)$.
 \end{definition}
 
+\newpage
+
+\subsection{Mollifiers}
+\begin{motivation}
+	Mollifiers are smooth functions which allow us to ``smooth over'' other functions via convolution.
+	Since mollifiers are smooth functions, we find that they become very important in the study of Sobolev spaces,
+	especially for approximations, Sobolev inequalities, and the Sobolev embedding theorem.
+\end{motivation}
+Let $U \subset \mathbb{R}^n$ be a bounded open set.
+\begin{definition}[Standard mollifier]~ 
+	\begin{enumerate}[(i)]
+		\item Define $\eta \in C^{\infty}(\mathbb{R}^n)$ by
+			\begin{equation*}
+				\eta(x) =
+				\begin{cases}
+					C e^{\frac{1}{|x|^2 - 1}},& \text{if } |x| < 1 \\
+					0,& \text{if } |x| \geq 1,
+				\end{cases}
+			\end{equation*}
+			where $C$ is chosen to satisfy
+			\begin{equation*}
+				\int_{\mathbb{R}^n}{\eta(x)dx} = 1.
+			\end{equation*}
+			$\eta$ is then called the \textit{standard mollifier}.
+		\item Now for each $\epsilon > 0$, define
+			\begin{equation*}
+				\eta_{\epsilon}(x) = \frac{1}{\epsilon^n}\eta\left(\frac{x}{\epsilon}\right).
+			\end{equation*}
+			The functions $\eta_{\epsilon} \in C^{\infty}(\mathbb{R}^n)$ also satisfy
+			\begin{equation*}
+				\int_{\mathbb{R}^n}{\eta_{\epsilon}(x)dx} = 1,
+			\end{equation*}
+			where $support(\eta_{\epsilon}) \in B(0,\epsilon)$.
+	\end{enumerate}
+\end{definition}
+
+\begin{definition}
+	If $f : U \rightarrow \mathbb{R}$ is locally integrable, then define its \textit{mollification} as
+	the convolution of $f$ and $\eta_{\epsilon}$ in $U_{\epsilon} = \{x\in U \,|\, dist(x,\partial U) > \epsilon \}$, written as
+	\begin{equation*}
+		f^{\epsilon} = f * \eta_{\epsilon} \text{ in } U_{\epsilon}.
+	\end{equation*}
+	In terms of the convolution, we can write this as
+	\begin{equation*}
+		f^{\epsilon}(x) = \int_U \eta_{\epsilon}(x-y)f(y)dy = \int_{B(0,\epsilon)} \eta_{\epsilon}(y)f(x-y)dy
+	\end{equation*}
+	for $x \in U_{\epsilon}$.
+\end{definition}
+\begin{theorem}[Properties of mollifiers]~ 
+	\begin{enumerate}[(i)]
+		\item $f^{\epsilon} \in C^{\infty}(U_{\epsilon})$.
+		\item $f^{\epsilon} \rightarrow f$ a.e., as $\epsilon \rightarrow 0$.
+		\item If $f \in C(U)$, then $f^{\epsilon} \rightarrow f$ uniformly on compact subsets of $U$.
+		\item If $1\leq p < \infty$ and $f \in L_{\text{loc}}^p(U)$, then $f^{\epsilon} \rightarrow f$ in $L_{\text{loc}}^p(U)$.
+	\end{enumerate}
+\end{theorem}
+\begin{proof}
+	In progress...
+\end{proof}
+
 %\subsection{$L^p$ Spaces}
 %\subsection{Hilbert Spaces}
-%\subsection{Mollifiers}
 %\subsection{Partition of Unity}
 
 \newpage
@@ -543,7 +602,7 @@ Sobolev spaces are nice function spaces as we find that elements in Sobolev spac
 These approximations can be done locally, globally up to but excluding the boundary, and globally up to and including the boundary.
 As expected these require three different Theorems (taken from Evans) which increase in difficulty to prove.
 \end{motivation}
-Let $U \subset \mathbb{R}^n$ be a bounded open set and suppose $u \in W^{k,p}(U)$ for some $1 \leq p < \infty$
+Let $U \subset \mathbb{R}^n$ be a bounded open set and suppose $u \in W^{k,p}(U)$ for some $1 \leq p < \infty$.
 \begin{theorem}[Local approximation by smooth functions]
 Set
 	\[u^{\epsilon} = \eta_{\epsilon} * u \text{ in } U_{\epsilon}.\]
@@ -621,7 +680,6 @@ for all $u \in C_{c}^{1}(\mathbb{R}^n)$.
 In progress...
 \end{proof}
 
-Let $U \subset \mathbb{R}^n$ be a bounded open set.
 \begin{theorem}[Estimates for $W^{1,p}$, where $1 \leq p < n$]
 Suppose $\partial U$ is $C^1$,
 and suppose $u \in W^{1,p}(U)$ for some $1 \leq p < n$. It then follows that $u \in L^{p^*}$, with the estimate that
