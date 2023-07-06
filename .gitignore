@@ -2,3 +2,6 @@
 *.toc
 *.aux
 *.out
+*.bib
+*.bbl
+*.blg
