@@ -507,46 +507,6 @@ The space of functions $C^{k,\gamma}(\overline{U})$ is a Banach space.
 
 \newpage
 
-\subsection{Weak derivatives}
-\begin{motivation}
-	The motivation for weak derivatives in our case comes from the desire to satisfy certain integral relations given by the integration by parts formula.
-	Let $U \subset \mathbb{R}^n$ be a bounded open set and let $u\in C^1(U)$. Then if $\phi \in C_{c}^{\infty}(U)$, we can see that
-	\begin{equation*}
-		\int_U u\phi_{x_i}dx = [u\phi]_U - \int_U \phi u_{x_i}dx = - \int_U \phi u_{x_i}dx
-	\end{equation*}
-	when we use the integration by parts formula. Now letting $k\in \mathbb{N}$, $u \in C^k(U)$, and $\alpha$ be a multi-index, we find that
-	\begin{equation*}
-		\begin{aligned}
-			\int_U u D^{\alpha}\phi dx &= \int_U u \frac{\partial^{\alpha_1}}{\partial x_1^{\alpha_1}}\dots\frac{\partial^{\alpha_n}}{\partial x_n^{\alpha_n}}\phi dx \\
-						   &= - \int_U \frac{\partial^{\alpha_n}}{\partial x_n^{\alpha_n}}u \frac{\partial^{\alpha_1}}{\partial x_1^{\alpha_1}}\dots\frac{\partial^{\alpha_{n-1}}}{\partial x_{n-1}^{\alpha_{n-1}}}\phi dx \\
-						   &= \quad\qquad\qquad\vdots \\ 
-						   &= (-1)^{|\alpha|}\int_U \phi\frac{\partial^{\alpha_1}}{\partial x_1^{\alpha_1}}\dots\frac{\partial^{\alpha_n}}{\partial x_n^{\alpha_n}}u dx \\
-						   &= (-1)^{|\alpha|}\int_U \phi D^{\alpha}u dx.
-		\end{aligned}
-	\end{equation*}
-	This gives us the relation
-	\begin{equation}
-		\label{eq:4}
-		\int_U u D^{\alpha}\phi dx = (-1)^{|\alpha|}\int_U D^{\alpha}u\phi  dx
-	\end{equation}
-	where the LHS of equation \ref{eq:4} also holds if $u\in L_{\text{loc}}^1(U)$.
-	The question now is ``does $u$ need to be k-times partially differentiable, or can we replace $D^{\alpha}u$ with something that also satisfies
-	equation \ref{eq:4}, but is just locally summable instead?''
-\end{motivation}
-\begin{definition}
-	Let $u,v \in L_{\text{loc}}^1(U)$ and let $\alpha$ be a multi-index. Then we say that $v$ is the 
-	\textit{$\alpha^{th}$ weak partial derivative of $u$} provided
-	\begin{equation*}
-		\int_U u D^{\alpha}\phi dx = (-1)^{|\alpha|}\int_U v \phi dx.
-	\end{equation*}
-	In this case, we also say $D^{\alpha}u = v$ ``in the weak sense.''
-\end{definition}
-\begin{definition}
-	The space of k-times weakly differentiable functions is denoted $W^k(U)$, where clearly $C^k(U) \subset W^k(U)$.
-\end{definition}
-
-\newpage
-
 \subsection{Mollifiers}
 \begin{motivation}
 	Mollifiers are smooth functions which allow us to ``smooth over'' other functions via convolution.
@@ -605,6 +565,47 @@ Let $U \subset \mathbb{R}^n$ be a bounded open set.
 	In progress...
 \end{proof}
 
+\newpage
+
+\subsection{Weak derivatives}
+\begin{motivation}
+	The motivation for weak derivatives in our case comes from the desire to satisfy certain integral relations given by the integration by parts formula.
+	Let $U \subset \mathbb{R}^n$ be a bounded open set and let $u\in C^1(U)$. Then if $\phi \in C_{c}^{\infty}(U)$, we can see that
+	\begin{equation*}
+		\int_U u\phi_{x_i}dx = [u\phi]_U - \int_U \phi u_{x_i}dx = - \int_U \phi u_{x_i}dx
+	\end{equation*}
+	when we use the integration by parts formula. Now letting $k\in \mathbb{N}$, $u \in C^k(U)$, and $\alpha$ be a multi-index, we find that
+	\begin{equation*}
+		\begin{aligned}
+			\int_U u D^{\alpha}\phi dx &= \int_U u \frac{\partial^{\alpha_1}}{\partial x_1^{\alpha_1}}\dots\frac{\partial^{\alpha_n}}{\partial x_n^{\alpha_n}}\phi dx \\
+						   &= - \int_U \frac{\partial^{\alpha_n}}{\partial x_n^{\alpha_n}}u \frac{\partial^{\alpha_1}}{\partial x_1^{\alpha_1}}\dots\frac{\partial^{\alpha_{n-1}}}{\partial x_{n-1}^{\alpha_{n-1}}}\phi dx \\
+						   &= \quad\qquad\qquad\vdots \\ 
+						   &= (-1)^{|\alpha|}\int_U \phi\frac{\partial^{\alpha_1}}{\partial x_1^{\alpha_1}}\dots\frac{\partial^{\alpha_n}}{\partial x_n^{\alpha_n}}u dx \\
+						   &= (-1)^{|\alpha|}\int_U \phi D^{\alpha}u dx.
+		\end{aligned}
+	\end{equation*}
+	This gives us the relation
+	\begin{equation}
+		\label{eq:4}
+		\int_U u D^{\alpha}\phi dx = (-1)^{|\alpha|}\int_U D^{\alpha}u\phi  dx
+	\end{equation}
+	where the LHS of equation \ref{eq:4} also holds if $u\in L_{\text{loc}}^1(U)$.
+	The question now is ``does $u$ need to be k-times partially differentiable, or can we replace $D^{\alpha}u$ with something that also satisfies
+	equation \ref{eq:4}, but is just locally summable instead?''
+\end{motivation}
+\begin{definition}
+	Let $u,v \in L_{\text{loc}}^1(U)$ and let $\alpha$ be a multi-index. Then we say that $v$ is the 
+	\textit{$\alpha^{th}$ weak partial derivative of $u$} provided
+	\begin{equation*}
+		\int_U u D^{\alpha}\phi dx = (-1)^{|\alpha|}\int_U v \phi dx.
+	\end{equation*}
+	In this case, we also say $D^{\alpha}u = v$ ``in the weak sense.''
+\end{definition}
+\begin{definition}
+	The space of k-times weakly differentiable functions described above is denoted as $W^k(U)$, where clearly $C^k(U) \subset W^k(U)$.
+\end{definition}
+
+
 %\subsection{$L^p$ Spaces}
 %\subsection{Hilbert Spaces}
 %\subsection{Partition of Unity}
@@ -627,9 +628,9 @@ Multiplying this equation on both sides by $\phi \in C_{c}^{\infty}$, then integ
 It can then be shown that for any $u \in C^2$, if the above integral relation holds, then $u$ is a classical solution of the original equation.
 However, one may notice that the integral relation only needs $\nabla u \in L^p$, for some fixed $p$, to be satisfied.
 Also, one may notice the similarity of the integral relation to the definition of weak derivatives. Both these observations lead to a more generalized
-case where $u \in L^1_{\text{loc}}$ and $u \not\in C^1$, only requiring that the $\alpha^{th}$ weak partial derivative of $u$ belong to $L^p$, for some fixed $p$.
-A space of functions like this is very useful as the functions in these spaces don't necessarily have to be continuous or totally differentiable,
-yet they still satisfy the above relation. 
+case where $u \in W^k$ and $u \not\in C^1$, for some fixed $p$.
+A space of functions like this is very useful as the functions in these spaces don't necessarily need to be continuous or totally differentiable,
+yet they still satisfy the above integral relation. 
 \end{motivation}
 
 \subsection{Definition of the $W^{k,p}$ spaces}
@@ -640,19 +641,68 @@ yet they still satisfy the above relation.
 Fix $1 \leq p \leq \infty$, let $k \in \mathbb{N}$, and let $U \subset \mathbb{R}^n$ be a bounded open set.
 \begin{definition}
 	The Sobolev space
-	\[W^{k,p}(U) = \{u \in L^1_{\text{loc}}(U) \, | \, D^{\alpha}u \text{ exists in the weak sense, and } D^{\alpha}u \in L^p(U) \, \forall \, |\alpha| \leq k\},\]
+	\[W^{k,p}(U) = \{u \in W^k(U) \, | \, D^{\alpha}u \in L^p(U) \,\, \forall \, |\alpha| \leq k\},\]
 	consists of all locally summable functions $u : U \rightarrow \mathbb{R}$ such that for each $|\alpha| \leq k$, $D^{\alpha}u$ exists in the weak sense
 	and belongs to $L^p(U)$.
 \end{definition}
 \begin{remark}
 	When $p=2$ we will instead use the notation
 	\[W^{k,2}(U) = H^k(U),\]
-	because this Sobolev space is also a Hilbert space.
+	because these Sobolev spaces are also Hilbert spaces.
 \end{remark}
 \begin{definition}
 	If $u \in W^{k,p}(U)$, we define its norm to be
 	\[\|u\|_{W^{k,p}(U)} = \sum_{|\alpha| \leq k} \|D^{\alpha}u\|_{L^p(U)}.\]
 \end{definition}
+
+\newpage
+
+\begin{definition}~ 
+	\begin{enumerate}[(i)]
+		\item Let $\{u_m\}_{m = 1}^{\infty}$ be a sequence of functions and let $u \in W^{k,p}(U)$. Then $u_m$ converges to $u$ in $W^{k,p}(U)$, written
+			\begin{equation*}
+				u_m \rightarrow u \text{ in } W^{k,p}(U),
+			\end{equation*}
+			provided that
+			\begin{equation*}
+				\lim_{m \rightarrow \infty}{\|u_m - u\|_{W^{k,p}(U)}} = 0.
+			\end{equation*}
+		\item We write
+			\begin{equation*}
+				u_m \rightarrow u \text{ in } W_{\text{loc}}^{k,p}(U)
+			\end{equation*}
+			to mean
+			\begin{equation*}
+				u_m \rightarrow u \text{ in } W^{k,p}(V)
+			\end{equation*}
+			for each $V \subset\subset U$.
+	\end{enumerate}
+\end{definition}
+
+\begin{definition}
+	Denote by
+	\begin{equation*}
+		W_0^{k,p}(U)
+	\end{equation*}
+	the closure of $C_c^{\infty}(U)$ in $W^{k,p}(U)$.
+	Thus $u \in W_0^{k,p}(U)$ if and only if there exists functions $u_m \in C_c^{\infty}(U)$
+	such that $u_m \rightarrow u$ in $W^{k,p}(U)$.
+\end{definition}
+
+\begin{theorem}[Properties of weak derivatives]
+	Suppose $u \in W^{k,p}(U)$.
+	\begin{enumerate}[(i)]
+		\item If $D^{\alpha}u \in W^{k-|\alpha|,p}(U)$, then
+			\begin{equation*}
+				D^{\beta}u(D^{\alpha}u) = D^{\alpha}u(D^{\beta}u) = D^{\alpha + \beta}u
+			\end{equation*}
+			for all multi-indices $\alpha,\beta$ such that $|\alpha| + |\beta| \leq k$.
+		\item $D^{\alpha}$ is a linear operator on $W^{k,p}(U)$ for all multi-indices $\alpha$, such that $|\alpha| \leq k$.
+		\item If $V \subset U$ is open, then $u \in W^{k,p}(V)$.
+		\item If $\zeta \in C_c^{\infty}(U)$, then $\zeta u \in W^{k,p}(U)$.
+	\end{enumerate}
+\end{theorem}
+
 \begin{theorem}[Sobolev spaces as function spaces]
 	For each $k \in \mathbb{N}$ and $1 \leq p \leq \infty$, the Sobolev space $W^{k,p}(U)$ is a Banach space.
 \end{theorem}
@@ -662,7 +712,7 @@ Fix $1 \leq p \leq \infty$, let $k \in \mathbb{N}$, and let $U \subset \mathbb{R
 
 \newpage
 
-\subsection{Approximation}
+\subsection{Approximations}
 \begin{motivation}
 Sobolev spaces are nice function spaces as we find that elements in Sobolev spaces can be approximated by sequences of smooth functions.
 These approximations can be done locally, globally up to but excluding the boundary, and globally up to and including the boundary.
@@ -699,6 +749,17 @@ nothing about the smoothness of the boundary of $U$, which is the goal of the ne
 	Suppose $\partial U$ is $C^1$.
 	Then there exists functions $u_m \in C^{\infty}(\overline{U})$ such that
 	\[u_m \rightarrow u \text{ in } W^{k,p}(U).\]
+\end{theorem}
+\begin{proof}
+In progress...
+\end{proof}
+\begin{remark}
+	These global approximation results can be simply rewritten as a density result
+	as found in Gilbarg and Trudinger \cite{gilbarg2001elliptic}.
+\end{remark}
+
+\begin{theorem}
+	The subspace $C^{\infty}(U) \cap W^{k,p}(U)$ is dense in $W^{k,p}(U)$.
 \end{theorem}
 \begin{proof}
 In progress...
@@ -766,8 +827,8 @@ In progress...
 \end{proof}
 
 \begin{remark}
-If $U$ is bounded as we supposed, then on $W_{0}^{1,p}$, the norm $\|Du\|_{L^{p}} \equiv \|u\|_{W^{1,p}(U)}$,
-meaning this is still an estimate for functions in Sobolev spaces.
+	If $U$ is bounded as we supposed, then on $W_{0}^{1,p}$, the norm $\|Du\|_{L^{p}(U)} \equiv \|u\|_{W^{1,p}(U)}$,
+	meaning this is still an estimate for functions in Sobolev spaces.
 \end{remark}
 
 \begin{theorem}[Morrey's inequality]
