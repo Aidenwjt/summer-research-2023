@@ -1,5 +1,4 @@
 \documentclass[11pt]{article}
-%\setlength{\textwidth}{430pt}\setlength{\oddsidemargin}{11pt}
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{amsmath}
@@ -8,6 +7,8 @@
 \usepackage{hyperref}
 \hypersetup{colorlinks=true,linktoc=all,linkcolor=blue}
 \usepackage[bottom=0.9in,top=0.9in]{geometry}
+\usepackage{filecontents}
+\usepackage[nottoc,numbib]{tocbibind}
 
 \theoremstyle{definition}
 \newtheorem*{theorem}{Theorem}
@@ -15,11 +16,76 @@
 \newtheorem*{remark}{Remark}
 \newtheorem*{motivation}{Motivation}
 
+\begin{filecontents*}{references.bib}
+@book{evans1998partial,
+	  title={Partial Differential Equations},
+	  author={Evans, L.C.},
+	  isbn={9780821807729},
+	  lccn={97041033},
+	  series={Graduate studies in mathematics},
+	  url={https://books.google.ca/books?id=5Pv4LVB\_m8AC},
+	  year={1998},
+	  publisher={American Mathematical Society}
+}
+@book{gilbarg2001elliptic,
+	  title={Elliptic Partial Differential Equations of Second Order},
+	  author={Gilbarg, D. and Trudinger, N.S.},
+	  isbn={9783540411604},
+	  lccn={00052272},
+	  series={Classics in Mathematics},
+	  url={https://books.google.ca/books?id=eoiGTf4cmhwC},
+	  year={2001},
+	  publisher={Springer Berlin Heidelberg}
+}
+@book{bartels2016numerical,
+	  title={Numerical Approximation of Partial Differential Equations},
+	  author={Bartels, S.},
+	  isbn={9783319323541},
+	  lccn={2016940376},
+	  series={Texts in Applied Mathematics},
+	  url={https://books.google.ca/books?id=45tPDAAAQBAJ},
+	  year={2016},
+	  publisher={Springer International Publishing}
+}
+@Inbook{Nochetto2012,
+	author="Nochetto, Ricardo H.
+	and Veeser, Andreas",
+	title="Primer of Adaptive Finite Element Methods",
+	bookTitle="Multiscale and Adaptivity: Modeling, Numerics and Applications: C.I.M.E. Summer School, Cetraro, Italy 2009, Editors: Giovanni Naldi, Giovanni Russo",
+	year="2012",
+	publisher="Springer Berlin Heidelberg",
+	address="Berlin, Heidelberg",
+	pages="125--225",
+	isbn="978-3-642-24079-9",
+	doi="10.1007/978-3-642-24079-9_3",
+	url="https://doi.org/10.1007/978-3-642-24079-9_3"
+}
+\end{filecontents*}
+
 \begin{document}
+\phantom{
+	\cite{evans1998partial}
+	\cite{gilbarg2001elliptic}
+	\cite{bartels2016numerical}
+	\cite{Nochetto2012}
+}
 \pagestyle{fancy}
 \fancyhead[L]{}
 \fancyhead[R]{}
 \fancyhead[C]{\textbf{2023 Summer Research Notes}}
+\section*{Preface}
+The following are notes for my summer research in Adaptive Finite Element Methods (AFEM).
+The theoretical sections of these notes closely follow Evans' \textit{Partial Differential Equations} \cite{evans1998partial} for the theory of Sobolev spaces, however,
+there are also some sections that follow Gilbarg and Trudinger's \textit{Elliptic Partial Differential Equations of Second Order} \cite{gilbarg2001elliptic} instead.
+The applied sections of these notes will mainly follow Nochetto and Veeser's \textit{Primer of Adaptive Finite Element Methods} \cite{Nochetto2012} survey,
+as well as Bartels'
+\textit{Numerical Approximation of Partial Differential Equations} \cite{bartels2016numerical}.
+There will also be some notes taken from online sources, which I will try to keep track of as well.
+By no means should any of MY proofs be taken as actual proofs, but instead they should be taken as my best attempts.
+My proof attempts will be labeled, and proofs that I followed very closely from other sources will just be labeled as proofs.
+Also, proofs may not be provided for every proposition as these are just notes to keep track of important concepts.
+
+\newpage
 \tableofcontents
 \newpage
 \fancyhead[L]{\leftmark}
@@ -28,7 +94,7 @@
 \section{Prior Concepts to Know}
 \begin{motivation}
 The following are just some concepts, ideas, and interesting topics (mainly in analysis) that help in understanding these notes.
-The main focus here is on background material required for studying Sobolev spaces and adaptive finite element methods.
+The main focus here is on background material required for studying Sobolev spaces and AFEM.
 \end{motivation}
 
 \subsection{Important inequalities}
@@ -40,7 +106,7 @@ For this reason, it is very helpful to know some of these important inequalities
 Let $p > 1$, $q < \infty$, and $\frac{1}{p}+\frac{1}{q} = 1$. Then
 \[ab \leq \frac{a^p}{p} + \frac{b^q}{q}.\]
 \end{theorem}
-\begin{proof}
+\begin{proof}[My proof attempt]
 Suppose we $t = \frac{1}{q}$ and $(1-t)=\frac{1}{p}$, implying $t \in (0,1)$. Then since we know $\ln$ is a concave function, we have
 	\begin{equation*}
 		\begin{aligned}
@@ -56,7 +122,7 @@ Suppose we $t = \frac{1}{q}$ and $(1-t)=\frac{1}{p}$, implying $t \in (0,1)$. Th
 Assume $1 \leq p$, $q \leq \infty$, and $\frac{1}{p} + \frac{1}{p} = 1$. If $u \in L^p(\mathbb{R}^n)$ and $v \in L^q(\mathbb{R}^n)$, then
 	\[\int_{\mathbb{R}^n}|uv|dx \leq \|u\|_{L^p(\mathbb{R}^n)}\|v\|_{L^q(\mathbb{R}^n)}.\]
 \end{theorem}
-\begin{proof}
+\begin{proof}[My proof attempt]
 	Letting $0 < t \in \mathbb{R}$, we can say
 	\[|uv| = |ut||v/t|,\]
 	and by Young's inequality
@@ -154,8 +220,8 @@ a lot of nice properties, as we will see.
 \begin{definition}
 	A \textit{linear space} over a field $F$ (usually a subfield of the complex numbers) is a non-empty set $X$ equipped with a special element 0, 
 	three operations, and a set of
-	axioms that the three operations must satisfy. These operations and axioms are laid out nicely for the real numbers by Professor Tao
-	\href{https://www.math.ucla.edu/~tao/resource/general/121.1.00s/vector_axioms.html}{here}.
+	axioms that the three operations must satisfy. These operations and axioms are laid out nicely for the real numbers by Professor Tao at
+	\url{https://www.math.ucla.edu/~tao/resource/general/121.1.00s/vector_axioms.html}.
 \end{definition}
 \begin{definition}
 	A \textit{normed linear space} is a linear space $X$ over a subfield $F$ of the complex numbers equipped with a norm,
@@ -216,7 +282,7 @@ Let $H$ be a real linear space.
 	For every bounded linear functional $F$ on a Hilbert space $H$, there exists a uniquely determined element $f \in H$
 	such that $F(x) = (x,f)$ for all $x \in H$. Furthermore, $\|F\|_{\text{op}} = \|f\|_H$.
 \end{theorem}
-\begin{proof}
+\begin{proof}[My proof attempt]
 	For the case when $H = N(F) = \{x \in H \, | \, F(x) = 0\}$ we find that our uniquely determined element is $f=0$ as the zero vector is
 	orthogonal to everything including itself, implying $F(x) = 0 = (x,0)$ for all $x \in H$. However, assume $H \not= N(F)$.
 	$N(F)$ is now a closed subspace of $H$, which by virtue of the Projection Theorem implies there exists non-zero elements in $N(F)^{\bot}$.
@@ -265,7 +331,7 @@ Let $H$ be a real linear space.
 	\end{equation*}
 	for all $x \in H$.
 \end{theorem}
-\begin{proof}
+\begin{proof}[My proof attempt]
 	For any $f \in H$, define the mapping 
 	\begin{equation}
 		\label{eq:5}
@@ -435,8 +501,8 @@ where the norm
 \begin{theorem}[H\"{o}lder spaces as function spaces]
 The space of functions $C^{k,\gamma}(\overline{U})$ is a Banach space.
 \end{theorem}
-\begin{proof}
-\href{https://github.com/Aidenwjt/some-math-notes/blob/master/exercises/evans/exercises.pdf}{Problem 5.1.}
+\begin{proof}[My proof attempt]
+\url{https://github.com/Aidenwjt/some-math-notes/blob/master/exercises/evans/exercises.pdf}.
 \end{proof}
 
 \newpage
@@ -465,7 +531,7 @@ The space of functions $C^{k,\gamma}(\overline{U})$ is a Banach space.
 	\end{equation}
 	where the LHS of equation \ref{eq:4} also holds if $u\in L_{\text{loc}}^1(U)$.
 	The question now is ``does $u$ need to be k-times partially differentiable, or can we replace $D^{\alpha}u$ with something that also satisfies
-	equation \ref{eq:4}, but is just locally summable instead?''.
+	equation \ref{eq:4}, but is just locally summable instead?''
 \end{motivation}
 \begin{definition}
 	Let $u,v \in L_{\text{loc}}^1(U)$ and let $\alpha$ be a multi-index. Then we say that $v$ is the 
@@ -749,5 +815,9 @@ infinite interval, which may not always be the case.
 	\[Du(x_1,\dots,x_n) = (u_{x_1},...,u_{x_n}).\]
 \end{enumerate}
 
+\newpage
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
 
 \end{document}
