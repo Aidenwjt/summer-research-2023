@@ -244,6 +244,33 @@ a lot of nice properties, as we will see.
 	A \textit{Banach space} is a complete normed linear space.
 \end{definition}
 
+\begin{definition}[Continuous embedding]
+	Let $X$ and $Y$ be two normed vector spaces, with norms
+	$\|\cdot\|_X$ and $\|\cdot\|_Y$, respectively, such that
+	$X \subseteq Y$. If the identity function
+	\begin{equation*}
+		i : X \hookrightarrow Y : x \mapsto x
+	\end{equation*}
+	is continuous, i.e. if there exists a constant $C > 0$ such that
+	\begin{equation*}
+		\|x\|_Y \leq C\|x\|_X
+	\end{equation*}
+	for every $x \in X$, then $X$ is said to be
+	\textit{continuously embedded} in $Y$.
+\end{definition}
+
+\begin{definition}[Compact embedding]
+	Let $X$ and $Y$ be as previously defined.
+	We say that $X$ is \textit{compactly embedded} in $Y$, written
+	$X \subset\subset Y$, if
+	\begin{enumerate}[(i)]
+		\item $X$ is continuously embedded in $Y$, and
+		\item The embedding of $X$ into $Y$ is a
+			compact operator such that any bounded
+			set in $X$ is totally bounded in $Y$.
+	\end{enumerate}
+\end{definition}
+
 \newpage
 
 \subsection{Hilbert spaces}
@@ -792,10 +819,10 @@ In progress...
 
 \newpage
 
-\subsection{Sobolev inequalities}
+\subsection{Sobolev inequalities, estimates, and embeddings}
 \begin{motivation}
-Sobolev inequalities are useful for finding embeddings of Sobolev spaces in other function spaces that may be easier to work with, more desirable,
-or simply imply nice properties. Many of the following theorems are taken from Evans.
+Sobolev inequalities are useful for finding embeddings of Sobolev spaces in other function spaces which may be easier to work with, be more desirable,
+or simply imply nice properties. Many of the following theorems are taken from Evans \cite{evans1998partial}, and Gilbarg and Trundinger \cite{gilbarg2001elliptic}.
 \end{motivation}
 Let $U \subset \mathbb{R}^n$ be a bounded open set.
 \begin{theorem}[Gagliardo-Nirenberg-Sobolev inequality]
@@ -850,6 +877,47 @@ where $C(p,n,U) > 0$ is a constant.
 \begin{proof}
 In progress...
 \end{proof}
+
+\begin{theorem}[General Sobolev inequalities]
+	Suppose $\partial U$ is $C^1$, and suppose $u \in W^{k,p}(U)$.
+	\begin{enumerate}[(i)]
+		\item If $k < \frac{n}{p}$, then $u \in L^q(U)$, where
+			\begin{equation*}
+				\frac{1}{q} = \frac{1}{p} - \frac{k}{n},
+			\end{equation*}
+			with the estimate
+			\begin{equation*}
+				\|u\|_{L^q(U)} \leq C(k,p,n,U)\|u\|_{W^{k,p}(U)}.
+			\end{equation*}
+		\item If $k > \frac{n}{p}$, then $u \in C^{k-\left\lfloor\frac{n}{p}\right\rfloor-1, \gamma}(\overline{U})$, where
+			\begin{equation*}
+				\gamma =
+				\begin{cases}
+					\left\lfloor \frac{n}{p} \right\rfloor + 1 - \frac{n}{p}, &\text{ if } \frac{n}{p} \not\in \mathbb{Z} \\
+					\text{any } x\in (0,1), &\text{ if } \frac{n}{p} \in \mathbb{Z},
+				\end{cases}
+			\end{equation*}
+			with the estimate
+			\begin{equation*}
+				\|u\|_{C^{k-\left\lfloor\frac{n}{p}\right\rfloor-1, \gamma}(\overline{U})} \leq C(k,p,n,\gamma,U)\|u\|_{W^{k,p}(U)}.
+			\end{equation*}
+	\end{enumerate}
+\end{theorem}
+\begin{proof}
+In progress...
+\end{proof}
+
+\begin{remark}
+	With our notion of continuous embeddings between Banach spaces, we can see that the General Sobolev inequalities
+	imply that
+	\begin{equation*}
+		W^{k,p}(U) \hookrightarrow L^{\frac{np}{n - kp}}(U) \,\text{ for } k < \frac{n}{p},
+	\end{equation*}
+	and
+	\begin{equation*}
+		W^{k,p}(U) \hookrightarrow C^{k-\left\lfloor\frac{n}{p}\right\rfloor-1, \gamma}(\overline{U}) \,\text{ for } k > \frac{n}{p}.
+	\end{equation*}
+\end{remark}
 
 \newpage
 
