@@ -994,6 +994,34 @@ Let $U \subset \mathbb{R}^n$ be a bounded open set.
 
 \newpage
 
+\subsection{Fourier transform methods involving $H^k$}
+\begin{motivation}
+	Since Sobolev spaces are also Hilbert spaces when $p=2$ it may be useful to have an alternate characterization of the $H^k$ spaces.
+	Specifically, the $H^k$ spaces can be characterized by the Fourier transform, which is a very useful transformation method.
+	This section follows Evans \cite{evans1998partial} very closely.
+\end{motivation}
+Note that all functions here are complex-valued like in the Fourier transform section.
+\begin{theorem}[Characterization of $H^k$ by Fourier transform]
+	Let $k \in \mathbb{N}_0$.
+	\begin{enumerate}[(i)]
+		\item A function $u \in L^2(\mathbb{R}^n)$ belongs to $H^k(\mathbb{R}^n)$ if and only if
+			\begin{equation}
+				(1+|y|^k)\hat{u} \in L^2(\mathbb{R}^n)
+			\end{equation}
+			for $y \in \mathbb{R}^n$.
+		\item In addition, there exists a constant $C$ such that
+			\begin{equation}
+				\frac{1}{C}\|u\|_{H^k(\mathbb{R}^n)} \leq \|(1+|y|^k)\hat{u}\|_{L^2(\mathbb{R}^n)} \leq C\|u\|_{H^k(\mathbb{R}^n)}
+			\end{equation}
+			for each $u \in H^k(\mathbb{R}^n)$.
+	\end{enumerate}
+\end{theorem}
+\begin{proof}
+	In progress...
+\end{proof}
+
+\newpage
+
 \section{Notation}
 \begin{enumerate}[(i)]
 	\item A \textit{multi-index} is a vector $\alpha = (\alpha_1, \dots, \alpha_n)$ where each component $\alpha_i \in \mathbb{N}_0$.
