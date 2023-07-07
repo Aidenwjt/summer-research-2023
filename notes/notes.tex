@@ -1067,11 +1067,42 @@ Let $U \subset \mathbb{R}^n$ be a bounded open set.
 	We denote by $H^{-1}(U)$ the \texttt{dual space} to $H_0^1(U)$.
 \end{definition}
 \begin{remark}
-	Although $H^{-1}$ is the dualspace to $H_0^1$, it is not true they are reflexive, in fact we find that
+	Although $H^{-1}$ is the dual space to $H_0^1$, it is not true they are reflexive, in fact we find that
 	\begin{equation*}
 		H_0^1(U) \subsetneq L^2(U) \subset H^{-1}(U).
 	\end{equation*}
 \end{remark}
+
+\begin{definition}
+	If $f \in H^{-1}(U)$, we define the norm
+	\begin{equation*}
+		\|f\|_{H^{-1}(U)} = \sup{\{<f,v> \,|\, v\in H_0^1(U), \|v\|_{H_0^1(U)} \leq 1}.
+	\end{equation*}
+\end{definition}
+
+\begin{theorem}[Characterization of $H^{-1}$]~ 
+	\begin{enumerate}[(i)]
+		\item Suppose $f\in H^{-1}(U)$. Then there exists functions $f^0,f^1,\dots,f^n \in L^2(U)$ such that
+			\begin{equation}
+				\label{eq:fjdk}
+				<f,v> = \int_U \left(f^0v + \sum_{i=1}^n f^iv_{x_i}\right)dx
+			\end{equation}
+			for any $u \in H_0^1(U)$.
+		\item Further,
+			\begin{equation*}
+				\|f\|_{H^{-1}(U)} = \inf{\left\{\left(\int_U \sum_{i=1}^n |f_i|^2dx\right)^{1/2} \,|\, f \text{ satifies } \ref{eq:fjdk} \text{ for } f^0,\dots,f^n \in L^2(U)\right\}}.
+			\end{equation*}
+		\item In particular, we have
+			\begin{equation}
+				(u,v)_{L^2(U)} = <u,v>
+			\end{equation}
+			for all $u \in H_0^1(U)$ and $v \in L^2(U) \subset H^{-1}(U)$.
+	\end{enumerate}
+	Note that if identity \ref{eq:fjdk} holds, we say $f = f^0 - \sum_{i=1}^n f_{x_i}^i$.
+\end{theorem}
+\begin{proof}
+	In progress...
+\end{proof}
 
 \newpage
 
