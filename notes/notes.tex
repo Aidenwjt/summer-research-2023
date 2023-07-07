@@ -662,6 +662,7 @@ yet they still satisfy the above integral relation.
 \begin{motivation}
 	We now desire to explicitly state the generalized formal definition for the space of functions described above,
 	as well as layout some useful properties that come along with this space.
+	Most of this section is taken from Evans \cite{evans1998partial}, and Gilbarg and Trudinger \cite{gilbarg2001elliptic}.
 \end{motivation}
 Fix $1 \leq p \leq \infty$, let $k \in \mathbb{N}$, and let $U \subset \mathbb{R}^n$ be a bounded open set.
 \begin{definition}
@@ -741,7 +742,7 @@ Fix $1 \leq p \leq \infty$, let $k \in \mathbb{N}$, and let $U \subset \mathbb{R
 \begin{motivation}
 Sobolev spaces are nice function spaces as we find that elements in Sobolev spaces can be approximated by sequences of smooth functions.
 These approximations can be done locally, globally up to but excluding the boundary, and globally up to and including the boundary.
-As expected these require three different Theorems (taken from Evans) which increase in difficulty to prove.
+As expected, these require three different theorems which increase in difficulty to prove, where these theorems are taken from Evans \cite{evans1998partial}.
 \end{motivation}
 Let $U \subset \mathbb{R}^n$ be a bounded open set and suppose $u \in W^{k,p}(U)$ for some $1 \leq p < \infty$.
 \begin{theorem}[Local approximation by smooth functions]
@@ -795,7 +796,7 @@ In progress...
 \subsection{Extensions}
 \begin{motivation}
 Naturally, we should desire to extend functions in $W^{k,p}(U)$ to functions in $W^{k,p}(\mathbb{R}^n)$.
-Evans discusses and proves this extension which becomes useful for some of the Sobolev inequalities proofs.
+Evans \cite{evans1998partial} discusses and proves this extension which becomes useful for proving Sobolev inequalities.
 \end{motivation}
 
 \begin{theorem}
@@ -823,8 +824,16 @@ Sobolev inequalities are useful for finding embeddings of Sobolev spaces in othe
 or simply imply nice properties. Many of the following theorems are taken from Evans \cite{evans1998partial}, and Gilbarg and Trundinger \cite{gilbarg2001elliptic}.
 \end{motivation}
 Let $U \subset \mathbb{R}^n$ be a bounded open set.
+
+\begin{definition}
+	If $1 \leq p < n$, then the \textit{Sobolev conjugate} of $p$ is
+	\begin{equation*}
+		p^* = \frac{np}{n-p}.
+	\end{equation*}
+\end{definition}
+
 \begin{theorem}[Gagliardo-Nirenberg-Sobolev inequality]
-Suppose $1\leq p < n$. There exists a constant $C(p,n) > 0$ such that
+Suppose $1\leq p < n$. There exists a constant $C(p,n)$ such that
 	\[\|u\|_{L^{p^*}(\mathbb{R}^n)} \leq C(p,n)\|Du\|_{L^{p}(\mathbb{R}^n)},\]
 for all $u \in C_{c}^{1}(\mathbb{R}^n)$.
 \end{theorem}
@@ -835,17 +844,16 @@ In progress...
 \begin{theorem}[Estimates for $W^{1,p}$, where $1 \leq p < n$]
 Suppose $\partial U$ is $C^1$,
 and suppose $u \in W^{1,p}(U)$ for some $1 \leq p < n$. It then follows that $u \in L^{p^*}$, with the estimate that
-	\[\|u\|_{L^{p^*}(U)} \leq C(p,n,U)\|u\|_{W^{1,p}(U)},\]
-where $C(p,n,U) > 0$ is a constant.
+	\[\|u\|_{L^{p^*}(U)} \leq C(p,n,U)\|u\|_{W^{1,p}(U)}.\]
 \end{theorem}
 \begin{proof}
 In progress...
 \end{proof}
 
 \begin{theorem}[Estimates for $W_{0}^{1,p}$, where $1 \leq p < n$]
-	Suppose $u \in W_{0}^{1,p}(U)$ for some $1 \leq p < n$. Then we get the estimate
+	Suppose $u \in W_{0}^{1,p}(U)$ for some $1 \leq p < n$. Then we have the estimate
 	\[\|u\|_{L^{q}(U)} \leq C(p,q,n,U)\|Du\|_{L^{p}(U)},\]
-	for all $1 \leq q \leq p^*$, where $C(p,q,n,U) > 0$ is a constant.
+	for all $1 \leq q \leq p^*$.
 \end{theorem}
 \begin{proof}
 In progress...
@@ -857,7 +865,7 @@ In progress...
 \end{remark}
 
 \begin{theorem}[Morrey's inequality]
-Suppose $n < p \leq \infty$. Then there exists a constant $C(p,n) > 0$ such that
+Suppose $n < p \leq \infty$. Then there exists a constant $C(p,n)$ such that
 	\[\|u\|_{C^{0,\gamma}(\mathbb{R}^n)} \leq C(p,n)\|u\|_{W^{1,p}(\mathbb{R}^n)},\]
 for all $u \in W^{1,p}(U)$ with $u \in C^1(\mathbb{R}^n)$, where $\gamma = 1 - \frac{n}{p}$.
 \end{theorem}
@@ -869,8 +877,7 @@ In progress...
 Suppose $\partial U$ is $C^1$,
 	and suppose $u \in W^{1,p}(U)$ for some $n < p \leq \infty$. It then follows that a continuous version $u^* \in C^{0,\gamma}(\overline{U})$,
 where $\gamma = 1 - \frac{n}{p}$, with the estimate that
-	\[\|u^*\|_{C^{0,\gamma}(\overline{U})} \leq C(p,n,U)\|u\|_{W^{1,p}(U)},\]
-where $C(p,n,U) > 0$ is a constant.
+	\[\|u^*\|_{C^{0,\gamma}(\overline{U})} \leq C(p,n,U)\|u\|_{W^{1,p}(U)}.\]
 \end{theorem}
 \begin{proof}
 In progress...
@@ -921,15 +928,15 @@ In progress...
 
 \subsection{Compactness results}
 \begin{motivation}
-	Some of the previous Sobolev embeddings can actually be improved to compact embeddings.
+	Some of the previous Sobolev embeddings are actually compact embeddings as well.
 	These results, layed out by Rellich and Kondrachov, can be found in Evans \cite{evans1998partial}, and Gilbarg and Trudinger \cite{gilbarg2001elliptic}.
-	I will use Gilbarg and Trudinger's version here as Evans doesn't mention the second point.
+	I will use Gilbarg and Trudinger's version here as Evans doesn't mention the second result.
 \end{motivation}
 
 \begin{theorem}[Rellich-Kondrachov compactness theorem]
-	Let $U \subset \mathbb{R}^n$ be a bouned open set. The spaces $W_0^{k,p}(U)$ are compactly embedded in
+	Let $U \subset \mathbb{R}^n$ be a bounded open set. The spaces $W_0^{1,p}(U)$ are compactly embedded in
 	\begin{enumerate}[(i)]
-		\item $L^q(U)$ for any $q < \frac{np}{n-p}$, if $p<n$, and
+		\item $L^q(U)$ for any $1 \leq q < p^*$, if $p<n$, and
 		\item $C^0(\overline{U})$, if $p>n$.
 	\end{enumerate}
 \end{theorem}
@@ -941,11 +948,11 @@ In progress...
 
 \section{Notation}
 \begin{enumerate}[(i)]
-	\item A \textit{multiindex} is a vector $\alpha = (\alpha_1, \dots, \alpha_n)$ where each component $\alpha_i \in \mathbb{N}_0$.
-A multiindex has an order defined by
+	\item A \textit{multi-index} is a vector $\alpha = (\alpha_1, \dots, \alpha_n)$ where each component $\alpha_i \in \mathbb{N}_0$.
+A multi-index has an order defined by
 \[|\alpha| = \alpha_1 + \dots + \alpha_n.\]
 
-\item Using our definition of a multiindex and letting $u(x)$ be some function, we define
+\item Using our definition of a multi-index and letting $u(x)$ be some function, we define
 \[D^{\alpha}u(x) = \frac{\partial^{|\alpha|}u(x)}{\partial x_1^{\alpha_1} \dots \partial x_n^{\alpha_n}} = \partial_{x_1}^{\alpha_1}\dots\partial_{x_n}^{\alpha_n}u(x).\]
 
 \item Let $U,V \subset \mathbb{R}^n$. Then define
