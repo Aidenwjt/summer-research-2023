@@ -946,6 +946,54 @@ In progress...
 
 \newpage
 
+\subsection{Difference quotients and $W^{1,p}$}
+\begin{motivation}
+	``In PDE, the weak or classical differentiability of functions may often be deduced through a consideration of their difference quotients.''
+	\cite{gilbarg2001elliptic} However, for functions in Sobolev spaces, we will need to consider difference quotient approximations to
+	weak derivatives as these functions may not be continuous or totally differentiable. Since Evans \cite{evans1998partial}, and
+	Gilbarg and Trudinger's \cite{gilbarg2001elliptic} sections on difference quotients are so similar, I will use a combination of
+	both their definitions and propositions here.
+\end{motivation}
+Let $U \subset \mathbb{R}^n$ be a bounded open set.
+\begin{definition}
+	Suppose $u : U \rightarrow \mathbb{R}$ is a locally integrable function, where $V \subset\subset U$.
+	Also, denote $e_i$ as the $i^{th}$ canonical vector in the $x_i$ direction.
+	The $i^{th}$ \textit{difference quotient} of size $h$ is
+	\begin{equation*}
+		D^hu(x) = D_i^hu(x) = \frac{u(x + he_i) - u(x)}{h} \qquad (i = 1,\dots,n)
+	\end{equation*}
+	for $x \in V$ and $h \in \mathbb{R}$, such that $0 < |h| < dist(V,\partial U)$.
+\end{definition}
+
+\begin{theorem}
+	Let $u \in W^{1,p}(U)$ for some fixed $1 \leq p < \infty$. Then $D^hu \in L^p(V)$ for each $V \subset\subset U$, where we have
+	\begin{equation*}
+		\|D^hu\|_{L^p(V)} \leq \|Du\|_{L^p(U)}
+	\end{equation*}
+	for all $0 < |h| < dist(V,\partial U)$.
+\end{theorem}
+\begin{proof}
+	In progress...
+\end{proof}
+
+\begin{theorem}
+	Let $u \in L^p(U)$ for some fixed $1 < p < \infty$, and suppose that there exists a constant $C$ such that
+	$D^hu \in L^p(V)$ and 
+	\begin{equation*}
+		\|D^hu\|_{L^p(V)} \leq C
+	\end{equation*}
+	for all $0 < |h| < dist(V,\partial U)$ and $V \subset\subset U$.
+	Then $u \in W^{1,p}(U)$, with
+	\begin{equation*}
+		\|Du\|_{L^p(U)} \leq C.
+	\end{equation*}
+\end{theorem}
+\begin{proof}
+	In progress...
+\end{proof}
+
+\newpage
+
 \section{Notation}
 \begin{enumerate}[(i)]
 	\item A \textit{multi-index} is a vector $\alpha = (\alpha_1, \dots, \alpha_n)$ where each component $\alpha_i \in \mathbb{N}_0$.
