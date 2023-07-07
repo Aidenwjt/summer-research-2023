@@ -1,4 +1,5 @@
 \documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{amsmath}
@@ -8,7 +9,8 @@
 \hypersetup{colorlinks=true,linktoc=all,linkcolor=blue}
 \usepackage[bottom=0.9in,top=0.9in]{geometry}
 \usepackage{filecontents}
-\usepackage[nottoc,numbib]{tocbibind}
+\usepackage{tocbibind}
+%\usepackage[nottoc,numbib]{tocbibind}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{proposition}{Proposition}
@@ -24,6 +26,24 @@
 \@addtoreset{lemma}{subsection}
 \@addtoreset{corollary}{subsection}
 \@addtoreset{definition}{subsection}
+\newcommand\frontmatter{%
+    \cleardoublepage
+  %\@mainmatterfalse
+  \pagenumbering{roman}}
+
+\newcommand\mainmatter{%
+    \cleardoublepage
+ % \@mainmattertrue
+  \pagenumbering{arabic}}
+
+\newcommand\backmatter{%
+  \if@openright
+    \cleardoublepage
+  \else
+    \clearpage
+  \fi
+ % \@mainmatterfalse
+   }
 \makeatother
 \begin{filecontents*}{references.bib}
 @book{evans1998partial,
@@ -72,6 +92,7 @@
 \end{filecontents*}
 
 \begin{document}
+\frontmatter
 \phantom{
 	\cite{evans1998partial}
 	\cite{gilbarg2001elliptic}
@@ -82,7 +103,12 @@
 \fancyhead[L]{}
 \fancyhead[R]{}
 \fancyhead[C]{\textbf{2023 Summer Research Notes}}
+
+\tableofcontents
+\newpage
+
 \section*{Preface}
+\addcontentsline{toc}{section}{\protect\numberline{}Preface}%
 The following are notes for my summer research in Adaptive Finite Element Methods (AFEM).
 The theoretical sections of these notes closely follow Evans' \textit{Partial Differential Equations} \cite{evans1998partial} for the theory of Sobolev spaces, however,
 there are also some sections that follow Gilbarg and Trudinger's \textit{Elliptic Partial Differential Equations of Second Order} \cite{gilbarg2001elliptic} instead.
@@ -94,12 +120,12 @@ By no means should any of MY proofs be taken as actual proofs, but instead they 
 My proof attempts will be labeled, and proofs that I followed very closely from other sources will just be labeled as proofs.
 Also, proofs may not be provided for every proposition as these are just notes to keep track of important concepts.
 
-\newpage
-\tableofcontents
-\newpage
 \fancyhead[L]{\leftmark}
 \fancyhead[R]{\rightmark}
 \fancyhead[C]{}
+\newpage
+\mainmatter
+
 \section{Prior Concepts to Know}
 \begin{motivation}
 The following are just some concepts, ideas, and interesting topics (mainly in analysis) that help in understanding these notes.
@@ -1031,7 +1057,12 @@ Note that all functions here are complex-valued like in the Fourier transform se
 
 \newpage
 
-\section{Notation}
+\subsection{Characterization of the $H_0^1$ dual space}
+
+\newpage
+
+\section*{Notation}
+\addcontentsline{toc}{section}{\protect\numberline{}Notation}%
 \begin{enumerate}[(i)]
 	\item A \texttt{multi-index} is a vector $\alpha = (\alpha_1, \dots, \alpha_n)$ where each component $\alpha_i \in \mathbb{N}_0$.
 A multi-index has an order defined by
