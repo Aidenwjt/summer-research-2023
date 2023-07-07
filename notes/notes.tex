@@ -10,12 +10,21 @@
 \usepackage{filecontents}
 \usepackage[nottoc,numbib]{tocbibind}
 
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{definition}{Definition}
 \theoremstyle{definition}
-\newtheorem*{theorem}{Theorem}
-\newtheorem*{definition}{Definition}
 \newtheorem*{remark}{Remark}
 \newtheorem*{motivation}{Motivation}
-
+\makeatletter
+\@addtoreset{theorem}{subsection}
+\@addtoreset{proposition}{subsection}
+\@addtoreset{lemma}{subsection}
+\@addtoreset{corollary}{subsection}
+\@addtoreset{definition}{subsection}
+\makeatother
 \begin{filecontents*}{references.bib}
 @book{evans1998partial,
 	  title={Partial Differential Equations},
@@ -77,7 +86,7 @@
 The following are notes for my summer research in Adaptive Finite Element Methods (AFEM).
 The theoretical sections of these notes closely follow Evans' \textit{Partial Differential Equations} \cite{evans1998partial} for the theory of Sobolev spaces, however,
 there are also some sections that follow Gilbarg and Trudinger's \textit{Elliptic Partial Differential Equations of Second Order} \cite{gilbarg2001elliptic} instead.
-The applied sections of these notes will mainly follow Nochetto and Veeser's \textit{Primer of Adaptive Finite Element Methods} \cite{Nochetto2012} survey,
+The applied sections of these notes will mainly follow Nochetto and Veeser's \textit{Primer of Adaptive Finite Element Methods} survey \cite{Nochetto2012},
 as well as Bartels'
 \textit{Numerical Approximation of Partial Differential Equations} \cite{bartels2016numerical}.
 There will also be some notes taken from online sources, which I will try to keep track of as well.
@@ -218,13 +227,13 @@ Being able to prove a space is a Banach space is very helpful because Banach spa
 a lot of nice properties, as we will see.
 \end{motivation}
 \begin{definition}
-	A \textit{linear space} over a field $F$ (usually a subfield of the complex numbers) is a non-empty set $X$ equipped with a special element 0, 
+	A \texttt{linear space} over a field $F$ (usually a subfield of the complex numbers) is a non-empty set $X$ equipped with a special element 0, 
 	three operations, and a set of
 	axioms that the three operations must satisfy. These operations and axioms are laid out nicely for the real numbers by Professor Tao at
 	\url{https://www.math.ucla.edu/~tao/resource/general/121.1.00s/vector_axioms.html}.
 \end{definition}
 \begin{definition}
-	A \textit{normed linear space} is a linear space $X$ over a subfield $F$ of the complex numbers equipped with a norm,
+	A \texttt{normed linear space} is a linear space $X$ over a subfield $F$ of the complex numbers equipped with a norm,
 	where the norm is a real-valued function $\|\cdot\| : X \rightarrow \mathbb{R}$ satisfying the following four axioms:
 	\begin{enumerate}[(i)]
 		\item $\|u+v\| \leq \|u\|+\|v\|$ for all $u,v \in X$.
@@ -232,16 +241,16 @@ a lot of nice properties, as we will see.
 		\item $\|u\| \geq 0$ for all $u \in V$.
 		\item $\|u\| = 0$ if and only if $u=0$.
 	\end{enumerate}
-	A normed linear space $X$ is also a \textit{metric space} under the metric $\rho$ defined by
+	A normed linear space $X$ is also a \texttt{metric space} under the metric $\rho$ defined by
 	\[\rho(u,v) = \|u-v\|\]
 	for all $u,v \in X$.
 \end{definition}
 \begin{definition}
-	A \textit{complete metric space} is a metric space $X$ where every Cauchy sequence of points in $X$ converge to a point also in $X$.
+	A \texttt{complete metric space} is a metric space $X$ where every Cauchy sequence of points in $X$ converge to a point also in $X$.
 	i.e. a space that has no missing points.
 \end{definition}
 \begin{definition}
-	A \textit{Banach space} is a complete normed linear space.
+	A \texttt{Banach space} is a complete normed linear space.
 \end{definition}
 
 \begin{definition}[Continuous embedding]
@@ -256,12 +265,12 @@ a lot of nice properties, as we will see.
 		\|x\|_Y \leq C\|x\|_X
 	\end{equation*}
 	for every $x \in X$, then $X$ is said to be
-	\textit{continuously embedded} in $Y$.
+	\texttt{continuously embedded} in $Y$.
 \end{definition}
 
 \begin{definition}[Compact embedding]
 	Let $X$ and $Y$ be as previously defined.
-	We say that $X$ is \textit{compactly embedded} in $Y$, written
+	We say that $X$ is \texttt{compactly embedded} in $Y$, written
 	$X \subset\subset Y$, if
 	\begin{enumerate}[(i)]
 		\item $X$ is continuously embedded in $Y$, and
@@ -278,7 +287,7 @@ a lot of nice properties, as we will see.
 \end{motivation}
 Let $H$ be a real linear space.
 \begin{definition}
-	Let $H$ be a real linear space. A mapping $(\cdot , \cdot) : H \times H \rightarrow \mathbb{R}$ is called an \textit{inner product} if
+	Let $H$ be a real linear space. A mapping $(\cdot , \cdot) : H \times H \rightarrow \mathbb{R}$ is called an \texttt{inner product} if
 	\begin{enumerate}
 		\item $(u,v) = (v,u)$ for all $u,v \in H$,
 		\item $u \mapsto (u,v)$ is linear for each $v \in H$,
@@ -300,7 +309,7 @@ Let $H$ be a real linear space.
 	for all $u,v \in H$. Equation \ref{eq:3} verifies that equation \ref{eq:2} defines a norm on $H$. 
 \end{definition}
 \begin{definition}
-	A \textit{Hilbert space} $H$ is a Banach space equipped with an inner product which defines the norm on $H$.
+	A \texttt{Hilbert space} $H$ is a Banach space equipped with an inner product which defines the norm on $H$.
 \end{definition}
 
 \begin{theorem}[Riesz Representation Theorem]
@@ -496,13 +505,13 @@ Let $H$ be a real linear space.
 \end{motivation}
 Let $U \subset \mathbb{R}^n$ be a bounded open set and $0 < \gamma \leq 1$.
 \begin{definition}[H\"{o}lder continuous functions]
-\textit{Lipschitz continuous functions} $u : U \rightarrow \mathbb{R}$
+\texttt{Lipschitz continuous functions} $u : U \rightarrow \mathbb{R}$
 satisfy the estimate
 \[|u(x) - u(y)| \leq C|x-y|\]
 where $x,y \in U$ and $C$ is some constant.
 Now with the same assumptions, consider the variant
 \[|u(x) - u(y)| \leq C|x-y|^{\gamma},\]
-where $u$ is now said to be \textit{H\"{o}lder continuous with exponent $\gamma$}.
+where $u$ is now said to be \texttt{H\"{o}lder continuous with exponent $\gamma$}.
 \end{definition}
 
 \begin{definition}[Supremum norm and $\gamma^{th}$-H\"{o}lder seminorm]~ 
@@ -553,7 +562,7 @@ Let $U \subset \mathbb{R}^n$ be a bounded open set.
 			\begin{equation*}
 				\int_{\mathbb{R}^n}{\eta(x)dx} = 1.
 			\end{equation*}
-			$\eta$ is then called the \textit{standard mollifier}.
+			$\eta$ is then called the \texttt{standard mollifier}.
 		\item Now for each $\epsilon > 0$, define
 			\begin{equation*}
 				\eta_{\epsilon}(x) = \frac{1}{\epsilon^n}\eta\left(\frac{x}{\epsilon}\right).
@@ -567,7 +576,7 @@ Let $U \subset \mathbb{R}^n$ be a bounded open set.
 \end{definition}
 
 \begin{definition}
-	If $f : U \rightarrow \mathbb{R}$ is locally integrable, then define its \textit{mollification} as
+	If $f : U \rightarrow \mathbb{R}$ is locally integrable, then define its \texttt{mollification} as
 	the convolution of $f$ and $\eta_{\epsilon}$ in $U_{\epsilon} = \{x\in U \,|\, dist(x,\partial U) > \epsilon \}$, written as
 	\begin{equation*}
 		f^{\epsilon} = f * \eta_{\epsilon} \text{ in } U_{\epsilon}.
@@ -620,7 +629,7 @@ Let $U \subset \mathbb{R}^n$ be a bounded open set.
 \end{motivation}
 \begin{definition}
 	Let $u,v \in L_{\text{loc}}^1(U)$ and let $\alpha$ be a multi-index. Then we say that $v$ is the 
-	\textit{$\alpha^{th}$ weak partial derivative of $u$} provided
+	\texttt{$\alpha^{th}$ weak partial derivative of $u$} provided
 	\begin{equation*}
 		\int_U u D^{\alpha}\phi dx = (-1)^{|\alpha|}\int_U v \phi dx.
 	\end{equation*}
@@ -738,7 +747,7 @@ Fix $1 \leq p \leq \infty$, let $k \in \mathbb{N}$, and let $U \subset \mathbb{R
 
 \newpage
 
-\subsection{Approximations}
+\subsection{Approximations and density}
 \begin{motivation}
 Sobolev spaces are nice function spaces as we find that elements in Sobolev spaces can be approximated by sequences of smooth functions.
 These approximations can be done locally, globally up to but excluding the boundary, and globally up to and including the boundary.
@@ -826,7 +835,7 @@ or simply imply nice properties. Many of the following theorems are taken from E
 Let $U \subset \mathbb{R}^n$ be a bounded open set.
 
 \begin{definition}
-	If $1 \leq p < n$, then the \textit{Sobolev conjugate} of $p$ is
+	If $1 \leq p < n$, then the \texttt{Sobolev conjugate} of $p$ is
 	\begin{equation*}
 		p^* = \frac{np}{n-p}.
 	\end{equation*}
@@ -958,7 +967,7 @@ Let $U \subset \mathbb{R}^n$ be a bounded open set.
 \begin{definition}
 	Suppose $u : U \rightarrow \mathbb{R}$ is a locally integrable function, where $V \subset\subset U$.
 	Also, denote $e_i$ as the $i^{th}$ canonical vector in the $x_i$ direction.
-	The $i^{th}$ \textit{difference quotient} of size $h$ is
+	The $i^{th}$ \texttt{difference quotient} of size $h$ is
 	\begin{equation*}
 		D^hu(x) = D_i^hu(x) = \frac{u(x + he_i) - u(x)}{h} \qquad (i = 1,\dots,n)
 	\end{equation*}
@@ -1024,7 +1033,7 @@ Note that all functions here are complex-valued like in the Fourier transform se
 
 \section{Notation}
 \begin{enumerate}[(i)]
-	\item A \textit{multi-index} is a vector $\alpha = (\alpha_1, \dots, \alpha_n)$ where each component $\alpha_i \in \mathbb{N}_0$.
+	\item A \texttt{multi-index} is a vector $\alpha = (\alpha_1, \dots, \alpha_n)$ where each component $\alpha_i \in \mathbb{N}_0$.
 A multi-index has an order defined by
 \[|\alpha| = \alpha_1 + \dots + \alpha_n.\]
 
@@ -1033,15 +1042,15 @@ A multi-index has an order defined by
 
 \item Let $U,V \subset \mathbb{R}^n$. Then define
 \[V \subset\subset U\]
-to be when $V \subset \overline{V} \subset U$ and $\overline{V}$ is compact. In plain english this means $V$ is \textit{compactly contained} in $U$.
+to be when $V \subset \overline{V} \subset U$ and $\overline{V}$ is compact. In plain english this means $V$ is \texttt{compactly contained} in $U$.
 
-\item Let $f$ and $g$ be functions. Then define $*$ to be the \textit{convolution operator} where
+\item Let $f$ and $g$ be functions. Then define $*$ to be the \texttt{convolution operator} where
 \[(f*g)(x) = \int_{-\infty}^{\infty}{f(\tau)g(x - \tau)d\tau} = \int_{-\infty}^{\infty}{f(x - \tau)g(\tau)d\tau}\]
-is the \textit{convolution} of the functions $f$ and $g$ which results in a third function that expresses
+is the \texttt{convolution} of the functions $f$ and $g$ which results in a third function that expresses
 how one of the functions modifies the other. Note that I am assuming $f$ and $g$ are both supported on an
 infinite interval, which may not always be the case.
 
-\item Let $u(x)$ be a function where $x \in \mathbb{R}^n$. Then the \textit{gradient vector} of $u$ is 
+\item Let $u(x)$ be a function where $x \in \mathbb{R}^n$. Then the \texttt{gradient vector} of $u$ is 
 	\[Du(x_1,\dots,x_n) = (u_{x_1},...,u_{x_n}).\]
 \end{enumerate}
 
