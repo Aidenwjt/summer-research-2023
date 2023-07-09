@@ -20,6 +20,9 @@
 \theoremstyle{definition}
 \newtheorem*{remark}{Remark}
 \newtheorem*{motivation}{Motivation}
+
+\DeclareMathOperator*{\esssup}{ess\,sup}
+
 \makeatletter
 \@addtoreset{theorem}{subsection}
 \@addtoreset{proposition}{subsection}
@@ -170,7 +173,7 @@ Assume $1 \leq p$, $q \leq \infty$, and $\frac{1}{p} + \frac{1}{p} = 1$. If $u \
 	\end{equation}
 	For the sake of simplicity let
 	\[a = \int_{\mathbb{R}^n}|u|^pdx, \text{ and } b = \int_{\mathbb{R}^n}|v|^qdx.\]
-	Now we wish to find the smallest $t > 0$ that satisfies equation \ref{eq:1}. To do this we can employ Calculus, which says the minimum $t$
+	Now we wish to find the smallest $t > 0$ that satisfies equation (\ref{eq:1}). To do this we can employ Calculus, which says the minimum $t$
 	we are looking for, which we denote as $t_0$, satisfies $g^{\prime}(t_0) = 0$. First, we need to compute $g^{\prime}(t)$ as follows
 	\[g^{\prime}(t) = \frac{d}{dt}\left(\frac{t^p}{p}a + \frac{1}{qt^q}b\right) = t^{p-1}a - \frac{b}{t^{q+1}}.\]
 	Then, let $g^{\prime}(t) = 0$ and solve for $t$ as follows
@@ -306,6 +309,61 @@ a lot of nice properties, as we will see.
 
 \newpage
 
+\subsection{$L^p$ spaces}
+\begin{motivation}
+	$L^p$ spaces are spaces of functions whose $p^{th}$ powers are integrable.
+	These spaces are very nice and incredibly important, however, they take a considerable amount of work to develop,
+	so we will just go over their definitions here.
+\end{motivation}
+
+\begin{definition}
+	Let $(X,S,\mu)$ be a measure space and fix $1 \leq p < \infty$. The space $L^p(X)$ consists of equivalence classes
+	of measurable functions $f : X \rightarrow \mathbb{R}$ such that
+	\begin{equation*}
+		\int |f|^p d\mu < \infty.
+	\end{equation*}
+	The $L^p$-norm of $f \in L^p(U)$ is defined by
+	\begin{equation*}
+		\|f\|_{L^p(X)} = \left( \int |f|^p d\mu \right)^{1/p}.
+	\end{equation*}
+\end{definition}
+
+\begin{remark}
+	$L^{\infty}$ spaces require a notion of the essential supremum and essential boundedness, which we will need to define first.
+\end{remark}
+
+\begin{definition}
+	Let $f: X \rightarrow \mathbb{R}$ be a measurable function on a measure space $(X,S,\mu)$.
+	The \texttt{essential supremum} of $f$ on $X$ is
+	\begin{equation*}
+		\esssup_X f = \inf{\left\{a \in \mathbb{R} \,|\, \mu\{ x\in X \,|\, f(x) > a\}>0 \right\}}.
+	\end{equation*}
+	We also say that $f$ is \texttt{essentially bounded} on $X$ if
+	\begin{equation*}
+		\esssup_X |f| < \infty.
+	\end{equation*}
+\end{definition}
+
+\begin{remark}
+	The essential supremum gives a loose sense of weight, where instead of just being the largest point,
+	it looks at the largest point with other points around it. This is sort of the intuition of why the definition uses the infimum.
+\end{remark}
+
+\begin{definition}
+	Let $(X,S,\mu)$ be a measure space. The space $L^{\infty}(X)$ consists of pointwise a.e.-equivalence classes of essentially
+	bounded function $f : X \rightarrow \mathbb{R}$ with norm
+	\begin{equation*}
+		\|f\|_{L^{\infty}(X)} = \esssup_X |f|.
+	\end{equation*}
+\end{definition}
+
+\begin{remark}
+	The spaces $L^p$ for $1 \leq p < \infty$, and $L^{\infty}$ are both Banach spaces.
+\end{remark}
+
+
+\newpage
+
 \subsection{Hilbert spaces}
 \begin{motivation}
 	Hilbert spaces are important in the study of Sobolev spaces as some Sobolev spaces are themselves Hilbert spaces.
@@ -332,7 +390,7 @@ Let $H$ be a real linear space.
 		\label{eq:3}
 		|(u,v)| \leq \|u\|\|v\|
 	\end{equation}
-	for all $u,v \in H$. Equation \ref{eq:3} verifies that equation \ref{eq:2} defines a norm on $H$. 
+	for all $u,v \in H$. Equation (\ref{eq:3}) verifies that equation (\ref{eq:2}) defines a norm on $H$. 
 \end{definition}
 \begin{definition}
 	A \texttt{Hilbert space} $H$ is a Banach space equipped with an inner product which defines the norm on $H$.
@@ -403,7 +461,7 @@ Let $H$ be a real linear space.
 		(F = B(\cdot,f)) \stackrel{RRT}{\mapsto} \tilde{f},
 	\end{equation}
 	where $\tilde{f}$ is defined to be a uniquely determined element in $H$.
-	Combining mappings \ref{eq:5} and \ref{eq:6} allows us to define one more mapping
+	Combining mappings (\ref{eq:5}) and (\ref{eq:6}) allows us to define one more mapping
 	\begin{equation}
 		\label{eq:7}
 		f \mapsto \tilde{f},
@@ -452,7 +510,7 @@ Let $H$ be a real linear space.
 		\label{eq:9}
 		\|f\|\|Tf\| \geq |(f,Tf)| = |B(f,f)| \geq |\nu \|f\|^2| = \nu \|f\|^2
 	\end{equation}
-	for some $\nu > 0$. Inequalities \ref{eq:8} and \ref{eq:9} imply
+	for some $\nu > 0$. Inequalities (\ref{eq:8}) and (\ref{eq:9}) imply
 	\begin{equation}
 		\label{eq:10}
 		\nu \|f\| \leq \|Tf\| \leq k \|f\|
@@ -460,7 +518,7 @@ Let $H$ be a real linear space.
 	for some $\nu >0$ and $k >0$.
 	By definition $T$ is injective provided that for any $x,y \in H$, if $Tx = Ty$, then $x=y$.
 	But note that the linearity of $T$ implies that we can instead say ``$T$ is injective provided that
-	for all $w \in H$, if $Tw = 0$, the $w = 0$ .'' It is then easy to see that inequality \ref{eq:10}
+	for all $w \in H$, if $Tw = 0$, the $w = 0$ .'' It is then easy to see that inequality (\ref{eq:10})
 	satisfies this definition, and thus $T$ is injective.
 	Now to prove that $T$ is also surjective, we first need to prove that $T$ has a closed range so that
 	we can invoke the Hilbert Projection Theorem. To prove this, let $T(H)$ denote the range of $T$.
@@ -649,9 +707,9 @@ Let $U \subset \mathbb{R}^n$ be a bounded open set.
 		\label{eq:4}
 		\int_U u D^{\alpha}\phi dx = (-1)^{|\alpha|}\int_U D^{\alpha}u\phi  dx
 	\end{equation}
-	where the LHS of equation \ref{eq:4} also holds if $u\in L_{\text{loc}}^1(U)$.
+	where the LHS of equation (\ref{eq:4}) also holds if $u\in L_{\text{loc}}^1(U)$.
 	The question now is ``does $u$ need to be k-times partially differentiable, or can we replace $D^{\alpha}u$ with something that also satisfies
-	equation \ref{eq:4}, but is just locally summable instead?''
+	equation (\ref{eq:4}), but is just locally summable instead?''
 \end{motivation}
 \begin{definition}
 	Let $u,v \in L_{\text{loc}}^1(U)$ and let $\alpha$ be a multi-index. Then we say that $v$ is the 
@@ -1090,7 +1148,7 @@ Let $U \subset \mathbb{R}^n$ be a bounded open set.
 			for any $u \in H_0^1(U)$.
 		\item Further,
 			\begin{equation*}
-				\|f\|_{H^{-1}(U)} = \inf{\left\{\left(\int_U \sum_{i=1}^n |f_i|^2dx\right)^{1/2} \,|\, f \text{ satifies } \ref{eq:fjdk} \text{ for } f^0,\dots,f^n \in L^2(U)\right\}}.
+				\|f\|_{H^{-1}(U)} = \inf{\left\{\left(\int_U \sum_{i=1}^n |f_i|^2dx\right)^{1/2} \,|\, f \text{ satifies } (\ref{eq:fjdk}) \text{ for } f^0,\dots,f^n \in L^2(U)\right\}}.
 			\end{equation*}
 		\item In particular, we have
 			\begin{equation}
@@ -1098,7 +1156,7 @@ Let $U \subset \mathbb{R}^n$ be a bounded open set.
 			\end{equation}
 			for all $u \in H_0^1(U)$ and $v \in L^2(U) \subset H^{-1}(U)$.
 	\end{enumerate}
-	Note that if identity \ref{eq:fjdk} holds, we say $f = f^0 - \sum_{i=1}^n f_{x_i}^i$.
+	Note that if identity (\ref{eq:fjdk}) holds, we say $f = f^0 - \sum_{i=1}^n f_{x_i}^i$.
 \end{theorem}
 \begin{proof}
 	In progress...
