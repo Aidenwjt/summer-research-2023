@@ -53,4 +53,29 @@ R.~H. Nochetto and A.~Veeser, \emph{Primer of Adaptive Finite Element
   \url{https://doi.org/10.1007/978-3-642-24079-9_3}
 \BIBentrySTDinterwordspacing
 
+\bibitem{hunter2011measure}
+\BIBentryALTinterwordspacing
+J.~K. Hunter, ``Measure theory,'' 2011. [Online]. Available:
+  \url{https://www.math.ucdavis.edu/~hunter/measure_theory/}
+\BIBentrySTDinterwordspacing
+
+\bibitem{bruce2003pde}
+\BIBentryALTinterwordspacing
+B.~Driver, ``Pde lecture notes,'' 2003. [Online]. Available:
+  \url{https://mathweb.ucsd.edu/~bdriver/231-02-03/Lecture_Notes/}
+\BIBentrySTDinterwordspacing
+
+\bibitem{francis2014bounded}
+\BIBentryALTinterwordspacing
+F.~J. Narcowich, ``Bounded operators \& closed subspaces,'' 2014. [Online].
+  Available:
+  \url{https://www.math.tamu.edu/~fnarc/m641/m641_notes/bdd_ops_subspaces2014.pdf}
+\BIBentrySTDinterwordspacing
+
+\bibitem{michelangeli????lax}
+\BIBentryALTinterwordspacing
+A.~Michelangeli, ``The lax-milgram theorem.'' [Online]. Available:
+  \url{https://www.math.lmu.de/~michel/lax-milgram.pdf}
+\BIBentrySTDinterwordspacing
+
 \end{thebibliography}
