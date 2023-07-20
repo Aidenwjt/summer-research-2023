@@ -170,7 +170,7 @@ def interior_angle(vi):
     l1 = distance(vi.prev.coords,vi.coords)
     l2 = distance(vi.coords,vi.next.coords)
     tri_area_x2 = (vi.next.coords[0]-vi.prev.coords[0])*(vi.prev.coords[1]-vi.coords[1]) - (vi.prev.coords[0]-vi.coords[0])*(vi.next.coords[1]-vi.prev.coords[1])
-    l3 = np.absolute(tri_area_x2 / distance(vi.prev.coords,vi.next.coords)) # TODO: runtime warning here?
+    l3 = np.absolute(tri_area_x2 / distance(vi.prev.coords,vi.next.coords)) # TODO: RuntimeWarning: invalid value encountered in scalar divide
     if(tri_area_x2 > 0):
         vi.inter_angle = np.arccos(l3/l1) + np.arccos(l3/l2) # in radians
     else:
@@ -212,9 +212,9 @@ def sort_ear_tips(ear_tips):
 
 # REFINE procedure
 # TODO: Needs to be updated
-def refine(t,n,max_n):
+def refine(t,iteration,max_iterations,regularity,ax):
     # Base case
-    if(n == max_n):
+    if(iteration == max_max_iterations):
         return
     # Calculate coordinate of new vertex using midpoint formula
     # v = [(t[0][1][0] + t[0][0][0])/2, (t[0][1][1] + t[0][0][1])/2]
@@ -247,7 +247,7 @@ def main():
         xtokens = xcoords.split(',')
         ytokens = ycoords.split(',')
         n = len(xtokens)
-    # TODO: Make sure iterations is a non-negative integer, and that the regularity is greater than 1
+    # TODO: Make sure iterations is a non-negative integer, and that the regularity is a float greater than 1
     iterations = int(input("How many refinement iterations would you like?: "))
     regularity = float(input("What value for the shape regularity constant would you like? (must be greater than 1): "))
     xs = []
@@ -257,8 +257,6 @@ def main():
         ys.append(float(ytokens[i]))
 
     # Plot points
-    # TODO: see if ax can just be passed as an argument to avoid global variables
-    global ax
     fig, ax = plt.subplots()
     ax.scatter(xs,ys,color='white')
 
@@ -296,7 +294,7 @@ def main():
         vi = ear_tips[0]
         vi_prev = vi.prev
         vi_next = vi.next
-        mesh_0.append([vi_prev.coords, vi.coords, vi_next.coords])
+        mesh_0.append([[vi_prev.coords, vi.coords, vi_next.coords], [0,0,0]]) # [[vi_prev,vi,vi_next],[edge opposite vi_prev,edge opposite vi,edge opposite vi_next]]
         # Update relationships in polygon
         polygon.remove(vi.coords)
         # Let this vertex no longer be an ear tip
@@ -328,13 +326,17 @@ def main():
         if(((vi_next in reflex_vi) or (ear_tip_status(vi_next,reflex_vi) == False)) and (vi_next in ear_tips)):
                 ear_tips.remove(vi_next)
 
-    # Draw the triangles in the initial mesh
+    # TODO: Implement shape regularity for bisections
+    # TODO: Create distance from point to line function (also returns point on the line?)
+    # TODO: Generate the special labeling of the initial mesh and draw the initial mesh.
     for t in mesh_0:
         for i in range(0,3):
-            ax.plot([t[i][0],t[(i+1)%3][0]],[t[i][1],t[(i+1)%3][1]],color='black',linestyle='-')
+            ax.plot([t[0][i][0],t[0][(i+1)%3][0]],[t[0][i][1],t[0][(i+1)%3][1]],color='black',linestyle='-')
    
-    # TODO: Implement REFINE procedure with shape regularity
-
+    """
+    for t in mesh_0:
+        refine(t,0,iterations,regularity,ax)
+    """
     plt.show()
 
 main()
