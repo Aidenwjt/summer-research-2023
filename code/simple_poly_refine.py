@@ -179,7 +179,7 @@ def interior_angle(vi):
     l1 = distance(vi.prev,vi)
     l2 = distance(vi,vi.next)
     tri_area_x2 = (vi.next.coords[0]-vi.prev.coords[0])*(vi.prev.coords[1]-vi.coords[1]) - (vi.prev.coords[0]-vi.coords[0])*(vi.next.coords[1]-vi.prev.coords[1])
-    l3 = np.absolute(tri_area_x2 / distance(vi.prev,vi.next)) # TODO: RuntimeWarning: invalid value encountered in scalar divide
+    l3 = np.absolute(tri_area_x2 / distance(vi.prev,vi.next)) # harmless bug here, returns 0 when there are only two vertices in the polygon, not a problem. 
     if(tri_area_x2 > 0):
         vi.inter_angle = np.arccos(l3/l1) + np.arccos(l3/l2) # in radians
     else:
@@ -289,7 +289,7 @@ def main():
         # Add x,y coordinates of each vertex to polygon structure
         polygon.append((xs[i],ys[i]),None)
 
-    # Compute interior angles of each vertex in the simple polygon
+    # Calculate interior angles of each vertex in the simple polygon
     vi = polygon.head
     convex_vi = []
     reflex_vi = []
@@ -302,20 +302,20 @@ def main():
         vi = vi.next
 
     # Find ear tips
+    # TODO: the way I'm doing this is very weird
     ear_tips = []
     for vi in convex_vi:
         if(ear_tip_status(vi,reflex_vi) == True):
             ear_tips.append(vi)
     ear_tips = sort_ear_tips(ear_tips)
 
-    #  Start clipping the ears and adding them to the initial mesh
+    #  Start clipping the ears
     mesh_0 = []
     while(len(mesh_0) < n-2):
-        # Construct triangle
+        # Construct triangle and add to initial mesh
         vi = ear_tips[0]
         vi_prev = vi.prev
         vi_next = vi.next
-        # mesh_0.append([[vi_prev.coords, vi.coords, vi_next.coords], [0,0,0]]) # [[vi_prev,vi,vi_next],[edge opposite vi_prev,edge opposite vi,edge opposite vi_next]]
         mesh_0.append(Triangle(vi_prev,vi,vi_next,0,0,0))
         # Update relationships in polygon
         polygon.remove(vi.coords)
