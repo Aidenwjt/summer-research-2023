@@ -166,9 +166,14 @@ class CircularDoublyLinkedList:
                 break
         print()
 
+def roughly_equals(x,y,err):
+    if(np.absolute(x - y) <= err):
+        return True
+    return False
+
 def midpoint(v1,v2):
     """ Return the midpoint of two points in 2D. """
-    return [(v2.coords[0] + v1.coords[0])/2, (v2.coords[1] + v1.coords[1])/2]
+    return ((v2.coords[0] + v1.coords[0])/2, (v2.coords[1] + v1.coords[1])/2)
 
 def distance(v1,v2):
     """ Return the distance between two vertices in 2D. """
@@ -178,14 +183,13 @@ def tri_area_x2(v1,v2,v3):
     return (v3.coords[0]-v1.coords[0])*(v1.coords[1]-v2.coords[1]) - (v1.coords[0]-v2.coords[0])*(v3.coords[1]-v1.coords[1])
 
 def nearest_distance_to_line(v1,v2,v3):
-    return np.absolute(tri_area_x2(v1,v2,v3) / distance(v1,v3))
+    return np.absolute(tri_area_x2(v1,v2,v3) / distance(v1,v3))# harmless bug here.
 
 def interior_angle(vi):
     """ Calculate the interior angle that a vertex shares with its two neighbor vertices in a polygon. """
     l1 = distance(vi.prev,vi)
     l2 = distance(vi,vi.next)
-    #l3 = np.absolute(tri_area_x2(vi.prev, vi, vi.next) / distance(vi.prev,vi.next)) # harmless bug here. 
-    l3 = nearest_distance_to_line(vi.prev, vi, vi.next) # harmless bug here. 
+    l3 = nearest_distance_to_line(vi.prev, vi, vi.next)
     if(tri_area_x2(vi.prev, vi, vi.next) > 0):
         vi.inter_angle = np.arccos(l3/l1) + np.arccos(l3/l2) # in radians
     else:
@@ -238,6 +242,7 @@ def update_ear_tip_status(vi,convex_vi,reflex_vi,ear_tips):
             ear_tips.remove(vi)
     return convex_vi,reflex_vi,ear_tips
 
+# TODO: maybe should return vertices in desired order, along with diameter
 def triangle_diam(t):
     l1 = distance(t.v1,t.v2)
     l2 = distance(t.v2,t.v3)
@@ -250,6 +255,7 @@ def triangle_diam(t):
     if(l3 == max_l):
         return l3,3
 
+# TODO: Have this not call triangle_diam, very lazy
 def triangle_area_root2(t):
     diam,flag = triangle_diam(t)
     if(flag == 1):
@@ -258,6 +264,24 @@ def triangle_area_root2(t):
         return np.sqrt(0.5*(diam*nearest_distance_to_line(t.v2,t.v1,t.v3)))
     if(flag == 3):
         return np.sqrt(0.5*(diam*nearest_distance_to_line(t.v3,t.v2,t.v1)))
+
+# TODO: should this start at v1 on the line v1,v3, then go to v3 recursively?
+#       because if you start at the midpoint and divide and conquer, then you have to compare what is returned by both recursions.
+def angle_bisector(p,v1,v2,v3):
+    m = (v3.coords[1] - v1.coords[1])/(v3.coords[0] - v1.coords[0])
+    b = v1.coords[1] - m*v1.coords[0]
+    if(p.coords[1] != m*p.coords[0] + b):
+        return None
+    if(roughly_equal(distance(v1,p)/distance(v3,p), distance(v1,v2)/distance(v2,v3), 0.1) == True): # TODO: user defined error instead of magic number?
+        return p
+    angle_bisector(Vertex((p.coords[0],p.coords[1]),None)) # TODO: THIS LINE IS NOT DONE
+
+def diam_of_inscribed_circle(t):
+    ab1 = angle_bisector(Vertex(midpoint(t.v1,t.v3),None),t.v1,t.v2,t.v3)
+    ab2 = angle_bisector(Vertex(midpoint(t.v1,t.v2),None),t.v1,t.v3,t.v2)
+    # TODO: Find the intersection point of the lines t.v2,ab1 and t.v3,ab2
+    # TODO: Find the nearest distance of this intersection point to any edge of t
+    # TODO: Multiply this distance by 2 and you have the diameter of the inscribed circle in t
 
 # REFINE procedure
 # TODO: Needs to be updated
