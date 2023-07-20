@@ -9,25 +9,34 @@ Ear Clipping Method to generate an initial mesh that is then passed into the REF
 import matplotlib.pyplot as plt
 import numpy as np
 
+class Triangle:
+    def __init__(self,v1,v2,v3,e1,e2,e3):
+        self.v1 = v1
+        self.v2 = v2
+        self.v3 = v3
+        self.e1 = e1
+        self.e2 = e2
+        self.e3 = e3
+
 # https://statisticsglobe.com/circular-doubly-linked-list-python
-class Node:
+class Vertex:
     """
-    Node that represents a vertex in a polygon.
+    Object that represents a vertex in a polygon.
     
     ...
     
     Attributes:
     -----------
-    coords : list
-        a list containing the x,y coordinates of the vertex, i.e. coords = [x,y].
+    coords : tuple
+        a tuple containing the x,y coordinates of the vertex, i.e. coords = (x,y).
     
     inter_angle : float
         the interior angle the vertex shares with its two neighbor vertices.
     
-    prev : Node
+    prev : Vertex
         neighbor vertex.
     
-    next : Node
+    next : Vertex
         neighbor vertex.
     """
     def __init__(self, coords, inter_angle):
@@ -44,8 +53,8 @@ class CircularDoublyLinkedList:
     
     Attributes:
     -----------
-    head : Node
-        the first node in the polygon (user defined).
+    head : Vertex
+        the first vertex in the polygon (user defined).
 
     Functions:
     ---------
@@ -53,16 +62,16 @@ class CircularDoublyLinkedList:
         Check if the list is empty.
     
     append(coords, inter_angle)
-        Add a new node with the given coords at the end of the list.
+        Add a new vertex with the given coords at the end of the list.
     
     prepend(coords, inter_angle)
-        Add a new node with the given coords at the beginning of the list.
+        Add a new vertex with the given coords at the beginning of the list.
     
     insert_after(coords, after_coords, inter_angle)
-        Insert a new node with the given coords after a specified node in the list.
+        Insert a new vertex with the given coords after a specified vertex in the list.
     
     remove(coords)
-        Remove the node with the specified coords from the list.
+        Remove the vertex with the specified coords from the list.
     
     display()
         Display the elements of the circular doubly linked list.
@@ -78,40 +87,40 @@ class CircularDoublyLinkedList:
 
     def append(self, coords, inter_angle):
         """
-        Add a new node with the given coords at the end of the list.
+        Add a new vertex with the given coords at the end of the list.
         """
-        new_node = Node(coords, inter_angle)
+        new_vertex = Vertex(coords, inter_angle)
         if self.is_empty():
-            # If the list is empty, set the new node as the head
-            self.head = new_node
+            # If the list is empty, set the new vertex as the head
+            self.head = new_vertex
         else:
             # If the list is not empty, update the references to maintain the circular structure
-            last_node = self.head.prev
-            last_node.next = new_node
-            new_node.prev = last_node
-        new_node.next = self.head
-        self.head.prev = new_node
+            last_vertex = self.head.prev
+            last_vertex.next = new_vertex
+            new_vertex.prev = last_vertex
+        new_vertex.next = self.head
+        self.head.prev = new_vertex
 
     def prepend(self, coords, inter_angle):
         """
-        Add a new node with the given coords at the beginning of the list.
+        Add a new vertex with the given coords at the beginning of the list.
         """
-        new_node = Node(coords, inter_angle)
+        new_vertex = Vertex(coords, inter_angle)
         if self.is_empty():
-            # If the list is empty, set the new node as the head
-            self.head = new_node
+            # If the list is empty, set the new vertex as the head
+            self.head = new_vertex
         else:
             # If the list is not empty, update the references to maintain the circular structure
-            last_node = self.head.prev
-            new_node.next = self.head
-            new_node.prev = last_node
-            last_node.next = new_node
-        self.head.prev = new_node
-        self.head = new_node
+            last_vertex = self.head.prev
+            new_vertex.next = self.head
+            new_vertex.prev = last_vertex
+            last_vertex.next = new_vertex
+        self.head.prev = new_vertex
+        self.head = new_vertex
 
     def insert_after(self, coords, after_coords, inter_angle):
         """
-        Insert a new node with the given coords after a specified node in the list.
+        Insert a new vertex with the given coords after a specified vertex in the list.
         """
         if self.is_empty():
             raise Exception("List is empty")
@@ -120,15 +129,15 @@ class CircularDoublyLinkedList:
             current = current.next
             if current == self.head:
                 raise Exception(f"{after_coords} not found in the list")
-        new_node = Node(coords, inter_angle)
-        new_node.next = current.next
-        new_node.prev = current
-        current.next.prev = new_node
-        current.next = new_node
+        new_vertex = Vertex(coords, inter_angle)
+        new_vertex.next = current.next
+        new_vertex.prev = current
+        current.next.prev = new_vertex
+        current.next = new_vertex
 
     def remove(self, coords):
         """
-        Remove the node with the specified coords from the list.
+        Remove the vertex with the specified coords from the list.
         """
         if self.is_empty():
             raise Exception("List is empty")
@@ -159,18 +168,18 @@ class CircularDoublyLinkedList:
 
 def midpoint(v1,v2):
     """ Return the midpoint of two points in 2D. """
-    return [(v2[0] + v1[0])/2, (v2[1] + v1[1])/2]
+    return [(v2.coords[0] + v1.coords[0])/2, (v2.coords[1] + v1.coords[1])/2]
 
 def distance(v1,v2):
-    """ Return the distance between two point in 2D. """
-    return np.sqrt((v2[0]-v1[0])**2 + (v2[1]-v1[1])**2)
+    """ Return the distance between two vertices in 2D. """
+    return np.sqrt((v2.coords[0]-v1.coords[0])**2 + (v2.coords[1]-v1.coords[1])**2)
 
 def interior_angle(vi):
     """ Calculate the interior angle that a vertex shares with its two neighbor vertices in a polygon. """
-    l1 = distance(vi.prev.coords,vi.coords)
-    l2 = distance(vi.coords,vi.next.coords)
+    l1 = distance(vi.prev,vi)
+    l2 = distance(vi,vi.next)
     tri_area_x2 = (vi.next.coords[0]-vi.prev.coords[0])*(vi.prev.coords[1]-vi.coords[1]) - (vi.prev.coords[0]-vi.coords[0])*(vi.next.coords[1]-vi.prev.coords[1])
-    l3 = np.absolute(tri_area_x2 / distance(vi.prev.coords,vi.next.coords)) # TODO: RuntimeWarning: invalid value encountered in scalar divide
+    l3 = np.absolute(tri_area_x2 / distance(vi.prev,vi.next)) # TODO: RuntimeWarning: invalid value encountered in scalar divide
     if(tri_area_x2 > 0):
         vi.inter_angle = np.arccos(l3/l1) + np.arccos(l3/l2) # in radians
     else:
@@ -210,6 +219,19 @@ def sort_ear_tips(ear_tips):
                 ear_tips[j] = temp
     return ear_tips
 
+def update_ear_tip_status(vi,convex_vi,reflex_vi,ear_tips):
+    if(vi in reflex_vi):
+        if(vi.inter_angle < np.pi):
+            reflex_vi.remove(vi)
+            convex_vi.append(vi)
+    if(vi in convex_vi):
+        if((ear_tip_status(vi,reflex_vi) == True) and (vi not in ear_tips)):
+            ear_tips.append(vi)
+            ear_tips = sort_ear_tips(ear_tips)
+    if(((vi in reflex_vi) or (ear_tip_status(vi,reflex_vi) == False)) and (vi in ear_tips)):
+            ear_tips.remove(vi)
+    return convex_vi,reflex_vi,ear_tips
+
 # REFINE procedure
 # TODO: Needs to be updated
 def refine(t,iteration,max_iterations,regularity,ax):
@@ -247,9 +269,8 @@ def main():
         xtokens = xcoords.split(',')
         ytokens = ycoords.split(',')
         n = len(xtokens)
-    # TODO: Make sure iterations is a non-negative integer, and that the regularity is a float greater than 1
-    iterations = int(input("How many refinement iterations would you like?: "))
-    regularity = float(input("What value for the shape regularity constant would you like? (must be greater than 1): "))
+    iterations = int(input("How many refinement iterations would you like? (whole number greater than or equal to zero): "))
+    regularity = float(input("What value for the shape regularity constant would you like? (any number greater than one): "))
     xs = []
     ys = []
     for i in range(0,n):
@@ -266,7 +287,7 @@ def main():
         # Draw lines between initial vertices
         ax.plot([xs[i],xs[(i+1)%n]],[ys[i],ys[(i+1)%n]],color='black',linestyle='-')
         # Add x,y coordinates of each vertex to polygon structure
-        polygon.append([xs[i],ys[i]],None)
+        polygon.append((xs[i],ys[i]),None)
 
     # Compute interior angles of each vertex in the simple polygon
     vi = polygon.head
@@ -294,7 +315,8 @@ def main():
         vi = ear_tips[0]
         vi_prev = vi.prev
         vi_next = vi.next
-        mesh_0.append([[vi_prev.coords, vi.coords, vi_next.coords], [0,0,0]]) # [[vi_prev,vi,vi_next],[edge opposite vi_prev,edge opposite vi,edge opposite vi_next]]
+        # mesh_0.append([[vi_prev.coords, vi.coords, vi_next.coords], [0,0,0]]) # [[vi_prev,vi,vi_next],[edge opposite vi_prev,edge opposite vi,edge opposite vi_next]]
+        mesh_0.append(Triangle(vi_prev,vi,vi_next,0,0,0))
         # Update relationships in polygon
         polygon.remove(vi.coords)
         # Let this vertex no longer be an ear tip
@@ -302,36 +324,17 @@ def main():
         # Compute new interior angles of the neighbor vertices
         interior_angle(vi_prev)
         interior_angle(vi_next)
-        # TODO: Make this a function
-        if(vi_prev in reflex_vi):
-            if(vi_prev.inter_angle < np.pi):
-                reflex_vi.remove(vi_prev)
-                convex_vi.append(vi_prev)
-        if(vi_next in reflex_vi):
-            if(vi_next.inter_angle < np.pi):
-                reflex_vi.remove(vi_next)
-                convex_vi.append(vi_next)
         # Update ear tip status of the neighbor vertices
-        # TODO: Make this a function
-        if(vi_prev in convex_vi):
-            if((ear_tip_status(vi_prev,reflex_vi) == True) and (vi_prev not in ear_tips)):
-                ear_tips.append(vi_prev)
-                ear_tips = sort_ear_tips(ear_tips)
-        if(((vi_prev in reflex_vi) or (ear_tip_status(vi_prev,reflex_vi) == False)) and (vi_prev in ear_tips)):
-                ear_tips.remove(vi_prev)
-        if(vi_next in convex_vi):
-            if((ear_tip_status(vi_next,reflex_vi) == True) and (vi_next not in ear_tips)):
-                ear_tips.append(vi_next)
-                ear_tips = sort_ear_tips(ear_tips)
-        if(((vi_next in reflex_vi) or (ear_tip_status(vi_next,reflex_vi) == False)) and (vi_next in ear_tips)):
-                ear_tips.remove(vi_next)
+        convex_vi, reflex_vi, ear_tips = update_ear_tip_status(vi_prev,convex_vi,reflex_vi,ear_tips)
+        convex_vi, reflex_vi, ear_tips = update_ear_tip_status(vi_next,convex_vi,reflex_vi,ear_tips)
 
     # TODO: Implement shape regularity for bisections
     # TODO: Create distance from point to line function (also returns point on the line?)
     # TODO: Generate the special labeling of the initial mesh and draw the initial mesh.
     for t in mesh_0:
-        for i in range(0,3):
-            ax.plot([t[0][i][0],t[0][(i+1)%3][0]],[t[0][i][1],t[0][(i+1)%3][1]],color='black',linestyle='-')
+        ax.plot([t.v1.coords[0],t.v2.coords[0]],[t.v1.coords[1],t.v2.coords[1]],color='black',linestyle='-')
+        ax.plot([t.v2.coords[0],t.v3.coords[0]],[t.v2.coords[1],t.v3.coords[1]],color='black',linestyle='-')
+        ax.plot([t.v3.coords[0],t.v1.coords[0]],[t.v3.coords[1],t.v1.coords[1]],color='black',linestyle='-')
    
     """
     for t in mesh_0:
