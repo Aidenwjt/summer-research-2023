@@ -162,120 +162,6 @@ The following are just some concepts, ideas, and interesting topics (mainly in a
 The main focus here is on background material required for studying Sobolev spaces and AFEM.
 \end{motivation}
 
-\subsection{Important inequalities}
-\begin{motivation}
-A lot of analysis proofs in general can be boiled down to figuring out if some element is smaller than, bigger than, or equal to some other element.
-For this reason, it is very helpful to know some of these important inequalities. 
-\end{motivation}
-\begin{theorem}[Young's inequality]
-Let $p > 1$, $q < \infty$, and $\frac{1}{p}+\frac{1}{q} = 1$. Then
-\[ab \leq \frac{a^p}{p} + \frac{b^q}{q}.\]
-\end{theorem}
-\begin{proof}[My proof attempt]
-Suppose we $t = \frac{1}{q}$ and $(1-t)=\frac{1}{p}$, implying $t \in (0,1)$. Then since we know $\ln$ is a concave function, we have
-	\begin{equation*}
-		\begin{aligned}
-			\ln{((1-t)a^p + tb^q)} &\geq (t-1)\ln{(a^p)} + t\ln{(b^q)} \\
-					       &= p(t-1)\ln{(a)} + qt\ln{(b)} \\
-					       &= \ln{(a)} + \ln{(b)} \\
-					       &= \ln{(ab)}.
-		\end{aligned}
-	\end{equation*}
-\end{proof}
-
-\begin{theorem}[H\"{o}lder's inequality]
-Assume $1 \leq p$, $q \leq \infty$, and $\frac{1}{p} + \frac{1}{p} = 1$. If $u \in L^p(\mathbb{R}^n)$ and $v \in L^q(\mathbb{R}^n)$, then
-	\[\int_{\mathbb{R}^n}|uv|dx \leq \|u\|_{L^p(\mathbb{R}^n)}\|v\|_{L^q(\mathbb{R}^n)}.\]
-\end{theorem}
-\begin{proof}[My proof attempt]
-	Letting $0 < t \in \mathbb{R}$, we can say
-	\[|uv| = |ut||v/t|,\]
-	and by Young's inequality
-	\[|uv| = |ut||v/t| \leq \frac{|ut|^p}{p} + \frac{|v/t|^q}{q} = \frac{|u|^pt^p}{p} + \frac{|u|^q}{qt^q}.\]
-	Now integrating with respect to $x \in \mathbb{R}^n$, results in
-	\begin{equation}
-	\label{eq:1}
-		\int_{\mathbb{R}^n}|uv|dx \leq  \int_{\mathbb{R}^n}\left(\frac{|u|^pt^p}{p} + \frac{|u|^q}{qt^q}\right)dx
-		= \frac{t^p}{p}\int_{\mathbb{R}^n}|u|^pdx + \frac{1}{qt^q}\int_{\mathbb{R}^n}|v|^qdx = g(t).
-	\end{equation}
-	For the sake of simplicity let
-	\[a = \int_{\mathbb{R}^n}|u|^pdx, \text{ and } b = \int_{\mathbb{R}^n}|v|^qdx.\]
-	Now we wish to find the smallest $t > 0$ that satisfies equation (\ref{eq:1}). To do this we can employ Calculus, which says the minimum $t$
-	we are looking for, which we denote as $t_0$, satisfies $g^{\prime}(t_0) = 0$. First, we need to compute $g^{\prime}(t)$ as follows
-	\[g^{\prime}(t) = \frac{d}{dt}\left(\frac{t^p}{p}a + \frac{1}{qt^q}b\right) = t^{p-1}a - \frac{b}{t^{q+1}}.\]
-	Then, let $g^{\prime}(t) = 0$ and solve for $t$ as follows
-	\begin{equation*}
-		\begin{aligned}
-			&g^{\prime}(t) = t^{p-1}a - \frac{b}{t^{q+1}} = 0 \\
-			&\Rightarrow t^{p-1}a = \frac{b}{t^{q+1}} \\
-			&\Rightarrow t^{p-1}t^{q+1} = \frac{b}{a} \\
-			&\Rightarrow t^{p+q} = \frac{b}{a} \\
-			&\Rightarrow t = \left(\frac{b}{a}\right)^{\frac{1}{p+q}} = t_0.
-		\end{aligned}
-	\end{equation*}
-	Finally, compute $g(t_0)$ as follows
-	\begin{equation*}
-		\begin{aligned}
-			g(t_0) &= \frac{\left(\left(\frac{b}{a}\right)^{\frac{1}{p+q}}\right)^p}{p}a + \frac{1}{q\left(\left(\frac{b}{a}\right)^{\frac{1}{p+q}}\right)^q}b \\
-			       &= \frac{\left(\frac{b}{a}\right)^{\frac{p}{p+q}}a}{p} + \frac{b}{q\left(\frac{b}{a}\right)^{\frac{q}{p+q}}} \\
-			       &= \frac{\left(\frac{b}{a}\right)^{\frac{p-1}{p}}a}{p} + \frac{b}{q\left(\frac{b}{a}\right)^{\frac{1}{p}}} \\
-			       &= \frac{b^{\frac{1}{q}}a^{\frac{1}{p}}}{p} + \frac{b^{\frac{1}{q}}a^{\frac{1}{p}}}{q} \\
-			       &= b^{\frac{1}{q}}a^{\frac{1}{p}}\left(\frac{1}{p} + \frac{1}{q}\right) \\
-			       &= b^{\frac{1}{q}}a^{\frac{1}{p}} \\
-			       &= \left(\int_{\mathbb{R}^n}|v|^qdx\right)^{\frac{1}{q}}\left(\int_{\mathbb{R}^n}|u|^pdx\right)^{\frac{1}{p}} \\
-			       &= \|v\|_{L^q(\mathbb{R}^n)}\|u\|_{L^p(\mathbb{R}^n)}.
-		\end{aligned}
-	\end{equation*}
-\end{proof}
-
-\newpage
-
-\begin{theorem}[Cauchy-Schwarz inequality]
-	Let $u$ and $v$ be arbitrary vectors in an inner product space over the scalar field $\mathbb{F}$,
-	where $\mathbb{F}$ is either $\mathbb{R}$ or $\mathbb{C}$. Then
-	\begin{equation*}
-		|(u,v)| \leq \|u\|\|v\|
-	\end{equation*}
-	with equality holding (``='') if and only if $u$ and $v$ are linearly dependent.
-	Moreover, if $|(u,v)| = \|u\|\|v\|$ and $v\not=0$, then
-	\begin{equation*}
-		u = \frac{(u,v)}{\|v\|^2}v.
-	\end{equation*}
-\end{theorem}
-\begin{proof}
-	When $u=0$ or $v=0$ then the inequality is trivial, so assume WLOG that $v\not=0$.
-	Let
-	\begin{equation*}
-		z = u - \frac{(u,v)}{(v,v)}v,
-	\end{equation*}
-	then it follows from the linearity of the inner product that
-	\begin{equation*}
-		(z,v) = \left(u - \frac{(u,v)}{(v,v)}v\right) = (u,v) - \left(\frac{(u,v)}{(v,v)}v,v\right) = (u,v) - \frac{(u,v)}{(v,v)}(v,v) = 0.
-	\end{equation*}
-	This implies $z$ is orthogonal to $v$. Now applying Pythagorean's Theorem to
-	\begin{equation*}
-		u = \frac{(u,v)}{(v,v)}v + z
-	\end{equation*}
-	results in
-	\begin{equation*}
-		\begin{aligned}
-			\|u\|^2 &= \left\|\frac{(u,v)}{(v,v)}v\right\|^2 + \|z\|^2 \\
-				&= \left|\frac{(u,v)}{(v,v)}\right|^2 \|v\|^2 + \|z\|^2 \\
-				&= \frac{|(u,v)|^2}{|(v,v)^{1/2}(v,v)^{1/2}|^2}\|v\|^2 + \|z\|^2 \\
-				&= \frac{|(u,v)|^2}{|\|v\|^2|^2}\|v\|^2 + \|z\|^2 \\
-				&= \frac{|(u,v)|^2}{\|v\|^2} + \|z\|^2 \\
-				&\geq \frac{|(u,v)|^2}{\|v\|^2}.
-		\end{aligned}
-	\end{equation*}
-	Multiplying through by $\|v\|^2$ results in our desired inequality. We can also observe if $z=0$, we get
-	\begin{equation*}
-		u = \frac{(u,v)}{(v,v)}v = \frac{(u,v)}{(v,v)^{1/2}(v,v)^{1/2}}v = \frac{(u,v)}{\|v\|^2}v,
-	\end{equation*}
-	as desired.
-\end{proof}
-
-\newpage
-
 \subsection{Banach spaces}
 \begin{motivation}
 Banach spaces are very important in the study of Sobolev spaces as Sobelev spaces themselves are Banach spaces, which will be proven later on.
@@ -749,10 +635,135 @@ Let $U \subset \mathbb{R}^n$ be a bounded open set.
 \begin{definition}
 	The space of k-times weakly differentiable functions described above is denoted as $W^k(U)$, where clearly $C^k(U) \subset W^k(U)$.
 \end{definition}
+\newpage
 
+\subsection{Fourier transform}
+In progress...
 
-%\subsection{$L^p$ Spaces}
-%\subsection{Hilbert Spaces}
+\newpage
+
+\subsection{Important inequalities}
+\begin{motivation}
+A lot of analysis proofs in general can be boiled down to figuring out if some element is smaller than, bigger than, or equal to some other element.
+For this reason, it is very helpful to know some of these important inequalities. 
+\end{motivation}
+\begin{theorem}[Young's inequality]
+Let $p > 1$, $q < \infty$, and $\frac{1}{p}+\frac{1}{q} = 1$. Then
+\[ab \leq \frac{a^p}{p} + \frac{b^q}{q}.\]
+\end{theorem}
+\begin{proof}[My proof attempt]
+Suppose we $t = \frac{1}{q}$ and $(1-t)=\frac{1}{p}$, implying $t \in (0,1)$. Then since we know $\ln$ is a concave function, we have
+	\begin{equation*}
+		\begin{aligned}
+			\ln{((1-t)a^p + tb^q)} &\geq (t-1)\ln{(a^p)} + t\ln{(b^q)} \\
+					       &= p(t-1)\ln{(a)} + qt\ln{(b)} \\
+					       &= \ln{(a)} + \ln{(b)} \\
+					       &= \ln{(ab)}.
+		\end{aligned}
+	\end{equation*}
+\end{proof}
+
+\begin{theorem}[H\"{o}lder's inequality]
+Assume $1 \leq p$, $q \leq \infty$, and $\frac{1}{p} + \frac{1}{p} = 1$. If $u \in L^p(\mathbb{R}^n)$ and $v \in L^q(\mathbb{R}^n)$, then
+	\[\int_{\mathbb{R}^n}|uv|dx \leq \|u\|_{L^p(\mathbb{R}^n)}\|v\|_{L^q(\mathbb{R}^n)}.\]
+\end{theorem}
+\begin{proof}[My proof attempt]
+	Letting $0 < t \in \mathbb{R}$, we can say
+	\[|uv| = |ut||v/t|,\]
+	and by Young's inequality
+	\[|uv| = |ut||v/t| \leq \frac{|ut|^p}{p} + \frac{|v/t|^q}{q} = \frac{|u|^pt^p}{p} + \frac{|u|^q}{qt^q}.\]
+	Now integrating with respect to $x \in \mathbb{R}^n$, results in
+	\begin{equation}
+	\label{eq:1}
+		\int_{\mathbb{R}^n}|uv|dx \leq  \int_{\mathbb{R}^n}\left(\frac{|u|^pt^p}{p} + \frac{|u|^q}{qt^q}\right)dx
+		= \frac{t^p}{p}\int_{\mathbb{R}^n}|u|^pdx + \frac{1}{qt^q}\int_{\mathbb{R}^n}|v|^qdx = g(t).
+	\end{equation}
+	For the sake of simplicity let
+	\[a = \int_{\mathbb{R}^n}|u|^pdx, \text{ and } b = \int_{\mathbb{R}^n}|v|^qdx.\]
+	Now we wish to find the smallest $t > 0$ that satisfies equation (\ref{eq:1}). To do this we can employ Calculus, which says the minimum $t$
+	we are looking for, which we denote as $t_0$, satisfies $g^{\prime}(t_0) = 0$. First, we need to compute $g^{\prime}(t)$ as follows
+	\[g^{\prime}(t) = \frac{d}{dt}\left(\frac{t^p}{p}a + \frac{1}{qt^q}b\right) = t^{p-1}a - \frac{b}{t^{q+1}}.\]
+	Then, let $g^{\prime}(t) = 0$ and solve for $t$ as follows
+	\begin{equation*}
+		\begin{aligned}
+			&g^{\prime}(t) = t^{p-1}a - \frac{b}{t^{q+1}} = 0 \\
+			&\Rightarrow t^{p-1}a = \frac{b}{t^{q+1}} \\
+			&\Rightarrow t^{p-1}t^{q+1} = \frac{b}{a} \\
+			&\Rightarrow t^{p+q} = \frac{b}{a} \\
+			&\Rightarrow t = \left(\frac{b}{a}\right)^{\frac{1}{p+q}} = t_0.
+		\end{aligned}
+	\end{equation*}
+	Finally, compute $g(t_0)$ as follows
+	\begin{equation*}
+		\begin{aligned}
+			g(t_0) &= \frac{\left(\left(\frac{b}{a}\right)^{\frac{1}{p+q}}\right)^p}{p}a + \frac{1}{q\left(\left(\frac{b}{a}\right)^{\frac{1}{p+q}}\right)^q}b \\
+			       &= \frac{\left(\frac{b}{a}\right)^{\frac{p}{p+q}}a}{p} + \frac{b}{q\left(\frac{b}{a}\right)^{\frac{q}{p+q}}} \\
+			       &= \frac{\left(\frac{b}{a}\right)^{\frac{p-1}{p}}a}{p} + \frac{b}{q\left(\frac{b}{a}\right)^{\frac{1}{p}}} \\
+			       &= \frac{b^{\frac{1}{q}}a^{\frac{1}{p}}}{p} + \frac{b^{\frac{1}{q}}a^{\frac{1}{p}}}{q} \\
+			       &= b^{\frac{1}{q}}a^{\frac{1}{p}}\left(\frac{1}{p} + \frac{1}{q}\right) \\
+			       &= b^{\frac{1}{q}}a^{\frac{1}{p}} \\
+			       &= \left(\int_{\mathbb{R}^n}|v|^qdx\right)^{\frac{1}{q}}\left(\int_{\mathbb{R}^n}|u|^pdx\right)^{\frac{1}{p}} \\
+			       &= \|v\|_{L^q(\mathbb{R}^n)}\|u\|_{L^p(\mathbb{R}^n)}.
+		\end{aligned}
+	\end{equation*}
+\end{proof}
+
+\newpage
+
+\begin{theorem}[Cauchy-Schwarz inequality]
+	Let $u$ and $v$ be arbitrary vectors in an inner product space over the scalar field $\mathbb{F}$,
+	where $\mathbb{F}$ is either $\mathbb{R}$ or $\mathbb{C}$. Then
+	\begin{equation*}
+		|(u,v)| \leq \|u\|\|v\|
+	\end{equation*}
+	with equality holding (``='') if and only if $u$ and $v$ are linearly dependent.
+	Moreover, if $|(u,v)| = \|u\|\|v\|$ and $v\not=0$, then
+	\begin{equation*}
+		u = \frac{(u,v)}{\|v\|^2}v.
+	\end{equation*}
+\end{theorem}
+\begin{proof}
+	When $u=0$ or $v=0$ then the inequality is trivial, so assume WLOG that $v\not=0$.
+	Let
+	\begin{equation*}
+		z = u - \frac{(u,v)}{(v,v)}v,
+	\end{equation*}
+	then it follows from the linearity of the inner product that
+	\begin{equation*}
+		(z,v) = \left(u - \frac{(u,v)}{(v,v)}v\right) = (u,v) - \left(\frac{(u,v)}{(v,v)}v,v\right) = (u,v) - \frac{(u,v)}{(v,v)}(v,v) = 0.
+	\end{equation*}
+	This implies $z$ is orthogonal to $v$. Now applying Pythagorean's Theorem to
+	\begin{equation*}
+		u = \frac{(u,v)}{(v,v)}v + z
+	\end{equation*}
+	results in
+	\begin{equation*}
+		\begin{aligned}
+			\|u\|^2 &= \left\|\frac{(u,v)}{(v,v)}v\right\|^2 + \|z\|^2 \\
+				&= \left|\frac{(u,v)}{(v,v)}\right|^2 \|v\|^2 + \|z\|^2 \\
+				&= \frac{|(u,v)|^2}{|(v,v)^{1/2}(v,v)^{1/2}|^2}\|v\|^2 + \|z\|^2 \\
+				&= \frac{|(u,v)|^2}{|\|v\|^2|^2}\|v\|^2 + \|z\|^2 \\
+				&= \frac{|(u,v)|^2}{\|v\|^2} + \|z\|^2 \\
+				&\geq \frac{|(u,v)|^2}{\|v\|^2}.
+		\end{aligned}
+	\end{equation*}
+	Multiplying through by $\|v\|^2$ results in our desired inequality. We can also observe if $z=0$, we get
+	\begin{equation*}
+		u = \frac{(u,v)}{(v,v)}v = \frac{(u,v)}{(v,v)^{1/2}(v,v)^{1/2}}v = \frac{(u,v)}{\|v\|^2}v,
+	\end{equation*}
+	as desired.
+\end{proof}
+
+\begin{theorem}[Minkowski's inequality]
+	If $u,v \in L^p(U)$ with $1 \leq p \leq \infty$, then we have
+	\begin{equation*}
+		\|u+v\|_{L^p(U)} \leq \|u\|_{L^p(U)} + \|v\|_{L^p(U)}.
+	\end{equation*}
+\end{theorem}
+\begin{proof}[My proof attempt]
+	In progress...
+\end{proof}
+
 %\subsection{Partition of Unity}
 
 \newpage
@@ -858,7 +869,7 @@ Fix $1 \leq p \leq \infty$, let $k \in \mathbb{N}$, and let $U \subset \mathbb{R
 
 \newpage
 
-\subsection{Approximations and density}
+\subsection{Approximations}
 \begin{motivation}
 Sobolev spaces are nice function spaces as we find that elements in Sobolev spaces can be approximated by sequences of smooth functions.
 These approximations can be done locally, globally up to but excluding the boundary, and globally up to and including the boundary.
@@ -899,10 +910,13 @@ nothing about the smoothness of the boundary of $U$, which is the goal of the ne
 \begin{proof}
 In progress...
 \end{proof}
-\begin{remark}
-	These global approximation results can be simply rewritten as a density result
-	as found in Gilbarg and Trudinger \cite{gilbarg2001elliptic}.
-\end{remark}
+
+\newpage
+
+\subsection{Density}
+\begin{motivation}
+	In progress...
+\end{motivation}
 
 \begin{theorem}
 	The subspace $C^{\infty}(U) \cap W^{k,p}(U)$ is dense in $W^{k,p}(U)$.
@@ -935,6 +949,11 @@ such that $\forall u \in W^{1,p}(U)$:
 \begin{proof}
 In progress...
 \end{proof}
+
+\newpage
+
+\subsection{Traces}
+In progress...
 
 \newpage
 
@@ -1191,6 +1210,16 @@ Let $U \subset \mathbb{R}^n$ be a bounded open set.
 
 \newpage
 
+\subsection{Sobolev spaces involving time}
+In progress...
+
+\newpage
+
+\section{Adaptive Finite Element Methods}
+In Progress...
+
+\newpage
+
 \section*{Notation}
 \addcontentsline{toc}{section}{\protect\numberline{}Notation}%
 \begin{enumerate}[(i)]
@@ -1213,6 +1242,8 @@ infinite interval, which may not always be the case.
 
 \item Let $u(x)$ be a function where $x \in \mathbb{R}^n$. Then the \texttt{gradient vector} of $u$ is 
 	\[Du(x_1,\dots,x_n) = (u_{x_1},...,u_{x_n}).\]
+
+% TODO: add continuously embedded arrow to notation
 \end{enumerate}
 
 \newpage
