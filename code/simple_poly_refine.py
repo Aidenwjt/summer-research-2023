@@ -8,6 +8,7 @@ Ear Clipping Method to generate an initial mesh that is then passed into the REF
 
 import matplotlib.pyplot as plt
 import numpy as np
+import multiprocessing as mp
 
 class Triangle:
     def __init__(self,v1,v2,v3,e1,e2,e3):
@@ -242,7 +243,8 @@ def update_ear_tip_status(vi,convex_vi,reflex_vi,ear_tips):
             ear_tips.remove(vi)
     return convex_vi,reflex_vi,ear_tips
 
-# TODO: maybe should return vertices in desired order, along with diameter
+# TODO: maybe should return vertices in desired order, along with diameter.
+#       just make this cleaner.
 def triangle_diam(t):
     l1 = distance(t.v1,t.v2)
     l2 = distance(t.v2,t.v3)
@@ -265,20 +267,72 @@ def triangle_area_root2(t):
     if(flag == 3):
         return np.sqrt(0.5*(diam*nearest_distance_to_line(t.v3,t.v2,t.v1)))
 
-# TODO: should this start at v1 on the line v1,v3, then go to v3 recursively?
-#       because if you start at the midpoint and divide and conquer, then you have to compare what is returned by both recursions.
+def angle_bisector_intersection(t):
+    print(t.v1.coords, t.v2.coords, t.v3.coords)
+    l1 = distance(t.v1, t.v2)
+    l2 = distance(t.v2, t.v3)
+    k = l1/l2
+    bisector1 = Vertex((k*t.v1.coords[0]+(1-k)*t.v3.coords[0], k*t.v1.coords[1]+(1-k)*t.v3.coords[1]), None)
+    m1 = (t.v2.coords[1] - bisector1.coords[1])/((t.v2.coords[0] - bisector1.coords[0]))
+    b1 =  t.v2.coords[1] - m1*t.v2.coords[0]
+    print(m1)
+    l1 = distance(t.v2, t.v3)
+    l2 = distance(t.v3, t.v1)
+    k = l1/l2
+    bisector2 = Vertex((k*t.v1.coords[0] + (1-k)*t.v2.coords[0], k*t.v1.coords[1] + (1-k)*t.v2.coords[1]), None)
+    m2 = (t.v3.coords[1] - bisector2.coords[1])/((t.v3.coords[0] - bisector2.coords[0]))
+    b2 =  t.v3.coords[1] - m2*t.v3.coords[0]
+    x = (b2 - b1)/(m1 - m2)
+    print(m2, x, b2)
+    y = m2*x + b2
+    print(y)
+    return Vertex((x,y),None)
+    
+# TODO: delete this function
+def iterate_along_line(procnum,p,v1,v2,v3,m,b,return_dict):
+    if(p.coords[1] != m*p.coords[0] + b):
+        return
+    if(roughly_equals(distance(v1,p)/distance(v3,p), distance(v1,v2)/distance(v2,v3), 1) == True): # TODO: user defined error instead of magic number?
+        return_dict[procnum] = p
+        return
+    if(procnum == 0):
+        p = Vertex(
+                (p.coords[0] + 1/(np.sqrt(1+(m**2))),
+                 p.coords[1] + m/(np.sqrt(1+(m**2)))),
+        None)
+    if(procnum == 1):
+        p = Vertex(
+                (p.coords[0] - 1/(np.sqrt(1+(m**2))),
+                 p.coords[1] - m/(np.sqrt(1+(m**2)))),
+        None)
+    iterate_along_line(procnum,p,v1,v2,v3,m,b,return_dict)
+
+# TODO: delete this function
 def angle_bisector(p,v1,v2,v3):
     m = (v3.coords[1] - v1.coords[1])/(v3.coords[0] - v1.coords[0])
     b = v1.coords[1] - m*v1.coords[0]
-    if(p.coords[1] != m*p.coords[0] + b):
-        return None
-    if(roughly_equal(distance(v1,p)/distance(v3,p), distance(v1,v2)/distance(v2,v3), 0.1) == True): # TODO: user defined error instead of magic number?
-        return p
-    angle_bisector(Vertex((p.coords[0],p.coords[1]),None)) # TODO: THIS LINE IS NOT DONE
+    manager = mp.Manager()
+    return_dict = manager.dict()
+    processes = []
+    for i in range(0,2):
+        proc = mp.Process(target=iterate_along_line, args=(i,p,v1,v2,v3,m,b,return_dict))
+        processes.append(proc)
+        proc.start()
+    for proc in processes:
+        proc.join()
+    points = []
+    for key, value in return_dict.items():
+        points.append(value)
+    ratio1 = distance(v1,points[0])/distance(v3,points[0])
+    ratio2 = distance(v1,points[1])/distance(v3,points[1])
+    ratio3 = distance(v1,v2)/distance(v2,v3)
+    if(np.minimum(ratio1,ratio3) <= np.minimum(ratio2, ratio3)):
+        return points[0]
+    return points[1]
 
 def diam_of_inscribed_circle(t):
-    ab1 = angle_bisector(Vertex(midpoint(t.v1,t.v3),None),t.v1,t.v2,t.v3)
-    ab2 = angle_bisector(Vertex(midpoint(t.v1,t.v2),None),t.v1,t.v3,t.v2)
+    # TODO: Get center point of inscribed circle
+    print(angle_bisector_intersection(t).coords)
     # TODO: Find the intersection point of the lines t.v2,ab1 and t.v3,ab2
     # TODO: Find the nearest distance of this intersection point to any edge of t
     # TODO: Multiply this distance by 2 and you have the diameter of the inscribed circle in t
@@ -385,6 +439,8 @@ def main():
         ax.plot([t.v1.coords[0],t.v2.coords[0]],[t.v1.coords[1],t.v2.coords[1]],color='black',linestyle='-')
         ax.plot([t.v2.coords[0],t.v3.coords[0]],[t.v2.coords[1],t.v3.coords[1]],color='black',linestyle='-')
         ax.plot([t.v3.coords[0],t.v1.coords[0]],[t.v3.coords[1],t.v1.coords[1]],color='black',linestyle='-')
+
+    diam_of_inscribed_circle(mesh_0[0])
     
     # TODO: Implement shape regularity for bisections
     # TODO: Create distance from point to line function (also returns point on the line?)
