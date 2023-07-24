@@ -183,8 +183,8 @@ def distance(v1,v2):
 def tri_area_x2(v1,v2,v3):
     return (v3.coords[0]-v1.coords[0])*(v1.coords[1]-v2.coords[1]) - (v1.coords[0]-v2.coords[0])*(v3.coords[1]-v1.coords[1])
 
-def nearest_distance_to_line(v1,v2,v3):
-    return np.absolute(tri_area_x2(v1,v2,v3) / distance(v1,v3))# harmless bug here.
+def nearest_distance_to_line(v1,p,v3):
+    return np.absolute(tri_area_x2(v1,p,v3) / distance(v1,v3))# harmless bug here.
 
 def interior_angle(vi):
     """ Calculate the interior angle that a vertex shares with its two neighbor vertices in a polygon. """
@@ -267,75 +267,24 @@ def triangle_area_root2(t):
     if(flag == 3):
         return np.sqrt(0.5*(diam*nearest_distance_to_line(t.v3,t.v2,t.v1)))
 
-def angle_bisector_intersection(t):
-    print(t.v1.coords, t.v2.coords, t.v3.coords)
-    l1 = distance(t.v1, t.v2)
-    l2 = distance(t.v2, t.v3)
-    k = l1/l2
-    bisector1 = Vertex((k*t.v1.coords[0]+(1-k)*t.v3.coords[0], k*t.v1.coords[1]+(1-k)*t.v3.coords[1]), None)
-    m1 = (t.v2.coords[1] - bisector1.coords[1])/((t.v2.coords[0] - bisector1.coords[0]))
+def section_formula(A,B,m,n):
+    return Vertex(((m*B.coords[0] + n*A.coords[0])/(m+n),(m*B.coords[1] + n*A.coords[1])/(m+n)),None)
+
+def center_of_inscribed_circle(t):
+    bisector1 = section_formula(t.v1,t.v3,distance(t.v1, t.v2),distance(t.v2, t.v3))
+    m1 = (bisector1.coords[1] - t.v2.coords[1])/(bisector1.coords[0] - t.v2.coords[0])
     b1 =  t.v2.coords[1] - m1*t.v2.coords[0]
-    print(m1)
-    l1 = distance(t.v2, t.v3)
-    l2 = distance(t.v3, t.v1)
-    k = l1/l2
-    bisector2 = Vertex((k*t.v1.coords[0] + (1-k)*t.v2.coords[0], k*t.v1.coords[1] + (1-k)*t.v2.coords[1]), None)
-    m2 = (t.v3.coords[1] - bisector2.coords[1])/((t.v3.coords[0] - bisector2.coords[0]))
+    bisector2 = section_formula(t.v2,t.v1,distance(t.v2, t.v3),distance(t.v3, t.v1))
+    m2 = (bisector2.coords[1] - t.v3.coords[1])/(bisector2.coords[0] - t.v3.coords[0])
     b2 =  t.v3.coords[1] - m2*t.v3.coords[0]
     x = (b2 - b1)/(m1 - m2)
-    print(m2, x, b2)
     y = m2*x + b2
-    print(y)
     return Vertex((x,y),None)
-    
-# TODO: delete this function
-def iterate_along_line(procnum,p,v1,v2,v3,m,b,return_dict):
-    if(p.coords[1] != m*p.coords[0] + b):
-        return
-    if(roughly_equals(distance(v1,p)/distance(v3,p), distance(v1,v2)/distance(v2,v3), 1) == True): # TODO: user defined error instead of magic number?
-        return_dict[procnum] = p
-        return
-    if(procnum == 0):
-        p = Vertex(
-                (p.coords[0] + 1/(np.sqrt(1+(m**2))),
-                 p.coords[1] + m/(np.sqrt(1+(m**2)))),
-        None)
-    if(procnum == 1):
-        p = Vertex(
-                (p.coords[0] - 1/(np.sqrt(1+(m**2))),
-                 p.coords[1] - m/(np.sqrt(1+(m**2)))),
-        None)
-    iterate_along_line(procnum,p,v1,v2,v3,m,b,return_dict)
-
-# TODO: delete this function
-def angle_bisector(p,v1,v2,v3):
-    m = (v3.coords[1] - v1.coords[1])/(v3.coords[0] - v1.coords[0])
-    b = v1.coords[1] - m*v1.coords[0]
-    manager = mp.Manager()
-    return_dict = manager.dict()
-    processes = []
-    for i in range(0,2):
-        proc = mp.Process(target=iterate_along_line, args=(i,p,v1,v2,v3,m,b,return_dict))
-        processes.append(proc)
-        proc.start()
-    for proc in processes:
-        proc.join()
-    points = []
-    for key, value in return_dict.items():
-        points.append(value)
-    ratio1 = distance(v1,points[0])/distance(v3,points[0])
-    ratio2 = distance(v1,points[1])/distance(v3,points[1])
-    ratio3 = distance(v1,v2)/distance(v2,v3)
-    if(np.minimum(ratio1,ratio3) <= np.minimum(ratio2, ratio3)):
-        return points[0]
-    return points[1]
 
 def diam_of_inscribed_circle(t):
-    # TODO: Get center point of inscribed circle
-    print(angle_bisector_intersection(t).coords)
-    # TODO: Find the intersection point of the lines t.v2,ab1 and t.v3,ab2
-    # TODO: Find the nearest distance of this intersection point to any edge of t
-    # TODO: Multiply this distance by 2 and you have the diameter of the inscribed circle in t
+    center = center_of_inscribed_circle(t)
+    radius = nearest_distance_to_line(t.v1,center,t.v3)
+    return 2*radius
 
 # REFINE procedure
 # TODO: Needs to be updated
@@ -440,7 +389,6 @@ def main():
         ax.plot([t.v2.coords[0],t.v3.coords[0]],[t.v2.coords[1],t.v3.coords[1]],color='black',linestyle='-')
         ax.plot([t.v3.coords[0],t.v1.coords[0]],[t.v3.coords[1],t.v1.coords[1]],color='black',linestyle='-')
 
-    diam_of_inscribed_circle(mesh_0[0])
     
     # TODO: Implement shape regularity for bisections
     # TODO: Create distance from point to line function (also returns point on the line?)
