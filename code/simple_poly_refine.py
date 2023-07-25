@@ -18,6 +18,7 @@ class Triangle:
         self.e1 = e1
         self.e2 = e2
         self.e3 = e3
+# TODO: method for edge flag
 
 # https://statisticsglobe.com/circular-doubly-linked-list-python
 class Vertex:
@@ -167,14 +168,9 @@ class CircularDoublyLinkedList:
                 break
         print()
 
-def roughly_equals(x,y,err):
-    if(np.absolute(x - y) <= err):
-        return True
-    return False
-
 def midpoint(v1,v2):
     """ Return the midpoint of two points in 2D. """
-    return ((v2.coords[0] + v1.coords[0])/2, (v2.coords[1] + v1.coords[1])/2)
+    return Vertex(((v2.coords[0] + v1.coords[0])/2, (v2.coords[1] + v1.coords[1])/2),None)
 
 def distance(v1,v2):
     """ Return the distance between two vertices in 2D. """
@@ -243,33 +239,17 @@ def update_ear_tip_status(vi,convex_vi,reflex_vi,ear_tips):
             ear_tips.remove(vi)
     return convex_vi,reflex_vi,ear_tips
 
-# TODO: maybe should return vertices in desired order, along with diameter.
-#       just make this cleaner.
-def triangle_diam(t):
-    l1 = distance(t.v1,t.v2)
-    l2 = distance(t.v2,t.v3)
-    l3 = distance(t.v3,t.v1)
-    max_l = np.maximum(np.maximum(l1,l2),l3)
-    if(l1 == max_l):
-        return l1,1
-    if(l2 == max_l):
-        return l2,2
-    if(l3 == max_l):
-        return l3,3
+# TODO: return diameter, and also new triangle with t.v1 and t.v2 as the longest edge?
+def diam_of_triangle(t):
+    return np.maximum(np.maximum(distance(t.v1,t.v2),distance(t.v2,t.v3)),distance(t.v3,t.v1))
 
-# TODO: Have this not call triangle_diam, very lazy
-def triangle_area_root2(t):
-    diam,flag = triangle_diam(t)
-    if(flag == 1):
-        return np.sqrt(0.5*(diam*nearest_distance_to_line(t.v1,t.v3,t.v2)))
-    if(flag == 2):
-        return np.sqrt(0.5*(diam*nearest_distance_to_line(t.v2,t.v1,t.v3)))
-    if(flag == 3):
-        return np.sqrt(0.5*(diam*nearest_distance_to_line(t.v3,t.v2,t.v1)))
+def triangle_area_root2(A,B,C):
+    return np.sqrt(0.5*(distance(A,C) * nearest_distance_to_line(A,B,C)))
 
 def section_formula(A,B,m,n):
     return Vertex(((m*B.coords[0] + n*A.coords[0])/(m+n),(m*B.coords[1] + n*A.coords[1])/(m+n)),None)
 
+# TODO: Might not need to be a function
 def center_of_inscribed_circle(t):
     bisector1 = section_formula(t.v1,t.v3,distance(t.v1, t.v2),distance(t.v2, t.v3))
     m1 = (bisector1.coords[1] - t.v2.coords[1])/(bisector1.coords[0] - t.v2.coords[0])
@@ -286,29 +266,58 @@ def diam_of_inscribed_circle(t):
     radius = nearest_distance_to_line(t.v1,center,t.v3)
     return 2*radius
 
-# REFINE procedure
-# TODO: Needs to be updated
-def refine(t,iteration,max_iterations,regularity,ax):
-    # Base case
-    if(iteration == max_max_iterations):
+"""
+def generate_child(procnum,t,p):
+    if(procnum == 0):
+        return Triangle(t.v2,t.v3,p,t.)
+"""
+
+# TODO: this function bisects the given triangle on the refinement edge and checks the inequality
+def iterate_along_line(procnum, t, p, sigma, return_dict):
+    m = (t.v2.coords[1] - t.v1.coords[1])/ (t.v2.coords[0] - t.v1.coords[0])
+    b = t.v1.coords[1] - m*t.v1.coords[0]
+    if(p.coords[1] != m*p.coords[0] + b): # TODO: only here for testing
         return
-    # Calculate coordinate of new vertex using midpoint formula
-    # v = [(t[0][1][0] + t[0][0][0])/2, (t[0][1][1] + t[0][0][1])/2]
-    v = midpoint(t[0][0],t[0][1])
-    # Bisect t based on coordinate of new vertex
-    ax.plot([v[0],t[0][2][0]],[v[1],t[0][2][1]],color='black',linestyle='-')
-    # Define child triangles based off the bisection
-    child1 = [
-            [ [t[0][0][0],t[0][0][1]], [t[0][2][0],t[0][2][1]], [v[0],v[1]] ],
-            [ t[1][2]+2, t[1][2]+2, t[1][0] ]
-    ]
-    child2 = [
-            [ [t[0][1][0],t[0][1][1]], [t[0][2][0],t[0][2][1]], [v[0],v[1]] ],
-            [ t[1][2]+2, t[1][2]+2, t[1][0] ]
-    ]
-    # Recurse
-    refine(child1,n+1,max_n)
-    refine(child2,n+1,max_n)
+    # TODO: calculate three values based off which procnum
+    if(procnum == 0):
+        child = Triangle(t.v3,p,t.v2,0,0,0)
+    if(procnum == 1):
+        child = Triangle(t.v3,p,t.v1,0,0,0)
+    circle_diam = diam_of_inscribed_circle(child)
+    area_root2 = triangle_area_root2(child)
+    triangle_diam = diam_of_triangle(child)
+    if(circle_diam <= area_root2 and area_root2 <= triangle_diam and triangle_diam <= sigma*circle_diam):
+        return return_dict.append[child]
+    if(procnum == 0):
+        p = Vertex(
+                (p.coords[0] + 1/(np.sqrt(1+(m**2))),
+                 p.coords[1] + m/(np.sqrt(1+(m**2)))),
+        None)
+    if(procnum == 1):
+        p = Vertex(
+                (p.coords[0] - 1/(np.sqrt(1+(m**2))),
+                 p.coords[1] - m/(np.sqrt(1+(m**2)))),
+        None)
+    iterate_along_line(procnum, t, p, sigma, return_dict)
+
+# TODO: this function manages the process of iterating along the refinement edge
+def bisect(t, sigma):
+    manager = mp.Manager()
+    return_dict = manager.dict()
+    processes = []
+    p = midpoint(t.v1, t.v2)
+    for i in range(0,2):
+        proc = mp.Process(target=iterate_along_line, args=(i, t, p, sigma, return_dict))
+        processes.append(proc)
+        proc.start()
+    for proc in processes:
+        proc.join()
+    child_triangles = []
+    for key, value in return_dict.items():
+        child_triangles.append(value)
+    return child_triangles
+
+# TODO: Refinement procedure function here
 
 def main():
     # Get input from user and parse coordinates
@@ -370,7 +379,16 @@ def main():
         vi = ear_tips[0]
         vi_prev = vi.prev
         vi_next = vi.next
-        mesh_0.append(Triangle(vi_prev,vi,vi_next,0,0,0))
+        # TODO: might not need this
+        l1 = distance(vi_prev,vi)
+        l2 = distance(vi, vi_next)
+        l3 = distance(vi_next,vi_prev)
+        if(np.maximum(np.maximum(l1, l2), l3) == l1):
+            mesh_0.append(Triangle(vi_prev,vi,vi_next,0,0,1))
+        elif(np.maximum(np.maximum(l1, l2), l3) == l2):
+            mesh_0.append(Triangle(vi,vi_next,vi_prev,0,0,1))
+        else:
+            mesh_0.append(Triangle(vi_prev,vi_next,vi,0,0,1))
         # Update relationships in polygon
         polygon.remove(vi.coords)
         # Let this vertex no longer be an ear tip
@@ -389,11 +407,20 @@ def main():
         ax.plot([t.v2.coords[0],t.v3.coords[0]],[t.v2.coords[1],t.v3.coords[1]],color='black',linestyle='-')
         ax.plot([t.v3.coords[0],t.v1.coords[0]],[t.v3.coords[1],t.v1.coords[1]],color='black',linestyle='-')
 
-    
-    # TODO: Implement shape regularity for bisections
-    # TODO: Create distance from point to line function (also returns point on the line?)
-    # TODO: Generate the special labeling of the initial mesh and draw the initial mesh.
-   
+    # TODO: Generate the special labeling of the initial mesh and draw the initial mesh
+    """
+    initial_mesh_0 = []
+    for t in mesh_0:
+        children = bisect(t, sigma)
+        grandchildren1 = bisect(child[0], sigma)
+        grandchildren2 = bisect(child[1], sigma)
+        # TODO: label the last lines drawn by the vertex as 0, then everything else as 1
+        initial_mesh_0.append(grandchildren1[0])
+        initial_mesh_0.append(grandchildren1[1])
+        initial_mesh_0.append(grandchildren2[0])
+        initial_mesh_0.append(grandchildren2[1])
+    # TODO: label and draw the new initial mesh
+    """
     plt.show()
 
 main()
