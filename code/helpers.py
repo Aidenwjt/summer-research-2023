@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+class Point:
+    def __init__(self,x,y):
+        self.x = x
+        self.y = y
+
 def midpoint(P,Q):
     """ Returns the midpoint of two points in 2D. """
     return Point((Q.x + P.x)/2, (Q.y + P.y)/2)
