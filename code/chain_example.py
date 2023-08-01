@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import matplotlib.pyplot as plt
 import numpy as np
 import helpers
 
@@ -44,122 +45,74 @@ class Node:
         p = helpers.midpoint(self.T.v[1], self.T.v[2])
         child_triangle1 = Triangle(p, self.T.v[0], self.T.v[1], Edge(self.T.v[0],self.T.v[1]), Edge(p,self.T.v[1]), Edge(p,self.T.v[0]))
         child_triangle2 = Triangle(p, self.T.v[2], self.T.v[0], Edge(self.T.v[0],self.T.v[2]), Edge(p,self.T.v[0]), Edge(p,self.T.v[2]))
-        child_node1 = Node(child_triangle1, self.T.GT + 1)
-        child_node2 = Node(child_triangle2, self.T.GT + 1)
-        self.T.left = child_node1
-        self.T.right = child_node2
-        child_node1.parent = self.T
-        child_node2.parent = self.T
+        child_node1 = Node(child_triangle1, self.GT + 1)
+        child_node2 = Node(child_triangle2, self.GT + 1)
+        self.left = child_node1
+        self.right = child_node2
+        child_node1.parent = self
+        child_node2.parent = self
         return (child_node1, child_node2)
 
 def update_neighbors(child1, child2, parents_neighbor):
-    if(child1.parents_neighbor.left != None):
+    if(parents_neighbor.left != None):
         # Iterate through the neighbors left children
-        for e in child1.parents_neighbor.left.T.e:
+        for e in parents_neighbor.left.T.e:
             # Check if left child shares an edge with any of the child triangles
             if(child1.T.e[0].equals(e) == True):
                 # Update neighbor relations
-                child1.neighbor0 = child1.parents_neighbor.left
-                if(child1.parents_neighbor.left.neighbor0 == child1.parent):
-                    child1.parents_neighbor.left.neighbor0 = child1
-                elif(child1.parents_neighbor.left.neighbor1 == child1.parent):
-                    child1.parents_neighbor.left.neighbor1 = child1
+                child1.neighbor0 = parents_neighbor.left
+                if(parents_neighbor.left.neighbor0 == child1.parent):
+                    parents_neighbor.left.neighbor0 = child1
+                elif(parents_neighbor.left.neighbor1 == child1.parent):
+                    parents_neighbor.left.neighbor1 = child1
                 else:
-                    child1.parents_neighbor.left.neighbor2 = child1
-            if(child1.T.e[1].equals(e) == True):
-                child1.neighbor1 = child1.parents_neighbor.left
-                if(child1.parents_neighbor0.left.neighbor0 == child1.parent):
-                    child1.parents_neighbor.left.neighbor0 = child1
-                elif(child1.parents_neighbor.left.neighbor1 == child1.parent):
-                    child1.parents_neighbor.left.neighbor1 = child1
-                else:
-                    child1.parents_neighbor.left.neighbor2 = child1
+                    parents_neighbor.left.neighbor2 = child1
             if(child2.T.e[0].equals(e) == True):
-                child2.neighbor0 = child1.parents_neighbor.left
-                if(child1.parents_neighbor.left.neighbor0 == child1.parent):
-                    child1.parents_neighbor.left.neighbor0 = child2
-                elif(child1.parents_neighbor.left.neighbor1 == child1.parent):
-                    child1.parents_neighbor.left.neighbor1 = child2
+                child2.neighbor0 = parents_neighbor.left
+                if(parents_neighbor.left.neighbor0 == child1.parent):
+                    parents_neighbor.left.neighbor0 = child2
+                elif(parents_neighbor.left.neighbor1 == child1.parent):
+                    parents_neighbor.left.neighbor1 = child2
                 else:
-                    child1.parents_neighbor.left.neighbor2 = child2
-            if(child2.T.e[2].equals(e) == True):
-                child2.neighbor2 = child1.parents_neighbor.left
-                if(child1.parents_neighbor.left.neighbor0 == child1.parent):
-                    child1.parents_neighbor.left.neighbor0 = child2
-                elif(child1.parents_neighbor.left.neighbor1 == child1.parent):
-                    child1.parents_neighbor0.left.neighbor1 = child2
-                else:
-                    child1.parents_neighbor.left.neighbor2 = child2
-        for e in child1.parents_neighbor.right.T.e:
+                    parents_neighbor.left.neighbor2 = child2
+        for e in parents_neighbor.right.T.e:
             # Check if right child shares an edge with any of the child triangles
             if(child1.T.e[0].equals(e) == True):
                 # Update neighbor relations
-                child1.neighbor0 = child1.parents_neighbor.right
-                if(child1.parents_neighbor.right.neighbor0 == child1.parent):
-                    child1.parents_neighbor.right.neighbor0 = child1
-                elif(child1.parents_neighbor.right.neighbor1 == child1.parent):
-                    child1.parents_neighbor.right.neighbor1 = child1
+                child1.neighbor0 = parents_neighbor.right
+                if(parents_neighbor.right.neighbor0 == child1.parent):
+                    parents_neighbor.right.neighbor0 = child1
+                elif(parents_neighbor.right.neighbor1 == child1.parent):
+                    parents_neighbor.right.neighbor1 = child1
                 else:
-                    child1.parents_neighbor.right.neighbor2 = child1
-            if(child1.T.e[1].equals(e) == True):
-                child1.neighbor1 = child1.parents_neighbor.right
-                if(child1.parents_neighbor.right.neighbor0 == child1.parent):
-                    child1.parents_neighbor.right.neighbor0 = child1
-                elif(child1.parents_neighbor.right.neighbor1 == child1.parent):
-                    child1.parents_neighbor.right.neighbor1 = child1
-                else:
-                    child1.parents_neighbor.right.neighbor2 = child1
+                    parents_neighbor.right.neighbor2 = child1
             if(child2.T.e[0].equals(e) == True):
-                child2.neighbor0 = child1.parents_neighbor.right
-                if(child1.parents_neighbor.right.neighbor0 == child1.parent):
-                    child1.parents_neighbor.right.neighbor0 = child2
-                elif(child1.parents_neighbor.right.neighbor1 == child1.parent):
-                    child1.parents_neighbor.right.neighbor1 = child2
+                child2.neighbor0 = parents_neighbor.right
+                if(parents_neighbor.right.neighbor0 == child1.parent):
+                    parents_neighbor.right.neighbor0 = child2
+                elif(parents_neighbor.right.neighbor1 == child1.parent):
+                    parents_neighbor.right.neighbor1 = child2
                 else:
-                    child1.parents_neighbor.right.neighbor2 = child2
-            if(child2.T.e[2].equals(e) == True):
-                child2.neighbor2 = child1.parents_neighbor.right
-                if(child1.parents_neighbor.right.neighbor0 == child1.parent):
-                    child1.parents_neighbor.right.neighbor0 = child2
-                elif(child1.parents_neighbor.right.neighbor1 == child1.parent):
-                    child1.parents_neighbor.right.neighbor1 = child2
-                else:
-                    child1.parents_neighbor.right.neighbor2 = child2
+                    parents_neighbor.right.neighbor2 = child2
     else:
-        for e in child1.parents_neighbor.T.e:
+        for e in parents_neighbor.T.e:
             if(child1.T.e[0].equals(e) == True):
                 # Update neighbor relations
-                child1.neighbor0 = child1.parents_neighbor
-                if(child1.parents_neighbor.neighbor0 == child1.parent):
-                    child1.parents_neighbor.neighbor0 = child1
-                elif(child1.parents_neighbor.neighbor1 == child1.parent):
-                    child1.parents_neighbor.neighbor1 = child1
+                child1.neighbor0 = parents_neighbor
+                if(parents_neighbor.neighbor0 == child1.parent):
+                    parents_neighbor.neighbor0 = child1
+                elif(parents_neighbor.neighbor1 == child1.parent):
+                    parents_neighbor.neighbor1 = child1
                 else:
-                    child1.parents_neighbor.neighbor2 = child1
-            if(child1.T.e[1].equals(e) == True):
-                child1.neighbor1 = child1.parents_neighbor
-                if(child1.parents_neighbor.neighbor0 == child1.parent):
-                    child1.parents_neighbor.neighbor0 = child1
-                elif(child1.parents_neighbor.neighbor1 == child1.parent):
-                    child1.parents_neighbor.neighbor1 = child1
-                else:
-                    child1.parents_neighbor.neighbor2 = child1
+                    parents_neighbor.neighbor2 = child1
             if(child2.T.e[0].equals(e) == True):
-                child2.neighbor0 = child1.parents_neighbor
-                if(child1.parents_neighbor.neighbor0 == child1.parent):
-                    child1.parents_neighbor.neighbor0 = child2
-                elif(child1.parents_neighbor.neighbor1 == child1.parent):
-                    child1.parents_neighbor.neighbor1 = child2
+                child2.neighbor0 = parents_neighbor
+                if(parents_neighbor.neighbor0 == child1.parent):
+                    parents_neighbor.neighbor0 = child2
+                elif(parents_neighbor.neighbor1 == child1.parent):
+                    parents_neighbor.neighbor1 = child2
                 else:
-                    child1.parents_neighbor.neighbor2 = child2
-            if(child2.T.e[2].equals(e) == True):
-                child2.neighbor2 = child1.parents_neighbor
-                if(child1.parents_neighbor.neighbor0 == child1.parent):
-                    child1.parents_neighbor.neighbor0 = child2
-                elif(child1.parents_neighbor.neighbor1 == child1.parent):
-                    child1.parents_neighbor.neighbor1 = child2
-                else:
-                    child1.parents_neighbor.neighbor2 = child2
+                    parents_neighbor.neighbor2 = child2
 
 def refine_recursive(mesh, elem):
     if (elem.neighbor0 != None):
@@ -168,30 +121,29 @@ def refine_recursive(mesh, elem):
     else:
         child1, child2 = elem.bisect()
         mesh.remove(elem)
-        mesh.append(child1,child2)
-        # TODO: Set new neighbors of child1 and child2
-        #       - go through all three neighbors of parent node
-        #           - if the neighbors have children, then go through the children instead
-        #       - NEED TO ALSO UPDATE RELATION OF THE NEIGHBORING TRIANGLES TO THE NEW ONES AS WELL?
+        mesh.append(child1)
+        mesh.append(child2)
         child1.neighbor2 = child2 # NOTE: still dont know if edge 0 and edge 1 have triangles that share them
         child2.neighbor1 = child1 # NOTE: still dont konw if edge 0 and edge 2 have triangles that share them
+        if(child1.parent.neighbor1 != None):
+            update_neighbors(child1, child2, child1.parent.neighbor1)
+        if(child1.parent.neighbor2 != None):
+            update_neighbors(child1, child2, child1.parent.neighbor2)
         if elem.neighbor0 == None:
-            if(child1.parent.neighbor0 != None):
-                update_neighbors(child1, child2, child1.parent.neighbor0)
-            if(child1.parent.neighbor1 != None):
-                update_neighbors(child1, child2, child1.parent.neighbor1)
-            if(child1.parent.neighbor2 != None):
-                update_neighbors(child1, child2, child1.parent.neighbor2)
             return mesh
-        child3, child4 = neighbor2.bisect()
+        child3, child4 = elem.neighbor0.bisect()
         child3.neighbor2 = child4
         child4.neighbor1 = child3
-        # TODO: Set new neighbors of child3 child4
-        #       - go through all three neighbors of parent node
-        #           - if the neighbors have children, then go through the children instead
-        mesh.remove(elem)
+        child1.neighbor1 = child4
+        child2.neighbor2 = child3
+        child3.neighbor1 = child2
+        child4.neighbor2 = child1
+        if(child3.parent.neighbor1 != None):
+            update_neighbors(child3, child4, child3.parent.neighbor1)
+        if(child3.parent.neighbor2 != None):
+            update_neighbors(child3, child4, child3.parent.neighbor2)
         mesh.remove(elem.neighbor0)
-        mesh.append(child1,child2,child3,child4)
+        mesh.append(child3,child4)
     return mesh
 
 def refine(mesh, marked):
@@ -211,10 +163,10 @@ T3 = Triangle(p0, p2, p3, Edge(p2 , p3), Edge(p0, p3), Edge(p0, p2))
 T4 = Triangle(p0, p1, p2, Edge(p1 , p2), Edge(p2, p0), Edge(p0, p1))
 
 # Creating forest of binary trees
-root1 = Node(T1, 0, None)
-root2 = Node(T2, 0, None)
-root3 = Node(T3, 0, None)
-root4 = Node(T4, 0, None)
+root1 = Node(T1, 0)
+root2 = Node(T2, 0)
+root3 = Node(T3, 0)
+root4 = Node(T4, 0)
 
 root1.root = root1
 root1.neighbor0 = None
@@ -239,3 +191,12 @@ root4.neighbor2 = root1
 # TODO: Refine to get to same place as example
 mesh = [root1, root2, root3, root4]
 marked = [root1, root4]
+mesh = refine(mesh, marked)
+
+fig, ax = plt.subplots()
+for elem in mesh:
+    ax.plot([elem.T.v[0].x,elem.T.v[1].x],[elem.T.v[0].y,elem.T.v[1].y],color='black',linestyle='-')
+    ax.plot([elem.T.v[1].x,elem.T.v[2].x],[elem.T.v[1].y,elem.T.v[2].y],color='black',linestyle='-')
+    ax.plot([elem.T.v[2].x,elem.T.v[0].x],[elem.T.v[2].y,elem.T.v[0].y],color='black',linestyle='-')
+
+plt.show()
