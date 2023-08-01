@@ -303,43 +303,14 @@ mesh = refine(mesh, marked)
 
 # Third iteration
 marked = [root1.right.right]
-#marked = [root4.left.left, root1.right.right]
 mesh = refine(mesh, marked)
-"""
-print("({},{}),({},{}),({},{})".format(root4.left.left.neighbor0.T.v[0].x, root4.left.left.neighbor0.T.v[0].y,
-                                        root4.left.left.neighbor0.T.v[1].x, root4.left.left.neighbor0.T.v[1].y,
-                                        root4.left.left.neighbor0.T.v[2].x, root4.left.left.neighbor0.T.v[2].y))
-print("({},{}),({},{}),({},{})".format(root4.left.left.neighbor1.T.v[0].x, root4.left.left.neighbor1.T.v[0].y,
-                                        root4.left.left.neighbor1.T.v[1].x, root4.left.left.neighbor1.T.v[1].y,
-                                        root4.left.left.neighbor1.T.v[2].x, root4.left.left.neighbor1.T.v[2].y))
-print("({},{}),({},{}),({},{})".format(root4.left.left.neighbor2.T.v[0].x, root4.left.left.neighbor2.T.v[0].y,
-                                        root4.left.left.neighbor2.T.v[1].x, root4.left.left.neighbor2.T.v[1].y,
-                                        root4.left.left.neighbor2.T.v[2].x, root4.left.left.neighbor2.T.v[2].y))
-"""
 
-#marked = [root1.right.right.left, root1.right.right.right]
+# Fourth iteration
 marked = [root1.right.right.left]
 mesh = refine(mesh, marked)
-"""
-print(root1.right.right.left.neighbor0)
-print("({},{}),({},{}),({},{})".format(root1.right.right.left.neighbor1.T.v[0].x, root1.right.right.left.neighbor1.T.v[0].y,
-                                        root1.right.right.left.neighbor1.T.v[1].x, root1.right.right.left.neighbor1.T.v[1].y,
-                                        root1.right.right.left.neighbor1.T.v[2].x, root1.right.right.left.neighbor1.T.v[2].y))
-print("({},{}),({},{}),({},{})".format(root1.right.right.left.neighbor2.T.v[0].x, root1.right.right.left.neighbor2.T.v[0].y,
-                                        root1.right.right.left.neighbor2.T.v[1].x, root1.right.right.left.neighbor2.T.v[1].y,
-                                        root1.right.right.left.neighbor2.T.v[2].x, root1.right.right.left.neighbor2.T.v[2].y))
-print("({},{}),({},{}),({},{})".format(root1.right.right.right.neighbor0.T.v[0].x, root1.right.right.right.neighbor0.T.v[0].y,
-                                        root1.right.right.right.neighbor0.T.v[1].x, root1.right.right.right.neighbor0.T.v[1].y,
-                                        root1.right.right.right.neighbor0.T.v[2].x, root1.right.right.right.neighbor0.T.v[2].y))
-print("({},{}),({},{}),({},{})".format(root1.right.right.right.neighbor1.T.v[0].x, root1.right.right.right.neighbor1.T.v[0].y,
-                                        root1.right.right.right.neighbor1.T.v[1].x, root1.right.right.right.neighbor1.T.v[1].y,
-                                        root1.right.right.right.neighbor1.T.v[2].x, root1.right.right.right.neighbor1.T.v[2].y))
-print("({},{}),({},{}),({},{})".format(root1.right.right.right.neighbor2.T.v[0].x, root1.right.right.right.neighbor2.T.v[0].y,
-                                        root1.right.right.right.neighbor2.T.v[1].x, root1.right.right.right.neighbor2.T.v[1].y,
-                                        root1.right.right.right.neighbor2.T.v[2].x, root1.right.right.right.neighbor2.T.v[2].y))
-"""
-marked = [root1.right.right.left.left, root1.right.right.left.right]
-mesh = refine(mesh, marked)
+
+#marked = [root1.right.right.left.left, root1.right.right.left.right]
+#mesh = refine(mesh, marked)
 
 fig, ax = plt.subplots()
 for elem in mesh:
