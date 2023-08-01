@@ -14,7 +14,8 @@ class Edge:
         self.p = p
         self.q = q
     def equals(self, e):
-        if((self.p == e.p and self.q == e.q) or (self.p == e.q and self.q == e.p)):
+        if(( (self.p.x == e.p.x and self.p.y == e.p.y) and (self.q.x == e.q.x and self.q.y == e.q.y) )
+           or ( (self.p.x == e.q.x and self.p.y == e.q.y) and (self.q.x == e.p.x and self.q.y == e.p.y) )):
             return True
         return False
 
@@ -67,8 +68,42 @@ def update_neighbors(child1, child2, parents_neighbor):
                     parents_neighbor.left.neighbor1 = child1
                 else:
                     parents_neighbor.left.neighbor2 = child1
+            if(child1.T.e[1].equals(e) == True):
+                # Update neighbor relations
+                child1.neighbor1 = parents_neighbor.left
+                if(parents_neighbor.left.neighbor0 == child1.parent):
+                    parents_neighbor.left.neighbor0 = child1
+                elif(parents_neighbor.left.neighbor1 == child1.parent):
+                    parents_neighbor.left.neighbor1 = child1
+                else:
+                    parents_neighbor.left.neighbor2 = child1
+            if(child1.T.e[2].equals(e) == True):
+                # Update neighbor relations
+                child1.neighbor2 = parents_neighbor.left
+                if(parents_neighbor.left.neighbor0 == child1.parent):
+                    parents_neighbor.left.neighbor0 = child1
+                elif(parents_neighbor.left.neighbor1 == child1.parent):
+                    parents_neighbor.left.neighbor1 = child1
+                else:
+                    parents_neighbor.left.neighbor2 = child1
             if(child2.T.e[0].equals(e) == True):
                 child2.neighbor0 = parents_neighbor.left
+                if(parents_neighbor.left.neighbor0 == child1.parent):
+                    parents_neighbor.left.neighbor0 = child2
+                elif(parents_neighbor.left.neighbor1 == child1.parent):
+                    parents_neighbor.left.neighbor1 = child2
+                else:
+                    parents_neighbor.left.neighbor2 = child2
+            if(child2.T.e[1].equals(e) == True):
+                child2.neighbor1 = parents_neighbor.left
+                if(parents_neighbor.left.neighbor0 == child1.parent):
+                    parents_neighbor.left.neighbor0 = child2
+                elif(parents_neighbor.left.neighbor1 == child1.parent):
+                    parents_neighbor.left.neighbor1 = child2
+                else:
+                    parents_neighbor.left.neighbor2 = child2
+            if(child2.T.e[2].equals(e) == True):
+                child2.neighbor2 = parents_neighbor.left
                 if(parents_neighbor.left.neighbor0 == child1.parent):
                     parents_neighbor.left.neighbor0 = child2
                 elif(parents_neighbor.left.neighbor1 == child1.parent):
@@ -86,8 +121,42 @@ def update_neighbors(child1, child2, parents_neighbor):
                     parents_neighbor.right.neighbor1 = child1
                 else:
                     parents_neighbor.right.neighbor2 = child1
+            if(child1.T.e[1].equals(e) == True):
+                # Update neighbor relations
+                child1.neighbor1 = parents_neighbor.right
+                if(parents_neighbor.right.neighbor0 == child1.parent):
+                    parents_neighbor.right.neighbor0 = child1
+                elif(parents_neighbor.right.neighbor1 == child1.parent):
+                    parents_neighbor.right.neighbor1 = child1
+                else:
+                    parents_neighbor.right.neighbor2 = child1
+            if(child1.T.e[2].equals(e) == True):
+                # Update neighbor relations
+                child1.neighbor2 = parents_neighbor.right
+                if(parents_neighbor.right.neighbor0 == child1.parent):
+                    parents_neighbor.right.neighbor0 = child1
+                elif(parents_neighbor.right.neighbor1 == child1.parent):
+                    parents_neighbor.right.neighbor1 = child1
+                else:
+                    parents_neighbor.right.neighbor2 = child1
             if(child2.T.e[0].equals(e) == True):
                 child2.neighbor0 = parents_neighbor.right
+                if(parents_neighbor.right.neighbor0 == child1.parent):
+                    parents_neighbor.right.neighbor0 = child2
+                elif(parents_neighbor.right.neighbor1 == child1.parent):
+                    parents_neighbor.right.neighbor1 = child2
+                else:
+                    parents_neighbor.right.neighbor2 = child2
+            if(child2.T.e[1].equals(e) == True):
+                child2.neighbor1 = parents_neighbor.right
+                if(parents_neighbor.right.neighbor0 == child1.parent):
+                    parents_neighbor.right.neighbor0 = child2
+                elif(parents_neighbor.right.neighbor1 == child1.parent):
+                    parents_neighbor.right.neighbor1 = child2
+                else:
+                    parents_neighbor.right.neighbor2 = child2
+            if(child2.T.e[2].equals(e) == True):
+                child2.neighbor2 = parents_neighbor.right
                 if(parents_neighbor.right.neighbor0 == child1.parent):
                     parents_neighbor.right.neighbor0 = child2
                 elif(parents_neighbor.right.neighbor1 == child1.parent):
@@ -105,8 +174,42 @@ def update_neighbors(child1, child2, parents_neighbor):
                     parents_neighbor.neighbor1 = child1
                 else:
                     parents_neighbor.neighbor2 = child1
+            if(child1.T.e[1].equals(e) == True):
+                # Update neighbor relations
+                child1.neighbor1 = parents_neighbor
+                if(parents_neighbor.neighbor0 == child1.parent):
+                    parents_neighbor.neighbor0 = child1
+                elif(parents_neighbor.neighbor1 == child1.parent):
+                    parents_neighbor.neighbor1 = child1
+                else:
+                    parents_neighbor.neighbor2 = child1
+            if(child1.T.e[2].equals(e) == True):
+                # Update neighbor relations
+                child1.neighbor2 = parents_neighbor
+                if(parents_neighbor.neighbor0 == child1.parent):
+                    parents_neighbor.neighbor0 = child1
+                elif(parents_neighbor.neighbor1 == child1.parent):
+                    parents_neighbor.neighbor1 = child1
+                else:
+                    parents_neighbor.neighbor2 = child1
             if(child2.T.e[0].equals(e) == True):
                 child2.neighbor0 = parents_neighbor
+                if(parents_neighbor.neighbor0 == child1.parent):
+                    parents_neighbor.neighbor0 = child2
+                elif(parents_neighbor.neighbor1 == child1.parent):
+                    parents_neighbor.neighbor1 = child2
+                else:
+                    parents_neighbor.neighbor2 = child2
+            if(child2.T.e[1].equals(e) == True):
+                child2.neighbor1 = parents_neighbor
+                if(parents_neighbor.neighbor0 == child1.parent):
+                    parents_neighbor.neighbor0 = child2
+                elif(parents_neighbor.neighbor1 == child1.parent):
+                    parents_neighbor.neighbor1 = child2
+                else:
+                    parents_neighbor.neighbor2 = child2
+            if(child2.T.e[2].equals(e) == True):
+                child2.neighbor2 = parents_neighbor
                 if(parents_neighbor.neighbor0 == child1.parent):
                     parents_neighbor.neighbor0 = child2
                 elif(parents_neighbor.neighbor1 == child1.parent):
@@ -200,8 +303,43 @@ mesh = refine(mesh, marked)
 
 # Third iteration
 marked = [root1.right.right]
+#marked = [root4.left.left, root1.right.right]
 mesh = refine(mesh, marked)
+"""
+print("({},{}),({},{}),({},{})".format(root4.left.left.neighbor0.T.v[0].x, root4.left.left.neighbor0.T.v[0].y,
+                                        root4.left.left.neighbor0.T.v[1].x, root4.left.left.neighbor0.T.v[1].y,
+                                        root4.left.left.neighbor0.T.v[2].x, root4.left.left.neighbor0.T.v[2].y))
+print("({},{}),({},{}),({},{})".format(root4.left.left.neighbor1.T.v[0].x, root4.left.left.neighbor1.T.v[0].y,
+                                        root4.left.left.neighbor1.T.v[1].x, root4.left.left.neighbor1.T.v[1].y,
+                                        root4.left.left.neighbor1.T.v[2].x, root4.left.left.neighbor1.T.v[2].y))
+print("({},{}),({},{}),({},{})".format(root4.left.left.neighbor2.T.v[0].x, root4.left.left.neighbor2.T.v[0].y,
+                                        root4.left.left.neighbor2.T.v[1].x, root4.left.left.neighbor2.T.v[1].y,
+                                        root4.left.left.neighbor2.T.v[2].x, root4.left.left.neighbor2.T.v[2].y))
+"""
 
+#marked = [root1.right.right.left, root1.right.right.right]
+marked = [root1.right.right.left]
+mesh = refine(mesh, marked)
+"""
+print(root1.right.right.left.neighbor0)
+print("({},{}),({},{}),({},{})".format(root1.right.right.left.neighbor1.T.v[0].x, root1.right.right.left.neighbor1.T.v[0].y,
+                                        root1.right.right.left.neighbor1.T.v[1].x, root1.right.right.left.neighbor1.T.v[1].y,
+                                        root1.right.right.left.neighbor1.T.v[2].x, root1.right.right.left.neighbor1.T.v[2].y))
+print("({},{}),({},{}),({},{})".format(root1.right.right.left.neighbor2.T.v[0].x, root1.right.right.left.neighbor2.T.v[0].y,
+                                        root1.right.right.left.neighbor2.T.v[1].x, root1.right.right.left.neighbor2.T.v[1].y,
+                                        root1.right.right.left.neighbor2.T.v[2].x, root1.right.right.left.neighbor2.T.v[2].y))
+print("({},{}),({},{}),({},{})".format(root1.right.right.right.neighbor0.T.v[0].x, root1.right.right.right.neighbor0.T.v[0].y,
+                                        root1.right.right.right.neighbor0.T.v[1].x, root1.right.right.right.neighbor0.T.v[1].y,
+                                        root1.right.right.right.neighbor0.T.v[2].x, root1.right.right.right.neighbor0.T.v[2].y))
+print("({},{}),({},{}),({},{})".format(root1.right.right.right.neighbor1.T.v[0].x, root1.right.right.right.neighbor1.T.v[0].y,
+                                        root1.right.right.right.neighbor1.T.v[1].x, root1.right.right.right.neighbor1.T.v[1].y,
+                                        root1.right.right.right.neighbor1.T.v[2].x, root1.right.right.right.neighbor1.T.v[2].y))
+print("({},{}),({},{}),({},{})".format(root1.right.right.right.neighbor2.T.v[0].x, root1.right.right.right.neighbor2.T.v[0].y,
+                                        root1.right.right.right.neighbor2.T.v[1].x, root1.right.right.right.neighbor2.T.v[1].y,
+                                        root1.right.right.right.neighbor2.T.v[2].x, root1.right.right.right.neighbor2.T.v[2].y))
+"""
+marked = [root1.right.right.left.left, root1.right.right.left.right]
+mesh = refine(mesh, marked)
 
 fig, ax = plt.subplots()
 for elem in mesh:
