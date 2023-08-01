@@ -115,35 +115,34 @@ def update_neighbors(child1, child2, parents_neighbor):
                     parents_neighbor.neighbor2 = child2
 
 def refine_recursive(mesh, elem):
-    if (elem.neighbor0 != None):
-        if(elem.neighbor0.GT < elem.GT):
-            mesh = refine_recursive(mesh, elem.neighbor0)
-    else:
-        child1, child2 = elem.bisect()
-        mesh.remove(elem)
-        mesh.append(child1)
-        mesh.append(child2)
-        child1.neighbor2 = child2 # NOTE: still dont know if edge 0 and edge 1 have triangles that share them
-        child2.neighbor1 = child1 # NOTE: still dont konw if edge 0 and edge 2 have triangles that share them
-        if(child1.parent.neighbor1 != None):
-            update_neighbors(child1, child2, child1.parent.neighbor1)
-        if(child1.parent.neighbor2 != None):
-            update_neighbors(child1, child2, child1.parent.neighbor2)
-        if elem.neighbor0 == None:
-            return mesh
-        child3, child4 = elem.neighbor0.bisect()
-        child3.neighbor2 = child4
-        child4.neighbor1 = child3
-        child1.neighbor1 = child4
-        child2.neighbor2 = child3
-        child3.neighbor1 = child2
-        child4.neighbor2 = child1
-        if(child3.parent.neighbor1 != None):
-            update_neighbors(child3, child4, child3.parent.neighbor1)
-        if(child3.parent.neighbor2 != None):
-            update_neighbors(child3, child4, child3.parent.neighbor2)
-        mesh.remove(elem.neighbor0)
-        mesh.append(child3,child4)
+    if(elem.neighbor0 != None and elem.neighbor0.GT < elem.GT):
+        mesh = refine_recursive(mesh, elem.neighbor0)
+    child1, child2 = elem.bisect()
+    mesh.remove(elem)
+    mesh.append(child1)
+    mesh.append(child2)
+    child1.neighbor2 = child2 # NOTE: still dont know if edge 0 and edge 1 have triangles that share them
+    child2.neighbor1 = child1 # NOTE: still dont konw if edge 0 and edge 2 have triangles that share them
+    if(child1.parent.neighbor1 != None):
+        update_neighbors(child1, child2, child1.parent.neighbor1)
+    if(child1.parent.neighbor2 != None):
+        update_neighbors(child1, child2, child1.parent.neighbor2)
+    if elem.neighbor0 == None:
+        return mesh
+    child3, child4 = elem.neighbor0.bisect()
+    child3.neighbor2 = child4
+    child4.neighbor1 = child3
+    child1.neighbor1 = child4
+    child2.neighbor2 = child3
+    child3.neighbor1 = child2
+    child4.neighbor2 = child1
+    if(child3.parent.neighbor1 != None):
+        update_neighbors(child3, child4, child3.parent.neighbor1)
+    if(child3.parent.neighbor2 != None):
+        update_neighbors(child3, child4, child3.parent.neighbor2)
+    mesh.remove(elem.neighbor0)
+    mesh.append(child3)
+    mesh.append(child4)
     return mesh
 
 def refine(mesh, marked):
@@ -188,10 +187,21 @@ root4.neighbor0 = None
 root4.neighbor1 = root3
 root4.neighbor2 = root1
 
-# TODO: Refine to get to same place as example
+# Initial mesh
 mesh = [root1, root2, root3, root4]
+
+# First iteration
 marked = [root1, root4]
 mesh = refine(mesh, marked)
+
+# Second iteration
+marked = [root1.right]
+mesh = refine(mesh, marked)
+
+# Third iteration
+marked = [root1.right.right]
+mesh = refine(mesh, marked)
+
 
 fig, ax = plt.subplots()
 for elem in mesh:
