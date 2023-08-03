@@ -592,9 +592,6 @@ Let $U \subset \mathbb{R}^n$ be a bounded open set.
 		\item If $1\leq p < \infty$ and $f \in L_{\text{loc}}^p(U)$, then $f^{\epsilon} \rightarrow f$ in $L_{\text{loc}}^p(U)$.
 	\end{enumerate}
 \end{theorem}
-\begin{proof}
-	In progress...
-\end{proof}
 
 \newpage
 
@@ -621,8 +618,8 @@ Let $U \subset \mathbb{R}^n$ be a bounded open set.
 		\int_U u D^{\alpha}\phi dx = (-1)^{|\alpha|}\int_U D^{\alpha}u\phi  dx
 	\end{equation}
 	where the LHS of equation (\ref{eq:4}) also holds if $u\in L_{\text{loc}}^1(U)$.
-	The question now is ``does $u$ need to be k-times partially differentiable, or can we replace $D^{\alpha}u$ with something that also satisfies
-	equation (\ref{eq:4}), but is just locally summable instead?''
+	The question now is ``\textit{does $u$ need to be k-times partially differentiable, or can we replace $D^{\alpha}u$ with something that also satisfies
+	equation (\ref{eq:4}), but is just locally summable instead?}''
 \end{motivation}
 \begin{definition}
 	Let $u,v \in L_{\text{loc}}^1(U)$ and let $\alpha$ be a multi-index. Then we say that $v$ is the 
@@ -869,11 +866,12 @@ Fix $1 \leq p \leq \infty$, let $k \in \mathbb{N}$, and let $U \subset \mathbb{R
 
 \newpage
 
-\subsection{Approximations}
+\subsection{Approximations and Density}
 \begin{motivation}
 Sobolev spaces are nice function spaces as we find that elements in Sobolev spaces can be approximated by sequences of smooth functions.
 These approximations can be done locally, globally up to but excluding the boundary, and globally up to and including the boundary.
 As expected, these require three different theorems which increase in difficulty to prove, where these theorems are taken from Evans \cite{evans1998partial}.
+Also, Gilbarg and Trudinger \cite{gilbarg2001elliptic} phrase the global approximation result as a density result in a nice concise theorem that we will mention as well.
 \end{motivation}
 Let $U \subset \mathbb{R}^n$ be a bounded open set and suppose $u \in W^{k,p}(U)$ for some $1 \leq p < \infty$.
 \begin{theorem}[Local approximation by smooth functions]
@@ -885,17 +883,11 @@ Then
 		\item $u^{\epsilon} \rightarrow u \text{ in } W_{\text{loc}}^{k,p}(U)$, as $\epsilon \rightarrow 0$.
 	\end{enumerate}
 \end{theorem}
-\begin{proof}
-In progress...
-\end{proof}
 
 \begin{theorem}[Global approximation by smooth functions]
 	There exists functions $u_m \in C^{\infty}(U)\cap W^{k,p}(U)$ such that
 	\[u_m \rightarrow u \text{ in } W^{k,p}(U).\]
 \end{theorem}
-\begin{proof}
-In progress...
-\end{proof}
 
 \begin{remark}
 Since $U \subset \mathbb{R}^n$ is a bounded open set, this Theorem says
@@ -907,23 +899,10 @@ nothing about the smoothness of the boundary of $U$, which is the goal of the ne
 	Then there exists functions $u_m \in C^{\infty}(\overline{U})$ such that
 	\[u_m \rightarrow u \text{ in } W^{k,p}(U).\]
 \end{theorem}
-\begin{proof}
-In progress...
-\end{proof}
-
-\newpage
-
-\subsection{Density}
-\begin{motivation}
-	In progress...
-\end{motivation}
 
 \begin{theorem}
 	The subspace $C^{\infty}(U) \cap W^{k,p}(U)$ is dense in $W^{k,p}(U)$.
 \end{theorem}
-\begin{proof}
-In progress...
-\end{proof}
 
 \newpage
 
@@ -946,9 +925,6 @@ such that $\forall u \in W^{1,p}(U)$:
 		\item $\|Eu\|_{W^{1,p}(\mathbb{R}^n)} \leq C(p,U,V)\|u\|_{W^{1,p}(U)}.$
 	\end{enumerate}
 \end{theorem}
-\begin{proof}
-In progress...
-\end{proof}
 
 \newpage
 
@@ -1079,9 +1055,6 @@ In progress...
 		\item $C^0(\overline{U})$, if $p>n$.
 	\end{enumerate}
 \end{theorem}
-\begin{proof}
-In progress...
-\end{proof}
 
 \newpage
 
