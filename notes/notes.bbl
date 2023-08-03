@@ -78,4 +78,12 @@ A.~Michelangeli, ``The lax-milgram theorem.'' [Online]. Available:
   \url{https://www.math.lmu.de/~michel/lax-milgram.pdf}
 \BIBentrySTDinterwordspacing
 
+\bibitem{brenner2007mathematical}
+\BIBentryALTinterwordspacing
+S.~Brenner and R.~Scott, \emph{The Mathematical Theory of Finite Element
+  Methods}, ser. Texts in Applied Mathematics.\hskip 1em plus 0.5em minus
+  0.4em\relax Springer New York, 2007. [Online]. Available:
+  \url{https://books.google.ca/books?id=ci4c\_R0WKYYC}
+\BIBentrySTDinterwordspacing
+
 \end{thebibliography}

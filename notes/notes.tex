@@ -10,6 +10,7 @@
 \usepackage[bottom=0.9in,top=0.9in]{geometry}
 \usepackage{filecontents}
 \usepackage{tocbibind}
+\usepackage{ upgreek }
 %\usepackage[nottoc,numbib]{tocbibind}
 
 \newtheorem{theorem}{Theorem}
@@ -79,6 +80,16 @@
 	  year={2016},
 	  publisher={Springer International Publishing}
 }
+@book{brenner2007mathematical,
+  title={The Mathematical Theory of Finite Element Methods},
+  author={Brenner, S. and Scott, R.},
+  isbn={9780387759333},
+  lccn={2007939977},
+  series={Texts in Applied Mathematics},
+  url={https://books.google.ca/books?id=ci4c\_R0WKYYC},
+  year={2007},
+  publisher={Springer New York}
+}
 @inbook{Nochetto2012,
 	author="Nochetto, Ricardo H.
 	and Veeser, Andreas",
@@ -127,6 +138,7 @@
 	\cite{bruce2003pde}
 	\cite{francis2014bounded}
 	\cite{michelangeli????lax}
+	\cite{brenner2007mathematical}
 }
 \frontmatter
 \pagestyle{fancy}
@@ -929,7 +941,70 @@ such that $\forall u \in W^{1,p}(U)$:
 \newpage
 
 \subsection{Traces}
-In progress...
+\begin{motivation}
+	In order to deal with Dirichlet boundary conditions in boundary value problems, it becomes necessary to assign meaning
+	to boundary values of functions in Sobolev spaces. This is because Sobolev spaces contain unbounded functions,
+	meaning we can no longer interpret the boundary conditions in a pointwise sense for $n \geq 2$.
+	Instead, we should interpret the boundary of a $n$-dimensional domain as an $n-1$-dimensional object, i.e. a manifold.
+	We now seek an interpretation of restrictions of Sobolev-class functions to manifolds of the dimension $n-1$.
+	The following is a combination of definitions and propositions taken from Bartels \cite{bartels2016numerical} and from
+	Brenner and Scott \cite{brenner2007mathematical}.
+\end{motivation}
+Firstly, we need to know what a Lipshitz domain is as this type of domain is necessary for the following definitions and propositions.
+Also, we will instead use $d$ to denote the dimension and $\Omega$ to denote the domain.
+\begin{definition}
+	A set $\Omega \subset \mathbb{R}^d$ is called \texttt{Lipschitz domain}, if it is open and connected,
+	and if for each $x \in \partial \Omega$ there exists a transformation
+	\begin{equation*}
+		\Phi(y) = My + r
+	\end{equation*}
+	with an orthogonal matrix $M \in \mathbb{R}^{d \times d}$ and a vector $r \in \mathbb{R}^d$,
+	a parameter $\delta > 0$, an open set $Q^{\prime} \subset \mathbb{R}^{d-1}$, and a Lipschitz continuous function
+	$h : Q^{\prime} \rightarrow \mathbb{R}$ such that
+	\begin{enumerate}[(i)]
+		\item $\Omega \cap B_{\delta}(x) = \Phi(\{(y^{\prime}, y_d) \in Q^{\prime} \times \mathbb{R} \, | \, h(y^{\prime}) < y_d\}) \cap B_{\delta}(x),$
+		\item $\partial\Omega \cap B_{\delta}(x) = \Phi(\{(y^{\prime}, y_d) \in Q^{\prime} \times \mathbb{R} \, | \, h(y^{\prime}) = y_d\}) \cap B_{\delta}(x),$
+		\item $\overline{\Omega}^c \cap B_{\delta}(x) = \Phi(\{(y^{\prime}, y_d) \in Q^{\prime} \times \mathbb{R} \, | \, h(y^{\prime}) > y_d\}) \cap B_{\delta}(x).$
+	\end{enumerate}
+\end{definition}
+
+We now find that smooth bounded functions are dense in Sobolev spaces on Lipschitz domains if $p < \infty$, which gives us
+an ``\textit{improved}'' density result from the Approximations and Density section.
+
+\begin{theorem}[Density of smooth functions]
+	Let $\Omega \subset \mathbb{R}^d$ be a bounded Lipschitz domain. Then the set $C^{\infty}(\overline{\Omega})$ is dense
+	in $W^{k,p}(\Omega)$ for $k \in \mathbb{N}_0$ and $1 \leq p < \infty$.
+\end{theorem}
+
+Now since Lebesgue functions can be modified on sets of measure zero, it is generally not meaningful to specify boundary values for these functions.
+However, because of Morrey (\url{https://math.stackexchange.com/a/2361510/1122760}) this is possible for Sobolev functions, which brings us to the next proposition. 
+
+\begin{theorem}[Trace operator]
+	Let $\Omega \subset \mathbb{R}^d$ be a bounded Lipschitz domain and fix $1 \leq p \leq \infty$. There exists a uniquely defined bounded
+	linear operator
+	\begin{equation*}
+		T : W^{1,p}(\Omega) \rightarrow L^p(\partial \Omega)
+	\end{equation*}
+	such that for all $u \in C^{\infty}(\overline{\Omega}) \cap W^{1,p}(\Omega)$ we have $T(u) = u|_{\partial \Omega}$.
+\end{theorem}
+
+Intuitively, the trace operator literally ``\textit{traces}'' the boundary of a function $u \in W^{1,p}(\Omega)$.
+This has obvious importance for boundary value problems where we can't work with the boundary in a pointwise sense.
+As alluded to before, we will now explicitly define the subset of $W^{1,p}(\Omega)$ that contains these elements.
+
+\begin{definition}
+	Let $\Omega \subset \mathbb{R}^d$ be a Lipschitz domain and fix $1 \leq p \leq \infty$.
+	We will use the notation $W_{0}^{1,p}(\Omega)$ to denote the subset of $W^{1,p}(\Omega)$ consisting of functions whose
+	trace on $\partial \Omega$ is zero, that is
+	\begin{equation*}
+		W_{0}^{1,p}(\Omega) = \{v \in W^{1,p}(\Omega) \, | \, v|_{\partial \Omega} = 0 \text{ in } L^2(\partial \Omega)\}.
+	\end{equation*}
+	More generally, we let $W_{0}^{k,p}(\Omega)$ denote the subset of $W^{k,p}(\Omega)$ consisting of functions whose
+	derivatives of order $k-1$ are in $W^{1,p}(\Omega)$, that is
+	\begin{equation*}
+		W_{0}^{k,p}(\Omega) = \{v \in W^{k,p}(\Omega) \, | \, D^{\alpha}v|_{\partial \Omega} = 0 \text{ in } L^2(\partial \Omega) \,\, \forall \, |\alpha| < k\}.
+	\end{equation*}
+\end{definition}
 
 \newpage
 
