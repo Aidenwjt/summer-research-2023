@@ -146,11 +146,78 @@ class Polygon:
                 break
         print()
 
+class Edge:
+    def __init__(self, p, q):
+        self.p = p
+        self.q = q
+    def equals(self, e):
+        if(( (self.p.x == e.p.x and self.p.y == e.p.y) and (self.q.x == e.q.x and self.q.y == e.q.y) )
+           or ( (self.p.x == e.q.x and self.p.y == e.q.y) and (self.q.x == e.p.x and self.q.y == e.p.y) )):
+            return True
+        return False
+
 class Triangle:
-    def __init__(self,A,B,C):
-        self.A = A
-        self.B = B
-        self.C = C
+    def __init__(self, v0, v1, v2, e0, e1, e2):
+        self.v = [v0, v1, v2]
+        self.e = [e0, e1, e2]
+    def shared_edges(self, T):
+        for i in range(0,3):
+            for j in range(0,3):
+                if(self.e[i].equals(T.e[j]) == True):
+                    return (i,j)
+        return None
+
+class Node:
+    def __init__(self, T, GT):
+        self.parent = None
+        self.left = None
+        self.right = None
+        self.T = T
+        self.GT = GT
+        self.neighbor0 = None # NOTE: F(T) for now
+        self.neighbor1 = None
+        self.neighbor2 = None
+        self.root = None
+    def bisect(self):
+        p = helpers.midpoint(self.T.v[1], self.T.v[2])
+        child_triangle1 = Triangle(p, self.T.v[0], self.T.v[1], Edge(self.T.v[0],self.T.v[1]), Edge(p,self.T.v[1]), Edge(p,self.T.v[0]))
+        child_triangle2 = Triangle(p, self.T.v[2], self.T.v[0], Edge(self.T.v[0],self.T.v[2]), Edge(p,self.T.v[0]), Edge(p,self.T.v[2]))
+        child_node1 = Node(child_triangle1, self.GT + 1)
+        child_node2 = Node(child_triangle2, self.GT + 1)
+        self.left = child_node1
+        self.right = child_node2
+        child_node1.parent = self
+        child_node2.parent = self
+        child_node1.neighbor2 = child_node2
+        child_node2.neighbor1 = child_node1
+        return (child_node1, child_node2)
+    def update_neighbor(self, elem):
+        edges = self.T.shared_edges(elem.T)
+        if(edges != None):
+            i,j = edges
+            if(i == 0):
+                self.neighbor0 = elem
+            elif(i == 1):
+                self.neighbor1 = elem
+            else:
+                self.neighbor2 = elem
+            if(j == 0):
+                elem.neighbor0 = self
+            elif(j == 1):
+                elem.neighbor1 = self
+            else:
+                elem.neighbor2 = self
+    def update_neighbors(self):
+        if self.parent != None:
+            parents_neighbors = [self.parent.neighbor0, self.parent.neighbor1, self.parent.neighbor2]
+            for neighbor in parents_neighbors:
+                if neighbor != None:
+                    if neighbor.left != None:
+                        children = [neighbor.left, neighbor.right]
+                        for child in children:
+                            self.update_neighbor(child)
+                    else:
+                        self.update_neighbor(neighbor)
 
 def ear_tip_status(v,reflex_v):
     """ 
@@ -197,7 +264,7 @@ def update_ear_tip_status(v,convex_v,reflex_v,ear_tips):
     if(((v in reflex_v) or (ear_tip_status(v,reflex_v) == False)) and (v in ear_tips)):
             ear_tips.remove(v)
 
-def triangulate(vertices):
+def earclipping(vertices):
     """ Returns a triangulation of the given vertices of a simple polygon using the ear clipping method. """
     # Construct polygon
     polygon = Polygon()
@@ -231,7 +298,9 @@ def triangulate(vertices):
         v = ear_tips[0]
         v_prev = v.prev
         v_next = v.next
-        triangulation.append(Triangle(v.coords,v_prev.coords,v_next.coords))
+        # TODO: add in order of largest edge
+        triangulation.append(Triangle(v.coords,v_prev.coords,v_next.coords,Edge(v_prev.coords,v_next.coords),Edge(v.coords,v_next.coords),Edge(v.coords,v_prev.coords)))
+        # TODO: maybe create the nodes here and add those to the trianglulation instead of just triangles
         # Update relationships in polygon
         polygon.remove(v.coords)
         # Let this vertex no longer be an ear tip
@@ -246,3 +315,5 @@ def triangulate(vertices):
         update_ear_tip_status(v_prev,convex_v,reflex_v,ear_tips)
         update_ear_tip_status(v_next,convex_v,reflex_v,ear_tips)
     return triangulation
+
+# TODO: new function for creating the initial mesh by bisecting twice
