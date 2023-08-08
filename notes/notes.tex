@@ -10,7 +10,8 @@
 \usepackage[bottom=0.9in,top=0.9in]{geometry}
 \usepackage{filecontents}
 \usepackage{tocbibind}
-\usepackage{ upgreek }
+\usepackage{mathtools}
+\usepackage{csquotes}
 %\usepackage[nottoc,numbib]{tocbibind}
 
 \newtheorem{theorem}{Theorem}
@@ -22,7 +23,10 @@
 \newtheorem*{remark}{Remark}
 \newtheorem*{motivation}{Motivation}
 
+\renewcommand{\mkbegdispquote}[2]{\itshape}
 \DeclareMathOperator*{\esssup}{ess\,sup}
+\newcommand{\defeq}{\vcentcolon=}
+\newcommand{\eqdef}{=\vcentcolon}
 
 \makeatletter
 \@addtoreset{theorem}{subsection}
@@ -289,16 +293,39 @@ a lot of nice properties, as we will see.
 	Hilbert spaces are important in the study of Sobolev spaces as some Sobolev spaces are themselves Hilbert spaces.
 	Hilbert spaces are also important as there are some very important representation theorems for boundary value problems that involve Hilbert spaces.
 \end{motivation}
-Let $H$ be a real linear space.
+
 \begin{definition}
-	Let $H$ be a real linear space. A mapping $(\cdot , \cdot) : H \times H \rightarrow \mathbb{R}$ is called an \texttt{inner product} if
-	\begin{enumerate}
+	Let $H$ be a real linear space. A mapping $B(\cdot , \cdot) : H \times H \rightarrow \mathbb{R}$ such that each of the maps
+	$u \mapsto B(u,v)$ and $v \mapsto B(u,v)$ is a linear form on $H$ is called a \texttt{bilinear form} on $H$.
+	A bilinear form is \texttt{symmetric} if $B(u,v) = B(v,u)$ for all $u,v \in H$.
+	A bilinear form is \texttt{continuous or bounded} if there exists a constant $C < \infty$ such that
+	\begin{equation*}
+		|B(u,v)| \leq C\|u\|\|v\|
+	\end{equation*}
+	for any $u,v \in H$.
+	A bilinear form is \texttt{coercive} on $H$ if there exists a number $\nu > 0$ such that
+	\begin{equation*}
+		B(v,v) \geq \nu\|v\|^2
+	\end{equation*}
+	for any $v \in H$.
+\end{definition}
+
+\begin{definition}
+	Let $H$ be a real linear space.
+	The symmetric bilinear form $(\cdot , \cdot) : H \times H \rightarrow \mathbb{R}$ is called the \texttt{inner product},
+	and satifies
+	\begin{enumerate}[(i)]
 		\item $(u,v) = (v,u)$ for all $u,v \in H$,
 		\item $u \mapsto (u,v)$ is linear for each $v \in H$,
 		\item $(u,v) \geq 0$ for all $v \in H$,
 		\item $(u,u) = 0$ if and only if $u = 0$.
 	\end{enumerate}
 \end{definition}
+
+\begin{definition}
+	A linear space $H$ together with and inner product defined on it is called an \texttt{inner-product space}.
+\end{definition}
+
 \begin{definition}
 	The inner product is also related to the norm of $H$ as
 	\begin{equation}
@@ -312,192 +339,24 @@ Let $H$ be a real linear space.
 	\end{equation}
 	for all $u,v \in H$. Equation (\ref{eq:3}) verifies that equation (\ref{eq:2}) defines a norm on $H$. 
 \end{definition}
+
 \begin{definition}
 	A \texttt{Hilbert space} $H$ is a Banach space equipped with an inner product which defines the norm on $H$.
 \end{definition}
 
-\begin{theorem}[Riesz Representation Theorem]
-	For every bounded linear functional $F$ on a Hilbert space $H$, there exists a uniquely determined element $f \in H$
-	such that $F(x) = (x,f)$ for all $x \in H$. Furthermore, $\|F\|_{\text{op}} = \|f\|_H$.
-\end{theorem}
-\begin{proof}[My proof attempt]
-	For the case when $H = N(F) = \{x \in H \, | \, F(x) = 0\}$ we find that our uniquely determined element is $f=0$ as the zero vector is
-	orthogonal to everything including itself, implying $F(x) = 0 = (x,0)$ for all $x \in H$. However, assume $H \not= N(F)$.
-	$N(F)$ is now a closed subspace of $H$, which by virtue of the Projection Theorem implies there exists non-zero elements in $N(F)^{\bot}$.
-	Take $z \in N(F)^{\bot}$ such that $z \not= 0$, where it follows that $(u,z) = 0$ for all $u \in N(F)$. Furthermore, $F(z) \not= 0$ and for any $x \in H$
-	\[F\left(x - \frac{F(x)}{F(z)}z\right) = F(x) - \frac{F(x)}{F(z)}F(z) = 0,\]
-	implying that $x - \frac{F(x)}{F(z)}z \in N(F)$, which further implies that $\left(x - \frac{F(x)}{F(z)}z, z\right) = 0$.
-	Now by the properties of inner products, we have
-	\begin{equation*}
-		\begin{aligned}
-			(x,z) &= \left(x - \frac{F(x)}{F(z)}z,z\right) + \left(\frac{F(x)}{F(z)}z,z\right) \\
-			      &= \left(\frac{F(x)}{F(z)}z,z\right) \\
-			      &= \frac{F(x)}{F(z)}(z,z) \\
-			      &= \frac{F(x)}{F(z)}(z,z)^{1/2}(z,z)^{1/2} \\
-			      &= \frac{F(x)}{F(z)}\|z\|^2
-		\end{aligned}
-	\end{equation*}
-	for any $x \in H$. Rearranging the above equation results in 
-	\[F(x) = (x,z)\frac{F(z)}{\|z\|^2} = \left(x,\frac{F(z)}{\|z\|^2}z\right),\]
-	where we now just need to show $f = \frac{F(z)}{\|z\|^2}z$ is unique.
-	To prove the uniqueness of $f$ assume there exists $f_1,f_2 \in H$ such that $F(x) = (x,f_1) = (x,f_2)$ for all $x \in H$,
-	and assume we have $x \in H$ such that $\|x\| > 0$. We can see that this implies
-	\begin{equation*}
-		0 = |F(x) - F(x)| = |(x,f_1) - (x,f_2)| = |(x,f_1-f_2)| \leq \|x\|\|f_1 - f_2\|.
-	\end{equation*}
-	This implies $\|f_1-f_2\| = 0$, which futher implies $f_1-f_2= 0$, proving the uniqueness of $f$.
-	Finally, to show $\|F\|_{\text{op}} = \|f\|_H$ we can use the fact that
-	\begin{equation*}
-		\|F\|_{\text{op}} = \sup\left\{\frac{\|F(x)\|_{\mathbb{R}}}{\|x\|_H}\, : \, x \not= 0 \text{ and } x \in H\right\}
-	\end{equation*}
-	to say
-	\begin{equation*}
-		\|F\|_{\text{op}} = \sup_{x\not=0}{\frac{\|F(x)\|_{\mathbb{R}}}{\|x\|_H}} = \sup_{x\not=0}{\frac{|F(x)|}{\|x\|_H}} = \sup_{x\not=0}{\frac{|(x,f)|}{\|x\|_H}} \leq \sup_{x\not=0}{\frac{\|x\|_H\|f\|_H}{\|x\|_H}} = \|f\|_H.
-	\end{equation*}
-	We can also say
-	\begin{equation*}
-		\|f\|_H^2 = \|f\|_H\|f\|_H = (f,f)^{1/2}(f,f)^{1/2} = (f,f) = F(f) \leq \|F(f)\|_{\text{op}}\|f\|_H.
-	\end{equation*}
-	These inequalities imply that $\|F\|_{\text{op}} \leq \|f\|_H$ and $\|f\|_H \leq \|F\|_{\text{op}}$, respectively, which can only be true if $\|F\|_{\text{op}} = \|f\|_H$.
-\end{proof}
+\begin{definition}
+	Let $H$ be a Hilbert space and $S \subset H$ be a linear subset that is closed in $H$. Then $S$ is called a \texttt{subspace} of $H$.
+\end{definition}
 
-\begin{theorem}[Lax-Milgram Theorem]
-	Let $B$ be a bounded, coercive bilinear form on a Hilbert space $H$. Then for every bounded linear functional $F$ on $H$
-	there exists a uniquely determined element $f\in H$ such that
-	\begin{equation*}
-		B(x,f) = F(x)
-	\end{equation*}
-	for all $x \in H$.
+\begin{theorem}
+	If $S$ is a subspace of $H$, then $S$ is also a Hilbert space.
 \end{theorem}
-\begin{proof}[My proof attempt]
-	For any $f \in H$, define the mapping 
-	\begin{equation}
-		\label{eq:5}
-		f \mapsto (F = B(\cdot, f)).
-	\end{equation}
-	Then since $F = B(\cdot, f) \in H^*$, we can use the Riesz Representation Theorem (RRT) to  define another mapping
-	\begin{equation}
-		\label{eq:6}
-		(F = B(\cdot,f)) \stackrel{RRT}{\mapsto} \tilde{f},
-	\end{equation}
-	where $\tilde{f}$ is defined to be a uniquely determined element in $H$.
-	Combining mappings (\ref{eq:5}) and (\ref{eq:6}) allows us to define one more mapping
-	\begin{equation}
-		\label{eq:7}
-		f \mapsto \tilde{f},
-	\end{equation}
-	where we denote this mapping as $T$ such that $Tf = \tilde{f}$.
-	With these mapping we now have
-	\begin{equation*}
-		F(z) = B(z,f) = (z,Tf)
-	\end{equation*}
-	for any $z \in H$.
-	This may look like we are done, but notice that we have no idea if $f$ is unique or not.
-	So our goal now is to show that $T$ is a bijective bounded linear operator from $H$ to $H$,
-	which will allow us to use the Bounded Inverse Theorem to say $T^{-1}$ exists and is also bounded.
-	Firstly, by the linearity and bilinearity of the inner product and the bilinear form $B$, respectively,
-	we can say that for all $x,y,z \in H$ and $\lambda, \mu \in \mathbb{C}$, we have
-	\begin{equation*}
-		\begin{aligned}
-			(z,T(\lambda x + \mu y)) &= B(z, \lambda x + \mu y) \\
-						 &= B(z,\lambda x) + B(z, \mu y) \\
-						 &= \lambda B(z,x) + \mu B(z,y) \\
-						 &= \lambda (z,Tx) + \mu (z,Ty) \\
-						 &= (z,\lambda Tx) + (z, \mu Ty) \\
-						 &= (z, \lambda Tx + \mu Ty),
-		\end{aligned}
-	\end{equation*}
-	implying that $T(\lambda x + \mu y) = \lambda Tx + \mu Ty$, which is the definition of a linear operator.
-	Next, for any $z \in H$, we have
-	\begin{equation*}
-		|(z,Tf)| = |B(z,f)| \leq k\|z\|\|f\|
-	\end{equation*}
-	for some $k>0$, where letting $z = Tf$ results in
-	\begin{equation*}
-		\|Tf\|^2 = |(Tf,Tf)| = |B(Tf,f)| \leq k\|Tf\|\|f\|,
-	\end{equation*}
-	implying that
-	\begin{equation}
-		\label{eq:8}
-		\|Tf\| \leq k\|f\|.
-	\end{equation}
-	Thus, $T$ is bounded. Now, also note that since
-	\begin{equation*}
-		(z,Tf) = B(z,f)
-	\end{equation*}
-	it follows that we can use the Cauchy-Schwarz inequality and the coercivity of $B$ to say that if $z=f$, then
-	\begin{equation}
-		\label{eq:9}
-		\|f\|\|Tf\| \geq |(f,Tf)| = |B(f,f)| \geq |\nu \|f\|^2| = \nu \|f\|^2
-	\end{equation}
-	for some $\nu > 0$. Inequalities (\ref{eq:8}) and (\ref{eq:9}) imply
-	\begin{equation}
-		\label{eq:10}
-		\nu \|f\| \leq \|Tf\| \leq k \|f\|
-	\end{equation}
-	for some $\nu >0$ and $k >0$.
-	By definition $T$ is injective provided that for any $x,y \in H$, if $Tx = Ty$, then $x=y$.
-	But note that the linearity of $T$ implies that we can instead say ``$T$ is injective provided that
-	for all $w \in H$, if $Tw = 0$, the $w = 0$ .'' It is then easy to see that inequality (\ref{eq:10})
-	satisfies this definition, and thus $T$ is injective.
-	Now to prove that $T$ is also surjective, we first need to prove that $T$ has a closed range so that
-	we can invoke the Hilbert Projection Theorem. To prove this, let $T(H)$ denote the range of $T$.
-	Then since $T(H)$ is a subspace of a Hilbert space we know that there exists a Cauchy sequence $\{\tilde{f}_k\}_{k=1}^{\infty} \subset H$
-	such that $\tilde{f}_k \rightarrow \tilde{f}$ in $T(H)$, as $k\rightarrow \infty$. Then, since $T$ is injective, there exists a unique
-	sequence $\{f_k\}_{k=1}^{\infty} \subset H$ such that $\tilde{f}_k = Tf_k$, for all $k \in \mathbb{N}$. Now $\{\tilde{f}_k\}_{k=1}^{\infty}$
-	being Cauchy implies that for any $\epsilon > 0$ there exists $N >0$ such that
-	\begin{equation*}
-		\epsilon > \|\tilde{f}_k - \tilde{f}_{\ell}\| = \|Tf_k - Tf_{\ell}\| = \|T(f_k - f_{\ell})\| \geq \nu \|f_k - f_{\ell}\|
-	\end{equation*}
-	for any $k,\ell \in \mathbb{N}$ and some $\nu >0$.
-	This implies $\{f_k\}_{k=1}^{\infty}$ is also Cauchy, further implying there exists a unqiue $f \in H$ such that
-	$f_k \rightarrow f$ in $H$, as $k \rightarrow \infty$.
-	Finally, to show $Tf = \tilde{f}$, observe that
-	\begin{equation*}
-		Tf = \lim_{k\rightarrow \infty}{Tf_k} = \lim_{k\rightarrow \infty}{\tilde{f}_k} = \tilde{f}.
-	\end{equation*}
-	Thus, $T$ has a closed range. Now to prove $T$ is surjective, suppose by contradiction that $T$ is not surjective.
-	Then this implies $T(H)$ is a closed proper subspace of $H$, where we know by the Hilbert Projection Theorem that
-	there exists non-zero elements $z \in T(H)^{\bot}$ such that $(z,Tf) = 0$. Letting $f = z$ results in
-	\begin{equation*}
-		0 = |(z,Tz)| = |B(z,z)| \geq \nu \|z\|^2 \geq 0
-	\end{equation*}
-	which can only be true if $z = 0$. Thus, $T$ must be surjective.
-	Collecting ourselves, we have now proven that $T$ is a bijective bounded linear operator with a closed range.
-	This means by virtue of the Bounded Inverse Theorem, $T^{-1}$ exists and is bounded.
-	Then invoking the RRT again, we can say for any $F \in H^*$, there exists a uniquely determined element $\hat{f} \in H$ such that
-	\begin{equation*}
-		F(z) = (z,\hat{f})
-	\end{equation*}
-	for any $z \in H$. Now since we know
-	\begin{equation*}
-		F = B(\cdot,f)
-	\end{equation*}
-	for any $f \in H$, we can say for any $z \in H$
-	\begin{equation*}
-		F(z) = (z, TT^{-1}\hat{f}) = B(z,T^{-1}\hat{f})
-	\end{equation*}
-	because we have proven that $T$ is a bijection. Letting $T^{-1}\hat{f} = g$ results in
-	\begin{equation*}
-		F(z) = B(z,g)
-	\end{equation*}
-	for any $z \in H$. Now all that is left is to prove the uniqueness of $g$.
-	Suppose we have $g_1,g_2 \in H$ such that $Tg_1$ and $Tg_2$ are unique elements satisfying
-	the RRT. This means
-	\begin{equation*}
-		\begin{aligned}
-			&B(z,g_1) = F(z) = B(z,g_2) \\
-			&\Rightarrow B(z,g_1) = B(z,g_2) \\
-			&\Rightarrow B(z,g_1) - B(z,g_2) = 0 \\
-			&\Rightarrow B(z,g_1 - g_2) = 0.
-		\end{aligned}
-	\end{equation*}
-	Letting $z= g_1 - g_2$ results in
-	\begin{equation*}
-		0 = B(g_1 - g_2, g_1 - g_2) \geq \nu \|g_1 - g_2\|^2 \geq 0
-	\end{equation*}
-	for some $\nu >0$. This can only be true if $g_1 - g_2 = 0$, proving the uniqueness of $g$.
-\end{proof}
+
+\begin{theorem}
+	Let $H$ be a Hilbert space, and suppose $B(\cdot, \cdot)$ is a symmetric bilinear form
+	that is continuous on $H$ and coercive on a subspace $V$ of $H$.
+	Then $V$, equipped with the same bilinear form, is a Hilbert space.
+\end{theorem}
 
 \newpage
 
@@ -1260,6 +1119,304 @@ In progress...
 
 \section{Adaptive Finite Element Methods}
 In Progress...
+
+\newpage
+
+\subsection{Formulation of variational problems}
+\begin{motivation}
+	Taken from Brenner and Scott \cite{brenner2007mathematical}, consider the two-point boundary value problem
+	\begin{equation}
+		\label{eq:asdkfj}
+		\begin{cases}
+			-\frac{d^2u}{dx^2} = f \text{ in } (0,1) \\
+			u(0) = 0, u^{\prime}(1) = 0.
+		\end{cases}
+	\end{equation}
+	If $u$ is the solution and $v$ is any function such that $v(0) = 0$,
+	then integration by parts yields
+	\begin{equation*}
+		\begin{aligned}
+			(f,v) &\defeq \int_0^1 f(x)v(x)dx \\
+			      &= \int_0^1 -u^{\prime\prime}(x)v(x)dx \\
+			      &= \int_0^1 u^{\prime}(x)v^{\prime}(x)dx \\
+			      &\eqdef B(u,v).
+		\end{aligned}
+	\end{equation*}
+	Let us then define
+	\begin{equation*}
+		V = \{v \in L^2(0,1) \, | \, B(v,v) < \infty \text{ and } v(0) = 0\}.
+	\end{equation*}
+	Then we can say that the solution $u$ to (\ref{eq:asdkfj}) is characterized by
+	\begin{equation*}
+		u \in V \, \text{ such that } \, B(u,v) = (f,v)
+	\end{equation*}
+	for any $v \in V$, which is called the \textit{\textbf{variational}} or \textit{\textbf{weak}} formulation of (\ref{eq:asdkfj}).
+\end{motivation}
+We now wish to generalize this example by applying abstract Hilbert space theory to get existence and uniqueness
+results for variational formulations of boundary value problems, both symmetric and nonsymmetric. To do this, we will
+first need to introduce one of the important representation theorems alluded to before in the Hilbert spaces section.
+
+\begin{theorem}[Riesz representation theorem]
+	For every bounded linear functional $F$ on a Hilbert space $H$, there exists a uniquely determined element $f \in H$
+	such that $F(x) = (x,f)$ for all $x \in H$. Furthermore, $\|F\|_{\text{op}} = \|f\|_H$.
+\end{theorem}
+\begin{proof}[My proof attempt]
+	For the case when $H = N(F) = \{x \in H \, | \, F(x) = 0\}$ we find that our uniquely determined element is $f=0$ as the zero vector is
+	orthogonal to everything including itself, implying $F(x) = 0 = (x,0)$ for all $x \in H$. However, assume $H \not= N(F)$.
+	$N(F)$ is now a closed subspace of $H$, which by virtue of the Projection Theorem implies there exists non-zero elements in $N(F)^{\bot}$.
+	Take $z \in N(F)^{\bot}$ such that $z \not= 0$, where it follows that $(u,z) = 0$ for all $u \in N(F)$. Furthermore, $F(z) \not= 0$ and for any $x \in H$
+	\[F\left(x - \frac{F(x)}{F(z)}z\right) = F(x) - \frac{F(x)}{F(z)}F(z) = 0,\]
+	implying that $x - \frac{F(x)}{F(z)}z \in N(F)$, which further implies that $\left(x - \frac{F(x)}{F(z)}z, z\right) = 0$.
+	Now by the properties of inner products, we have
+	\begin{equation*}
+		\begin{aligned}
+			(x,z) &= \left(x - \frac{F(x)}{F(z)}z,z\right) + \left(\frac{F(x)}{F(z)}z,z\right) \\
+			      &= \left(\frac{F(x)}{F(z)}z,z\right) \\
+			      &= \frac{F(x)}{F(z)}(z,z) \\
+			      &= \frac{F(x)}{F(z)}(z,z)^{1/2}(z,z)^{1/2} \\
+			      &= \frac{F(x)}{F(z)}\|z\|^2
+		\end{aligned}
+	\end{equation*}
+	for any $x \in H$. Rearranging the above equation results in 
+	\[F(x) = (x,z)\frac{F(z)}{\|z\|^2} = \left(x,\frac{F(z)}{\|z\|^2}z\right),\]
+	where we now just need to show $f = \frac{F(z)}{\|z\|^2}z$ is unique.
+	To prove the uniqueness of $f$ assume there exists $f_1,f_2 \in H$ such that $F(x) = (x,f_1) = (x,f_2)$ for all $x \in H$,
+	and assume we have $x \in H$ such that $\|x\| > 0$. We can see that this implies
+	\begin{equation*}
+		0 = |F(x) - F(x)| = |(x,f_1) - (x,f_2)| = |(x,f_1-f_2)| \leq \|x\|\|f_1 - f_2\|.
+	\end{equation*}
+	This implies $\|f_1-f_2\| = 0$, which futher implies $f_1-f_2= 0$, proving the uniqueness of $f$.
+	Finally, to show $\|F\|_{\text{op}} = \|f\|_H$ we can use the fact that
+	\begin{equation*}
+		\|F\|_{\text{op}} = \sup\left\{\frac{\|F(x)\|_{\mathbb{R}}}{\|x\|_H}\, : \, x \not= 0 \text{ and } x \in H\right\}
+	\end{equation*}
+	to say
+	\begin{equation*}
+		\|F\|_{\text{op}} = \sup_{x\not=0}{\frac{\|F(x)\|_{\mathbb{R}}}{\|x\|_H}} = \sup_{x\not=0}{\frac{|F(x)|}{\|x\|_H}} = \sup_{x\not=0}{\frac{|(x,f)|}{\|x\|_H}} \leq \sup_{x\not=0}{\frac{\|x\|_H\|f\|_H}{\|x\|_H}} = \|f\|_H.
+	\end{equation*}
+	We can also say
+	\begin{equation*}
+		\|f\|_H^2 = \|f\|_H\|f\|_H = (f,f)^{1/2}(f,f)^{1/2} = (f,f) = F(f) \leq \|F(f)\|_{\text{op}}\|f\|_H.
+	\end{equation*}
+	These inequalities imply that $\|F\|_{\text{op}} \leq \|f\|_H$ and $\|f\|_H \leq \|F\|_{\text{op}}$, respectively, which can only be true if $\|F\|_{\text{op}} = \|f\|_H$.
+\end{proof}
+
+In general, a symmetric variational problem is posed as follows. Suppose the following three conditions are valid:
+\begin{enumerate}[(i)]
+	\item $H$ is a Hilbert space.
+	\item $V$ is a subspace of $H$. 
+	\item $B(\cdot, \cdot)$ is a bounded symmetric bilinear form coercive on $V$.
+\end{enumerate}
+Then the \textit{\textbf{symmetric variational problem}} is the following.
+\begin{displayquote}
+	Given $F \in V^*$, find $u \in V$ such that $B(u,v) = F(v)$ for any $v \in V$.
+\end{displayquote}
+
+\begin{theorem}
+	Suppose conditions (i)-(iii) of the symmetric variational problem hold. Then there exists a unique $u \in V$
+	that solves the symmetric variational problem.
+\end{theorem}
+
+The \textit{\textbf{Ritz-Galerkin approximation problem}} is the following.
+\begin{displayquote}
+	Given a finite-dimensional subspace $V_h \subset V$ and $F \in V^*$,
+	find $u_h \in V_h$ such that
+	\begin{equation*}
+		B(u_h,v) = F(v)
+	\end{equation*}
+	for any $v \in V_h$.
+\end{displayquote}
+
+\begin{theorem}
+	Suppose conditions (i)-(iii) of the symmetric variation problem hold.
+	Then there exists a unique $u_h$ that solves the Ritz-Galerkin approximation problem.
+\end{theorem}
+
+\begin{theorem}
+	Let $u$ and $u_h$ be solutions to the symmetric variational problem and the Ritz-Galerkin approximation problem, respectively.
+	Then
+	\begin{equation*}
+		B(u-u_h,v) = 0
+	\end{equation*}
+	for any $v \in V_h$.
+\end{theorem}
+
+\begin{corollary}
+	\begin{equation*}
+		\|u - u_h\|_E = \min_{v \in V_h}\|u - v\|_E.
+	\end{equation*}
+\end{corollary}
+
+A nonsymmetric variational problem is posed as follows. Suppose that the following five conditions are valid:
+\begin{enumerate}[(i)]
+	\item $H$ is a Hilbert space.
+	\item $V$ is a subspace of $H$.
+	\item $B(\cdot, \cdot)$ is a bilinear form on $V$, not necessarily symmetric.
+	\item $B(\cdot, \cdot)$ is continuous on $V$.
+	\item $B(\cdot, \cdot)$ is coercive on $V$.
+\end{enumerate}
+The variational and approximation problems are posed in the exact same way as in the symmetric case, but since the bilinear form is not guaranteed to be symmetric
+this means we can no longer rely on the Riesz representation theorem to guarantee existence and uniqueness.
+This gives rise to the Lax-Milgram theorem.
+
+\begin{theorem}[Lax-Milgram Theorem]
+	Let $B$ be a bounded, coercive bilinear form on a Hilbert space $H$. Then for every bounded linear functional $F$ on $H$
+	there exists a uniquely determined element $f\in H$ such that
+	\begin{equation*}
+		B(x,f) = F(x)
+	\end{equation*}
+	for all $x \in H$.
+\end{theorem}
+\begin{proof}[My proof attempt]
+	For any $f \in H$, define the mapping 
+	\begin{equation}
+		\label{eq:5}
+		f \mapsto (F = B(\cdot, f)).
+	\end{equation}
+	Then since $F = B(\cdot, f) \in H^*$, we can use the Riesz Representation Theorem (RRT) to  define another mapping
+	\begin{equation}
+		\label{eq:6}
+		(F = B(\cdot,f)) \stackrel{RRT}{\mapsto} \tilde{f},
+	\end{equation}
+	where $\tilde{f}$ is defined to be a uniquely determined element in $H$.
+	Combining mappings (\ref{eq:5}) and (\ref{eq:6}) allows us to define one more mapping
+	\begin{equation}
+		\label{eq:7}
+		f \mapsto \tilde{f},
+	\end{equation}
+	where we denote this mapping as $T$ such that $Tf = \tilde{f}$.
+	With these mapping we now have
+	\begin{equation*}
+		F(z) = B(z,f) = (z,Tf)
+	\end{equation*}
+	for any $z \in H$.
+	This may look like we are done, but notice that we have no idea if $f$ is unique or not.
+	So our goal now is to show that $T$ is a bijective bounded linear operator from $H$ to $H$,
+	which will allow us to use the Bounded Inverse Theorem to say $T^{-1}$ exists and is also bounded.
+	Firstly, by the linearity and bilinearity of the inner product and the bilinear form $B$, respectively,
+	we can say that for all $x,y,z \in H$ and $\lambda, \mu \in \mathbb{C}$, we have
+	\begin{equation*}
+		\begin{aligned}
+			(z,T(\lambda x + \mu y)) &= B(z, \lambda x + \mu y) \\
+						 &= B(z,\lambda x) + B(z, \mu y) \\
+						 &= \lambda B(z,x) + \mu B(z,y) \\
+						 &= \lambda (z,Tx) + \mu (z,Ty) \\
+						 &= (z,\lambda Tx) + (z, \mu Ty) \\
+						 &= (z, \lambda Tx + \mu Ty),
+		\end{aligned}
+	\end{equation*}
+	implying that $T(\lambda x + \mu y) = \lambda Tx + \mu Ty$, which is the definition of a linear operator.
+	Next, for any $z \in H$, we have
+	\begin{equation*}
+		|(z,Tf)| = |B(z,f)| \leq k\|z\|\|f\|
+	\end{equation*}
+	for some $k>0$, where letting $z = Tf$ results in
+	\begin{equation*}
+		\|Tf\|^2 = |(Tf,Tf)| = |B(Tf,f)| \leq k\|Tf\|\|f\|,
+	\end{equation*}
+	implying that
+	\begin{equation}
+		\label{eq:8}
+		\|Tf\| \leq k\|f\|.
+	\end{equation}
+	Thus, $T$ is bounded. Now, also note that since
+	\begin{equation*}
+		(z,Tf) = B(z,f)
+	\end{equation*}
+	it follows that we can use the Cauchy-Schwarz inequality and the coercivity of $B$ to say that if $z=f$, then
+	\begin{equation}
+		\label{eq:9}
+		\|f\|\|Tf\| \geq |(f,Tf)| = |B(f,f)| \geq |\nu \|f\|^2| = \nu \|f\|^2
+	\end{equation}
+	for some $\nu > 0$. Inequalities (\ref{eq:8}) and (\ref{eq:9}) imply
+	\begin{equation}
+		\label{eq:10}
+		\nu \|f\| \leq \|Tf\| \leq k \|f\|
+	\end{equation}
+	for some $\nu >0$ and $k >0$.
+	By definition $T$ is injective provided that for any $x,y \in H$, if $Tx = Ty$, then $x=y$.
+	But note that the linearity of $T$ implies that we can instead say ``$T$ is injective provided that
+	for all $w \in H$, if $Tw = 0$, the $w = 0$ .'' It is then easy to see that inequality (\ref{eq:10})
+	satisfies this definition, and thus $T$ is injective.
+	Now to prove that $T$ is also surjective, we first need to prove that $T$ has a closed range so that
+	we can invoke the Hilbert Projection Theorem. To prove this, let $T(H)$ denote the range of $T$.
+	Then since $T(H)$ is a subspace of a Hilbert space we know that there exists a Cauchy sequence $\{\tilde{f}_k\}_{k=1}^{\infty} \subset H$
+	such that $\tilde{f}_k \rightarrow \tilde{f}$ in $T(H)$, as $k\rightarrow \infty$. Then, since $T$ is injective, there exists a unique
+	sequence $\{f_k\}_{k=1}^{\infty} \subset H$ such that $\tilde{f}_k = Tf_k$, for all $k \in \mathbb{N}$. Now $\{\tilde{f}_k\}_{k=1}^{\infty}$
+	being Cauchy implies that for any $\epsilon > 0$ there exists $N >0$ such that
+	\begin{equation*}
+		\epsilon > \|\tilde{f}_k - \tilde{f}_{\ell}\| = \|Tf_k - Tf_{\ell}\| = \|T(f_k - f_{\ell})\| \geq \nu \|f_k - f_{\ell}\|
+	\end{equation*}
+	for any $k,\ell \in \mathbb{N}$ and some $\nu >0$.
+	This implies $\{f_k\}_{k=1}^{\infty}$ is also Cauchy, further implying there exists a unqiue $f \in H$ such that
+	$f_k \rightarrow f$ in $H$, as $k \rightarrow \infty$.
+	Finally, to show $Tf = \tilde{f}$, observe that
+	\begin{equation*}
+		Tf = \lim_{k\rightarrow \infty}{Tf_k} = \lim_{k\rightarrow \infty}{\tilde{f}_k} = \tilde{f}.
+	\end{equation*}
+	Thus, $T$ has a closed range. Now to prove $T$ is surjective, suppose by contradiction that $T$ is not surjective.
+	Then this implies $T(H)$ is a closed proper subspace of $H$, where we know by the Hilbert Projection Theorem that
+	there exists non-zero elements $z \in T(H)^{\bot}$ such that $(z,Tf) = 0$. Letting $f = z$ results in
+	\begin{equation*}
+		0 = |(z,Tz)| = |B(z,z)| \geq \nu \|z\|^2 \geq 0
+	\end{equation*}
+	which can only be true if $z = 0$. Thus, $T$ must be surjective.
+	Collecting ourselves, we have now proven that $T$ is a bijective bounded linear operator with a closed range.
+	This means by virtue of the Bounded Inverse Theorem, $T^{-1}$ exists and is bounded.
+	Then invoking the RRT again, we can say for any $F \in H^*$, there exists a uniquely determined element $\hat{f} \in H$ such that
+	\begin{equation*}
+		F(z) = (z,\hat{f})
+	\end{equation*}
+	for any $z \in H$. Now since we know
+	\begin{equation*}
+		F = B(\cdot,f)
+	\end{equation*}
+	for any $f \in H$, we can say for any $z \in H$
+	\begin{equation*}
+		F(z) = (z, TT^{-1}\hat{f}) = B(z,T^{-1}\hat{f})
+	\end{equation*}
+	because we have proven that $T$ is a bijection. Letting $T^{-1}\hat{f} = g$ results in
+	\begin{equation*}
+		F(z) = B(z,g)
+	\end{equation*}
+	for any $z \in H$. Now all that is left is to prove the uniqueness of $g$.
+	Suppose we have $g_1,g_2 \in H$ such that $Tg_1$ and $Tg_2$ are unique elements satisfying
+	the RRT. This means
+	\begin{equation*}
+		\begin{aligned}
+			&B(z,g_1) = F(z) = B(z,g_2) \\
+			&\Rightarrow B(z,g_1) = B(z,g_2) \\
+			&\Rightarrow B(z,g_1) - B(z,g_2) = 0 \\
+			&\Rightarrow B(z,g_1 - g_2) = 0.
+		\end{aligned}
+	\end{equation*}
+	Letting $z= g_1 - g_2$ results in
+	\begin{equation*}
+		0 = B(g_1 - g_2, g_1 - g_2) \geq \nu \|g_1 - g_2\|^2 \geq 0
+	\end{equation*}
+	for some $\nu >0$. This can only be true if $g_1 - g_2 = 0$, proving the uniqueness of $g$.
+\end{proof}
+
+\begin{corollary}
+	Suppose conditions (i)-(v) of the nonsymmetric variational problem hold. Then there exists a unique $u$ that solves the nonsymmetric variatonal problem.
+\end{corollary}
+
+\begin{corollary}
+	Suppose conditions (i)-(v) of the nonsymmetric variational problem hold. Then there exists a unique $u_h$ that solves the nonsymmetric approximation problem.
+\end{corollary}
+
+Now let $u$ be a solution to the nonsymmetric variational problem, and let $u_h$ be a solution to the nonsymmetric approximation problem.
+We desire to estimate the error $\|u - u_h\|_V$ like we did in the symmetric case.
+
+\begin{theorem}[C\'{e}a's theorem]
+	Suppose condtitions (i)-(v) of the nonsymmetric variational problem hold. For the \texttt{finite element variational problem},
+	i.e. the approximation problem, we have
+	\begin{equation*}
+		\|u - u_h\|_V \leq \frac{C}{\alpha}\min_{v \in V_h}\|u - v\|_V,
+	\end{equation*}
+	where $C$ is the \texttt{continuity constant} and $\alpha$ is the \texttt{coercivity constant} of $B(\cdot, \cdot)$ on $V$.
+\end{theorem}
+
 
 \newpage
 
