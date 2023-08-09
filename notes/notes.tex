@@ -352,12 +352,6 @@ a lot of nice properties, as we will see.
 	If $S$ is a subspace of $H$, then $S$ is also a Hilbert space.
 \end{theorem}
 
-\begin{theorem}
-	Let $H$ be a Hilbert space, and suppose $B(\cdot, \cdot)$ is a symmetric bilinear form
-	that is continuous on $H$ and coercive on a subspace $V$ of $H$.
-	Then $V$, equipped with the same bilinear form, is a Hilbert space.
-\end{theorem}
-
 \newpage
 
 \subsection{H\"{o}lder spaces}
@@ -406,7 +400,7 @@ The space of functions $C^{k,\gamma}(\overline{U})$ is a Banach space.
 
 \subsection{Mollifiers}
 \begin{motivation}
-	Mollifiers are smooth functions which allow us to ``smooth over'' other functions via convolution.
+	Mollifiers are smooth functions which allow us to \blockquote{\textit{smooth over}} other functions via convolution.
 	Since mollifiers are smooth functions, we find that they become very important in the study of Sobolev spaces,
 	especially for approximations, Sobolev inequalities, and the Sobolev embedding theorem.
 \end{motivation}
@@ -484,8 +478,8 @@ Let $U \subset \mathbb{R}^n$ be a bounded open set.
 		\int_U u D^{\alpha}\phi dx = (-1)^{|\alpha|}\int_U D^{\alpha}u\phi  dx
 	\end{equation}
 	where the LHS of equation (\ref{eq:4}) also holds if $u\in L_{\text{loc}}^1(U)$.
-	The question now is ``\textit{does $u$ need to be k-times partially differentiable, or can we replace $D^{\alpha}u$ with something that also satisfies
-	equation (\ref{eq:4}), but is just locally summable instead?}''
+	The question now is \blockquote{\textit{does $u$ need to be k-times partially differentiable, or can we replace $D^{\alpha}u$ with something that also satisfies
+	equation (\ref{eq:4}), but is just locally summable instead?}}
 \end{motivation}
 \begin{definition}
 	Let $u,v \in L_{\text{loc}}^1(U)$ and let $\alpha$ be a multi-index. Then we say that $v$ is the 
@@ -493,7 +487,7 @@ Let $U \subset \mathbb{R}^n$ be a bounded open set.
 	\begin{equation*}
 		\int_U u D^{\alpha}\phi dx = (-1)^{|\alpha|}\int_U v \phi dx.
 	\end{equation*}
-	In this case, we also say $D^{\alpha}u = v$ ``in the weak sense.''
+	In this case, we also say $D^{\alpha}u = v$ \blockquote{in the weak sense.}
 \end{definition}
 \begin{definition}
 	The space of k-times weakly differentiable functions described above is denoted as $W^k(U)$, where clearly $C^k(U) \subset W^k(U)$.
@@ -579,7 +573,7 @@ Assume $1 \leq p$, $q \leq \infty$, and $\frac{1}{p} + \frac{1}{p} = 1$. If $u \
 	\begin{equation*}
 		|(u,v)| \leq \|u\|\|v\|
 	\end{equation*}
-	with equality holding (``='') if and only if $u$ and $v$ are linearly dependent.
+	with equality holding if and only if $u$ and $v$ are linearly dependent.
 	Moreover, if $|(u,v)| = \|u\|\|v\|$ and $v\not=0$, then
 	\begin{equation*}
 		u = \frac{(u,v)}{\|v\|^2}v.
@@ -633,7 +627,7 @@ Assume $1 \leq p$, $q \leq \infty$, and $\frac{1}{p} + \frac{1}{p} = 1$. If $u \
 
 \section{Sobolev Spaces}
 \begin{motivation}
-Sobolev spaces are motivated by the study of elliptic PDEs, for example, the Poisson equation
+Sobolev spaces are motivated by the study of elliptic PDE, for example, the Poisson equation
 \[\Delta{u} = f.\]
 Multiplying this equation on both sides by $\phi \in C_{c}^{\infty}$, then integrating both sides, then integrating the left side by parts, results in
 \begin{equation*}
@@ -823,7 +817,7 @@ Also, we will instead use $d$ to denote the dimension and $\Omega$ to denote the
 \end{definition}
 
 We now find that smooth bounded functions are dense in Sobolev spaces on Lipschitz domains if $p < \infty$, which gives us
-an ``\textit{improved}'' density result from the Approximations and Density section.
+an \blockquote{\textit{improved}} density result from the Approximations and Density section.
 
 \begin{theorem}[Density of smooth functions]
 	Let $\Omega \subset \mathbb{R}^d$ be a bounded Lipschitz domain. Then the set $C^{\infty}(\overline{\Omega})$ is dense
@@ -842,7 +836,7 @@ However, because of Morrey (\url{https://math.stackexchange.com/a/2361510/112276
 	such that for all $u \in C^{\infty}(\overline{\Omega}) \cap W^{1,p}(\Omega)$ we have $T(u) = u|_{\partial \Omega}$.
 \end{theorem}
 
-Intuitively, the trace operator literally ``\textit{traces}'' the boundary of a function $u \in W^{1,p}(\Omega)$.
+Intuitively, the trace operator literally \blockquote{\textit{traces}} the boundary of a function $u \in W^{1,p}(\Omega)$.
 This has obvious importance for boundary value problems where we can't work with the boundary in a pointwise sense.
 As alluded to before, we will now explicitly define the subset of $W^{1,p}(\Omega)$ that contains these elements.
 
@@ -989,7 +983,7 @@ In progress...
 
 \subsection{Difference quotients and $W^{1,p}$}
 \begin{motivation}
-	``In PDE, the weak or classical differentiability of functions may often be deduced through a consideration of their difference quotients.''
+	\blockquote{\textit{In PDE, the weak or classical differentiability of functions may often be deduced through a consideration of their difference quotients.}}
 	\cite{gilbarg2001elliptic} However, for functions in Sobolev spaces, we will need to consider difference quotient approximations to
 	weak derivatives as these functions may not be continuous or totally differentiable. Since Evans \cite{evans1998partial}, and
 	Gilbarg and Trudinger's \cite{gilbarg2001elliptic} sections on difference quotients are so similar, I will use a combination of
@@ -1117,7 +1111,7 @@ In progress...
 
 \newpage
 
-\section{Adaptive Finite Element Methods}
+\section{AFEM}
 In Progress...
 
 \newpage
@@ -1158,12 +1152,12 @@ first need to introduce one of the important representation theorems alluded to 
 
 \begin{theorem}[Riesz representation theorem]
 	For every bounded linear functional $F$ on a Hilbert space $H$, there exists a uniquely determined element $f \in H$
-	such that $F(x) = (x,f)$ for all $x \in H$. Furthermore, $\|F\|_{\text{op}} = \|f\|_H$.
+	such that $F(x) = (x,f)$ for all $x \in H$. Furthermore, $\|F\|_{H^*} = \|f\|_H$.
 \end{theorem}
 \begin{proof}[My proof attempt]
 	For the case when $H = N(F) = \{x \in H \, | \, F(x) = 0\}$ we find that our uniquely determined element is $f=0$ as the zero vector is
 	orthogonal to everything including itself, implying $F(x) = 0 = (x,0)$ for all $x \in H$. However, assume $H \not= N(F)$.
-	$N(F)$ is now a closed subspace of $H$, which by virtue of the Projection Theorem implies there exists non-zero elements in $N(F)^{\bot}$.
+	$N(F)$ is now a closed subspace of $H$, which by virtue of the Hilbert Projection Theorem implies there exists non-zero elements in $N(F)^{\bot}$.
 	Take $z \in N(F)^{\bot}$ such that $z \not= 0$, where it follows that $(u,z) = 0$ for all $u \in N(F)$. Furthermore, $F(z) \not= 0$ and for any $x \in H$
 	\[F\left(x - \frac{F(x)}{F(z)}z\right) = F(x) - \frac{F(x)}{F(z)}F(z) = 0,\]
 	implying that $x - \frac{F(x)}{F(z)}z \in N(F)$, which further implies that $\left(x - \frac{F(x)}{F(z)}z, z\right) = 0$.
@@ -1186,19 +1180,19 @@ first need to introduce one of the important representation theorems alluded to 
 		0 = |F(x) - F(x)| = |(x,f_1) - (x,f_2)| = |(x,f_1-f_2)| \leq \|x\|\|f_1 - f_2\|.
 	\end{equation*}
 	This implies $\|f_1-f_2\| = 0$, which futher implies $f_1-f_2= 0$, proving the uniqueness of $f$.
-	Finally, to show $\|F\|_{\text{op}} = \|f\|_H$ we can use the fact that
+	Finally, to show $\|F\|_{H^*} = \|f\|_H$ we can use the fact that
 	\begin{equation*}
-		\|F\|_{\text{op}} = \sup\left\{\frac{\|F(x)\|_{\mathbb{R}}}{\|x\|_H}\, : \, x \not= 0 \text{ and } x \in H\right\}
+		\|F\|_{H^*} = \sup\left\{\frac{\|F(x)\|_{\mathbb{R}}}{\|x\|_H}\, : \, x \not= 0 \text{ and } x \in H\right\}
 	\end{equation*}
 	to say
 	\begin{equation*}
-		\|F\|_{\text{op}} = \sup_{x\not=0}{\frac{\|F(x)\|_{\mathbb{R}}}{\|x\|_H}} = \sup_{x\not=0}{\frac{|F(x)|}{\|x\|_H}} = \sup_{x\not=0}{\frac{|(x,f)|}{\|x\|_H}} \leq \sup_{x\not=0}{\frac{\|x\|_H\|f\|_H}{\|x\|_H}} = \|f\|_H.
+		\|F\|_{H^*} = \sup_{x\not=0}{\frac{\|F(x)\|_{\mathbb{R}}}{\|x\|_H}} = \sup_{x\not=0}{\frac{|F(x)|}{\|x\|_H}} = \sup_{x\not=0}{\frac{|(x,f)|}{\|x\|_H}} \leq \sup_{x\not=0}{\frac{\|x\|_H\|f\|_H}{\|x\|_H}} = \|f\|_H.
 	\end{equation*}
 	We can also say
 	\begin{equation*}
-		\|f\|_H^2 = \|f\|_H\|f\|_H = (f,f)^{1/2}(f,f)^{1/2} = (f,f) = F(f) \leq \|F(f)\|_{\text{op}}\|f\|_H.
+		\|f\|_H^2 = \|f\|_H\|f\|_H = (f,f)^{1/2}(f,f)^{1/2} = (f,f) = F(f) \leq \|F(f)\|_{H^*}\|f\|_H.
 	\end{equation*}
-	These inequalities imply that $\|F\|_{\text{op}} \leq \|f\|_H$ and $\|f\|_H \leq \|F\|_{\text{op}}$, respectively, which can only be true if $\|F\|_{\text{op}} = \|f\|_H$.
+	These inequalities imply that $\|F\|_{H^*} \leq \|f\|_H$ and $\|f\|_H \leq \|F\|_{H^*}$, respectively, which can only be true if $\|F\|_{H^*} = \|f\|_H$.
 \end{proof}
 
 In general, a symmetric variational problem is posed as follows. Suppose the following three conditions are valid:
@@ -1256,11 +1250,11 @@ A nonsymmetric variational problem is posed as follows. Suppose that the followi
 	\item $B(\cdot, \cdot)$ is coercive on $V$.
 \end{enumerate}
 The variational and approximation problems are posed in the exact same way as in the symmetric case, but since the bilinear form is not guaranteed to be symmetric
-this means we can no longer rely on the Riesz representation theorem to guarantee existence and uniqueness.
+this means we can no longer rely on the Riesz representation theorem to guarantee the existence and uniqueness of a solution.
 This gives rise to the Lax-Milgram theorem.
 
 \begin{theorem}[Lax-Milgram Theorem]
-	Let $B$ be a bounded, coercive bilinear form on a Hilbert space $H$. Then for every bounded linear functional $F$ on $H$
+	Let $B(\cdot,\cdot)$ be a bounded, coercive bilinear form on a Hilbert space $H$. Then for every bounded linear functional $F$ on $H$
 	there exists a uniquely determined element $f\in H$ such that
 	\begin{equation*}
 		B(x,f) = F(x)
@@ -1335,8 +1329,8 @@ This gives rise to the Lax-Milgram theorem.
 	\end{equation}
 	for some $\nu >0$ and $k >0$.
 	By definition $T$ is injective provided that for any $x,y \in H$, if $Tx = Ty$, then $x=y$.
-	But note that the linearity of $T$ implies that we can instead say ``$T$ is injective provided that
-	for all $w \in H$, if $Tw = 0$, the $w = 0$ .'' It is then easy to see that inequality (\ref{eq:10})
+	But note that the linearity of $T$ implies that we can instead say \blockquote{\textit{$T$ is injective provided that
+	for all $w \in H$, if $Tw = 0$, then $w = 0$ .}} It is then easy to see that inequality (\ref{eq:10})
 	satisfies this definition, and thus $T$ is injective.
 	Now to prove that $T$ is also surjective, we first need to prove that $T$ has a closed range so that
 	we can invoke the Hilbert Projection Theorem. To prove this, let $T(H)$ denote the range of $T$.
@@ -1408,7 +1402,7 @@ This gives rise to the Lax-Milgram theorem.
 Now let $u$ be a solution to the nonsymmetric variational problem, and let $u_h$ be a solution to the nonsymmetric approximation problem.
 We desire to estimate the error $\|u - u_h\|_V$ like we did in the symmetric case.
 
-\begin{theorem}[C\'{e}a's theorem]
+\begin{theorem}[C\'{e}a's lemma]
 	Suppose condtitions (i)-(v) of the nonsymmetric variational problem hold. For the \texttt{finite element variational problem},
 	i.e. the approximation problem, we have
 	\begin{equation*}
