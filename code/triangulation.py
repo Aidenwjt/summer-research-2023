@@ -206,39 +206,21 @@ class Node:
         for i in range(0,3):
             if(np.minimum(self.T.e[i].label, np.minimum(self.T.e[(i+1)%3].label, self.T.e[(i+1)%3].label)) == self.T.e[i].label):
                 self.ET = i
-    def bisect(self):
-        p = helpers.midpoint(self.T.v[(self.ET+1)%3], self.T.v[(self.ET+2)%3])
-        child_triangle1 = Triangle(self.T.v[self.ET], self.T.v[(self.ET+1)%3], p)
-        child_triangle2 = Triangle(self.T.v[self.ET], p, self.T.v[(self.ET+2)%3])
-        # TODO: figure out which vertex in each child triangle is p
-        for i in range(0,3):
-            if(child_triangle1.v[i].x == p.x and child_triangle1.v[i].y == p.y):
-                child_triangle1.e[i].label = self.T.e[(self.ET+2)%3].label
-                child_triangle1.e[(i+1)%3].label = self.T.e[self.ET].label + 2
-                child_triangle1.e[(i+2)%3].label = self.T.e[(self.ET+1)%3].label + 1
-        child_node1 = Node(child_triangle1, self.GT + 1)
-        child_node2 = Node(child_triangle2, self.GT + 1)
-        self.left = child_node1
-        self.right = child_node2
-        child_node1.parent = self
-        child_node2.parent = self
-        return (child_node1, child_node2)
     def update_neighbor(self, elem):
-        # TODO: also update sibling element here
         edges = self.T.shared_edges(elem.T)
         if(edges != None):
             i,j = edges
             if(i == 0):
                 self.neighbor0 = elem
-            elif(i == 1):
+            if(i == 1):
                 self.neighbor1 = elem
-            else:
+            if(i == 2):
                 self.neighbor2 = elem
             if(j == 0):
                 elem.neighbor0 = self
-            elif(j == 1):
+            if(j == 1):
                 elem.neighbor1 = self
-            else:
+            if(j == 2):
                 elem.neighbor2 = self
     def update_neighbors(self):
         if self.parent != None:
@@ -251,6 +233,31 @@ class Node:
                             self.update_neighbor(child)
                     else:
                         self.update_neighbor(neighbor)
+    def bisect(self):
+        p = helpers.midpoint(self.T.v[(self.ET+1)%3], self.T.v[(self.ET+2)%3])
+        child_triangle1 = Triangle(self.T.v[self.ET], self.T.v[(self.ET+1)%3], p)
+        child_triangle2 = Triangle(self.T.v[self.ET], p, self.T.v[(self.ET+2)%3])
+        for i in range(0,3):
+            if(child_triangle1.v[i].x == p.x and child_triangle1.v[i].y == p.y):
+                child_triangle1.e[i].label = self.T.e[(self.ET+2)%3].label
+                child_triangle1.e[(i+1)%3].label = self.T.e[self.ET].label + 2
+                child_triangle1.e[(i+2)%3].label = self.T.e[(self.ET+1)%3].label + 1
+            if(child_triangle2.v[i].x == p.x and child_triangle2.v[i].y == p.y):
+                child_triangle1.e[i].label = self.T.e[(self.ET+1)%3].label
+                child_triangle1.e[(i+1)%3].label = self.T.e[(self.ET+2)%3].label + 1
+                child_triangle1.e[(i+2)%3].label = self.T.e[self.ET].label + 2
+        child_node1 = Node(child_triangle1, self.GT + 1)
+        child_node2 = Node(child_triangle2, self.GT + 1)
+        child_node1.root = self.root
+        child_node2.root = self.root
+        child_node1.find_refinement_edge()
+        child_node2.find_refinement_edge()
+        self.left = child_node1
+        self.right = child_node2
+        child_node1.parent = self
+        child_node2.parent = self
+        child_node1.update_neighbor(child_node2)
+        return (child_node1, child_node2)
 
 def ear_tip_status(v,reflex_v):
     """ 
@@ -335,6 +342,7 @@ def earclipping(vertices):
         T.label_longest_edge()
         elem = Node(T, 0)
         elem.find_refinement_edge()
+        elem.root = elem
         triangulation.append(elem)
         # Update relationships in polygon
         polygon.remove(v.coords)
@@ -350,6 +358,22 @@ def earclipping(vertices):
         update_ear_tip_status(v_prev,convex_v,reflex_v,ear_tips)
         update_ear_tip_status(v_next,convex_v,reflex_v,ear_tips)
 
-    # TODO: construct the initial mesh
+    initial_mesh = []
+    for elem in triangulation:
+        child1, child2 = elem.bisect()
+        grandchild1, grandchild2 = child1.bisect()
+        grandchild3, grandchild4 = child2.bisect()
+        grandchildren = [grandchild1, grandchild2, grandchild3, grandchild4]
+        for grandchild in grandchildren:
+            neighbors = [grandchild.neighbor0, grandchild.neighbor1, grandchild.neighbor2]
+            for i in range(0,3):
+                if(neighbors[i] == None or neighbors[i].root != grandchild.root):
+                    grandchild.T.e[i].label = 1
+                else:
+                    grandchild.T.e[i].label = 0
 
-    return triangulation
+    for i in range(0, len(initial_mesh)+1):
+        for j in range(0, len(initial_mesh)+1):
+            if(i != j):
+                initial_mesh[i].update_neighbor(initial_mesh[j])
+    return initial_mesh
