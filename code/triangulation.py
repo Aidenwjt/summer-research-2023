@@ -159,11 +159,12 @@ class Edge:
         return False
 
 class Triangle:
-    def __init__(self, v0, v1, v2):
+    def __init__(self, v0, v1, v2, e0, e1, e2):
         self.v = [v0, v1, v2]
+        self.e = [e0, e1, e2]
         for i in range(0,3):
             tao1 = Point(self.v[1].x - self.v[0].x, self.v[1].y - self.v[0].y)
-            tao1_perp = Point(-tao_1.y, tao_1.x)
+            tao1_perp = Point(-tao1.y, tao1.x)
             tao2 = Point(self.v[2].x - self.v[0].x, self.v[2].y - self.v[0].y)
             if( ((tao2.x * tao1_perp.x) + (tao2.y * tao1_perp.y)) > 0 ):
                 break
@@ -173,16 +174,18 @@ class Triangle:
             self.v[0] = temp_v2
             self.v[1] = temp_v0
             self.v[2] = temp_v1
-        e0 = Edge(self.v[1], self.v[2])
-        e1 = Edge(self.v[0], self.v[2])
-        e2 = Edge(self.v[0], self.v[1])
-        self.e = [e0, e1, e2]
+            temp_e0 = self.e[0]
+            temp_e1 = self.e[1]
+            temp_e2 = self.e[2]
+            self.e[0] = temp_e2
+            self.e[1] = temp_e0
+            self.e[2] = temp_e1
     def label_longest_edge(self):
         for i in range(0,3):
             if(np.maximum(self.e[i].dist, np.maximum(self.e[(i+1)%3].dist, self.e[(i+2)%3].dist)) == self.e[i].dist):
                 self.e[i].label = 0
-                self.e[(i+1)%3] = 1
-                self.e[(i+2)%3] = 1
+                self.e[(i+1)%3].label = 1
+                self.e[(i+2)%3].label = 1
     def shared_edges(self, T):
         for i in range(0,3):
             for j in range(0,3):
@@ -204,7 +207,7 @@ class Node:
         self.root = None
     def find_refinement_edge(self):
         for i in range(0,3):
-            if(np.minimum(self.T.e[i].label, np.minimum(self.T.e[(i+1)%3].label, self.T.e[(i+1)%3].label)) == self.T.e[i].label):
+            if(np.minimum(self.T.e[i].label, np.minimum(self.T.e[(i+1)%3].label, self.T.e[(i+2)%3].label)) == self.T.e[i].label):
                 self.ET = i
     def update_neighbor(self, elem):
         edges = self.T.shared_edges(elem.T)
@@ -235,17 +238,27 @@ class Node:
                         self.update_neighbor(neighbor)
     def bisect(self):
         p = helpers.midpoint(self.T.v[(self.ET+1)%3], self.T.v[(self.ET+2)%3])
-        child_triangle1 = Triangle(self.T.v[self.ET], self.T.v[(self.ET+1)%3], p)
-        child_triangle2 = Triangle(self.T.v[self.ET], p, self.T.v[(self.ET+2)%3])
+        new_edge1 = Edge(p, self.T.v[(self.ET+1)%3])
+        new_edge1.label = self.T.e[self.ET].label + 2
+        new_edge2 = Edge(p, self.T.v[self.ET])
+        new_edge2.label = self.T.e[(self.ET+1)%3].label + 1
+        child_triangle1 = Triangle(self.T.v[self.ET], self.T.v[(self.ET+1)%3], p, new_edge1, new_edge2, self.T.e[(self.ET+2)%3])
+        new_edge3 = Edge(p, self.T.v[(self.ET+2)%3])
+        new_edge3.label = self.T.e[self.ET].label + 2
+        new_edge4 = Edge(p, self.T.v[self.ET])
+        new_edge4.label = self.T.e[(self.ET+2)%3].label + 1
+        child_triangle2 = Triangle(self.T.v[self.ET], p, self.T.v[(self.ET+2)%3], new_edge3, self.T.e[(self.ET+1)%3], new_edge4)
+        """
         for i in range(0,3):
             if(child_triangle1.v[i].x == p.x and child_triangle1.v[i].y == p.y):
-                child_triangle1.e[i].label = self.T.e[(self.ET+2)%3].label
+                child_triangle1.e[i].label = self.T.e[(self.ET+2)%3].label 
                 child_triangle1.e[(i+1)%3].label = self.T.e[self.ET].label + 2
                 child_triangle1.e[(i+2)%3].label = self.T.e[(self.ET+1)%3].label + 1
             if(child_triangle2.v[i].x == p.x and child_triangle2.v[i].y == p.y):
-                child_triangle1.e[i].label = self.T.e[(self.ET+1)%3].label
-                child_triangle1.e[(i+1)%3].label = self.T.e[(self.ET+2)%3].label + 1
-                child_triangle1.e[(i+2)%3].label = self.T.e[self.ET].label + 2
+                child_triangle2.e[i].label = self.T.e[(self.ET+1)%3].label 
+                child_triangle2.e[(i+1)%3].label = self.T.e[(self.ET+2)%3].label + 1
+                child_triangle2.e[(i+2)%3].label = self.T.e[self.ET].label + 2
+        """
         child_node1 = Node(child_triangle1, self.GT + 1)
         child_node2 = Node(child_triangle2, self.GT + 1)
         child_node1.root = self.root
@@ -317,7 +330,6 @@ def earclipping(vertices):
     reflex_v = []
     for i in range(0,len(vertices)):
         v.calculate_interior_angle()
-        print(v.interior_angle)
         if(v.interior_angle < np.pi):
             convex_v.append(v)
         else:
@@ -338,7 +350,7 @@ def earclipping(vertices):
         v = ear_tips[0]
         v_prev = v.prev
         v_next = v.next
-        T = Triangle(v.coords,v_prev.coords,v_next.coords)
+        T = Triangle(v_prev.coords,v.coords,v_next.coords, Edge(v.coords,v_next.coords), Edge(v_prev.coords,v_next.coords), Edge(v_prev.coords,v.coords))
         T.label_longest_edge()
         elem = Node(T, 0)
         elem.find_refinement_edge()
@@ -357,7 +369,7 @@ def earclipping(vertices):
         # Update ear tip status of the neighbor vertices
         update_ear_tip_status(v_prev,convex_v,reflex_v,ear_tips)
         update_ear_tip_status(v_next,convex_v,reflex_v,ear_tips)
-
+    
     initial_mesh = []
     for elem in triangulation:
         child1, child2 = elem.bisect()
@@ -367,13 +379,14 @@ def earclipping(vertices):
         for grandchild in grandchildren:
             neighbors = [grandchild.neighbor0, grandchild.neighbor1, grandchild.neighbor2]
             for i in range(0,3):
-                if(neighbors[i] == None or neighbors[i].root != grandchild.root):
+                if(neighbors[i] == None or neighbors[i].parent != grandchild.parent):
                     grandchild.T.e[i].label = 1
                 else:
                     grandchild.T.e[i].label = 0
+            initial_mesh.append(grandchild)
 
-    for i in range(0, len(initial_mesh)+1):
-        for j in range(0, len(initial_mesh)+1):
+    for i in range(0, len(initial_mesh)):
+        for j in range(0, len(initial_mesh)):
             if(i != j):
                 initial_mesh[i].update_neighbor(initial_mesh[j])
     return initial_mesh
