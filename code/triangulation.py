@@ -150,6 +150,8 @@ class Edge:
     def __init__(self, p, q):
         self.p = p
         self.q = q
+        self.dist = helpers.distance(p, q)
+        self.label = None
     def equals(self, e):
         if(( (self.p.x == e.p.x and self.p.y == e.p.y) and (self.q.x == e.q.x and self.q.y == e.q.y) )
            or ( (self.p.x == e.q.x and self.p.y == e.q.y) and (self.q.x == e.p.x and self.q.y == e.p.y) )):
@@ -157,9 +159,30 @@ class Edge:
         return False
 
 class Triangle:
-    def __init__(self, v0, v1, v2, e0, e1, e2):
+    def __init__(self, v0, v1, v2):
         self.v = [v0, v1, v2]
+        for i in range(0,3):
+            tao1 = Point(self.v[1].x - self.v[0].x, self.v[1].y - self.v[0].y)
+            tao1_perp = Point(-tao_1.y, tao_1.x)
+            tao2 = Point(self.v[2].x - self.v[0].x, self.v[2].y - self.v[0].y)
+            if( ((tao2.x * tao1_perp.x) + (tao2.y * tao1_perp.y)) > 0 ):
+                break
+            temp_v0 = self.v[0]
+            temp_v1 = self.v[1]
+            temp_v2 = self.v[2]
+            self.v[0] = temp_v2
+            self.v[1] = temp_v0
+            self.v[2] = temp_v1
+        e0 = Edge(self.v[1], self.v[2])
+        e1 = Edge(self.v[0], self.v[2])
+        e2 = Edge(self.v[0], self.v[1])
         self.e = [e0, e1, e2]
+    def label_longest_edge(self):
+        for i in range(0,3):
+            if(np.maximum(self.e[i].dist, np.maximum(self.e[(i+1)%3].dist, self.e[(i+2)%3].dist)) == self.e[i].dist):
+                self.e[i].label = 0
+                self.e[(i+1)%3] = 1
+                self.e[(i+2)%3] = 1
     def shared_edges(self, T):
         for i in range(0,3):
             for j in range(0,3):
@@ -174,24 +197,34 @@ class Node:
         self.right = None
         self.T = T
         self.GT = GT
-        self.neighbor0 = None # NOTE: F(T) for now
+        self.ET = None # NOTE: F(T) corresponds to value of E(T)
+        self.neighbor0 = None
         self.neighbor1 = None
         self.neighbor2 = None
         self.root = None
+    def find_refinement_edge(self):
+        for i in range(0,3):
+            if(np.minimum(self.T.e[i].label, np.minimum(self.T.e[(i+1)%3].label, self.T.e[(i+1)%3].label)) == self.T.e[i].label):
+                self.ET = i
     def bisect(self):
-        p = helpers.midpoint(self.T.v[1], self.T.v[2])
-        child_triangle1 = Triangle(p, self.T.v[0], self.T.v[1], Edge(self.T.v[0],self.T.v[1]), Edge(p,self.T.v[1]), Edge(p,self.T.v[0]))
-        child_triangle2 = Triangle(p, self.T.v[2], self.T.v[0], Edge(self.T.v[0],self.T.v[2]), Edge(p,self.T.v[0]), Edge(p,self.T.v[2]))
+        p = helpers.midpoint(self.T.v[(self.ET+1)%3], self.T.v[(self.ET+2)%3])
+        child_triangle1 = Triangle(self.T.v[self.ET], self.T.v[(self.ET+1)%3], p)
+        child_triangle2 = Triangle(self.T.v[self.ET], p, self.T.v[(self.ET+2)%3])
+        # TODO: figure out which vertex in each child triangle is p
+        for i in range(0,3):
+            if(child_triangle1.v[i].x == p.x and child_triangle1.v[i].y == p.y):
+                child_triangle1.e[i].label = self.T.e[(self.ET+2)%3].label
+                child_triangle1.e[(i+1)%3].label = self.T.e[self.ET].label + 2
+                child_triangle1.e[(i+2)%3].label = self.T.e[(self.ET+1)%3].label + 1
         child_node1 = Node(child_triangle1, self.GT + 1)
         child_node2 = Node(child_triangle2, self.GT + 1)
         self.left = child_node1
         self.right = child_node2
         child_node1.parent = self
         child_node2.parent = self
-        child_node1.neighbor2 = child_node2
-        child_node2.neighbor1 = child_node1
         return (child_node1, child_node2)
     def update_neighbor(self, elem):
+        # TODO: also update sibling element here
         edges = self.T.shared_edges(elem.T)
         if(edges != None):
             i,j = edges
@@ -298,9 +331,11 @@ def earclipping(vertices):
         v = ear_tips[0]
         v_prev = v.prev
         v_next = v.next
-        # TODO: add in order of largest edge
-        triangulation.append(Triangle(v.coords,v_prev.coords,v_next.coords,Edge(v_prev.coords,v_next.coords),Edge(v.coords,v_next.coords),Edge(v.coords,v_prev.coords)))
-        # TODO: maybe create the nodes here and add those to the trianglulation instead of just triangles
+        T = Triangle(v.coords,v_prev.coords,v_next.coords)
+        T.label_longest_edge()
+        elem = Node(T, 0)
+        elem.find_refinement_edge()
+        triangulation.append(elem)
         # Update relationships in polygon
         polygon.remove(v.coords)
         # Let this vertex no longer be an ear tip
@@ -314,6 +349,7 @@ def earclipping(vertices):
         # Update ear tip status of the neighbor vertices
         update_ear_tip_status(v_prev,convex_v,reflex_v,ear_tips)
         update_ear_tip_status(v_next,convex_v,reflex_v,ear_tips)
-    return triangulation
 
-# TODO: new function for creating the initial mesh by bisecting twice
+    # TODO: construct the initial mesh
+
+    return triangulation
