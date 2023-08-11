@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 import triangulation
 
-#initial_mesh = triangulation.earclipping([(0,0),(4,0),(4,3),(6,3),(6,4),(3,4),(3,2),(0,2)])
-initial_mesh = triangulation.earclipping([(0,0),(1,0),(1,1),(0,1)])
+initial_mesh = triangulation.earclipping([(0,0),(4,0),(4,3),(6,3),(6,4),(3,4),(3,2),(0,2)])
+#initial_mesh = triangulation.earclipping([(0,0),(1,0),(1,1),(0,1)])
 
 fig, ax = plt.subplots()
 print("v0           v1          v2        l0 l1 l2")

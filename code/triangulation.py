@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import numpy as np
+import multiprocessing as mp
 import helpers
 
 class Point:
@@ -236,8 +237,7 @@ class Node:
                             self.update_neighbor(child)
                     else:
                         self.update_neighbor(neighbor)
-    def bisect(self):
-        p = helpers.midpoint(self.T.v[(self.ET+1)%3], self.T.v[(self.ET+2)%3])
+    def bisect(self, p):
         new_edge1 = Edge(p, self.T.v[(self.ET+1)%3])
         new_edge1.label = self.T.e[self.ET].label + 2
         new_edge2 = Edge(p, self.T.v[self.ET])
@@ -248,17 +248,6 @@ class Node:
         new_edge4 = Edge(p, self.T.v[self.ET])
         new_edge4.label = self.T.e[(self.ET+2)%3].label + 1
         child_triangle2 = Triangle(self.T.v[self.ET], p, self.T.v[(self.ET+2)%3], new_edge3, self.T.e[(self.ET+1)%3], new_edge4)
-        """
-        for i in range(0,3):
-            if(child_triangle1.v[i].x == p.x and child_triangle1.v[i].y == p.y):
-                child_triangle1.e[i].label = self.T.e[(self.ET+2)%3].label 
-                child_triangle1.e[(i+1)%3].label = self.T.e[self.ET].label + 2
-                child_triangle1.e[(i+2)%3].label = self.T.e[(self.ET+1)%3].label + 1
-            if(child_triangle2.v[i].x == p.x and child_triangle2.v[i].y == p.y):
-                child_triangle2.e[i].label = self.T.e[(self.ET+1)%3].label 
-                child_triangle2.e[(i+1)%3].label = self.T.e[(self.ET+2)%3].label + 1
-                child_triangle2.e[(i+2)%3].label = self.T.e[self.ET].label + 2
-        """
         child_node1 = Node(child_triangle1, self.GT + 1)
         child_node2 = Node(child_triangle2, self.GT + 1)
         child_node1.root = self.root
@@ -271,6 +260,83 @@ class Node:
         child_node2.parent = self
         child_node1.update_neighbor(child_node2)
         return (child_node1, child_node2)
+    def iterate_along_line(self, i, return_dict, sigma, p, t, step):
+        if(i == 0):
+            diam_triangle = helpers.diam_of_triangle(self.T.v[self.ET], self.T.v[(self.ET+1)%3], p)
+            area_root2 = helpers.triangle_area_root2(self.T.v[self.ET], self.T.v[(self.ET+1)%3], p)
+            diam_circle = helpers.diam_of_inscribed_circle(self.T.v[self.ET], p, self.T.v[(self.ET+1)%3])
+            print("Process 0: diam_triangle = {} area_root2 = {} diam_circle = {}".format(diam_triangle, area_root2, diam_circle))
+            if(diam_circle <= area_root2 and area_root2 <= diam_triangle and diam_triangle <= sigma * diam_circle):
+                return_dict[i] = p
+                return
+            t = t - step
+            p = Point(
+                self.T.v[(self.ET+2)%3].x+(t/(helpers.distance(self.T.v[(self.ET+2)%3],self.T.v[(self.ET+1)%3])))*(self.T.v[(self.ET+1)%3].x-self.T.v[(self.ET+2)%3].x),
+                self.T.v[(self.ET+2)%3].y+(t/(helpers.distance(self.T.v[(self.ET+2)%3],self.T.v[(self.ET+1)%3])))*(self.T.v[(self.ET+1)%3].y-self.T.v[(self.ET+2)%3].y)
+            )
+            print("({},{})".format(p.x,p.y))
+            #if(p.x == self.T.v[(self.ET+2)%3].x and p.y == self.T.v[(self.ET+2)%3].y):
+            if(helpers.barycentric_point_check(self.T.v[self.ET], self.T.v[(self.ET+1)%3], self.T.v[(self.ET+2)%3], p) == False):
+                print("Here1")
+                return_dict[i] = None
+                return
+        if(i == 1):
+            diam_triangle = helpers.diam_of_triangle(self.T.v[self.ET], p, self.T.v[(self.ET+2)%3])
+            area_root2 = helpers.triangle_area_root2(self.T.v[self.ET], p, self.T.v[(self.ET+2)%3])
+            diam_circle = helpers.diam_of_inscribed_circle(self.T.v[self.ET], p, self.T.v[(self.ET+2)%3])
+            print("Process 1: diam_triangle = {} area_root2 = {} diam_circle = {}".format(diam_triangle, area_root2, diam_circle))
+            if(diam_circle <= area_root2 and area_root2 <= diam_triangle and diam_triangle <= sigma * diam_circle):
+                return_dict[i] = p
+                return
+            t = t + step
+            p = Point(
+                self.T.v[(self.ET+2)%3].x+(t/(helpers.distance(self.T.v[(self.ET+2)%3],self.T.v[(self.ET+1)%3])))*(self.T.v[(self.ET+1)%3].x-self.T.v[(self.ET+2)%3].x),
+                self.T.v[(self.ET+2)%3].y+(t/(helpers.distance(self.T.v[(self.ET+2)%3],self.T.v[(self.ET+1)%3])))*(self.T.v[(self.ET+1)%3].y-self.T.v[(self.ET+2)%3].y)
+            )
+            print("({},{})".format(p.x,p.y))
+            #if(p.x == self.T.v[(self.ET+1)%3].x and p.y == self.T.v[(self.ET+1)%3].y):
+            if(helpers.barycentric_point_check(self.T.v[self.ET], self.T.v[(self.ET+1)%3], self.T.v[(self.ET+2)%3], p) == False):
+                print("Here2")
+                return_dict[i] = None
+                return
+        self.iterate_along_line(i, return_dict, sigma, p, t, step)
+    def shape_regularity_bisect(self, sigma):
+        p = helpers.midpoint(self.T.v[(self.ET+1)%3], self.T.v[(self.ET+2)%3])
+        print("p: ({},{})".format(p.x,p.y))
+        t = helpers.distance(self.T.v[(self.ET+1)%3], p)
+        step = t/100
+        manager = mp.Manager()
+        return_dict = manager.dict()
+        processes = []
+        for i in range(0,2):
+            proc = mp.Process(target=self.iterate_along_line, args=(i, return_dict, sigma, p, t, step))
+            processes.append(proc)
+            proc.start()
+        for proc in processes:
+            proc.join()
+        points = []
+        for _,value in return_dict.items():
+            points.append(value)
+        if(points[0] == None and points[1] == None):
+            print("Error")
+        elif(points[0] != None and points[1] == None):
+            child1, child2 = self.bisect(points[0])
+            return (child1, child2)
+        elif(points[0] == None and points[1] != None):
+            child1, child2 = self.bisect(points[1])
+            return (child1, child2)
+        else:
+            upper_bound1 = sigma*helpers.diam_of_inscribed_circle(self.T.v[self.ET], p, self.T.v[(self.ET+2)%3])
+            diam1 = helpers.diam_of_triangle(self.T.v[self.ET], p, self.T.v[(self.ET+2)%3])
+            upper_bound2 = sigma*helpers.diam_of_inscribed_circle(self.T.v[self.ET], p, self.T.v[(self.ET+1)%3])
+            diam2 = helpers.diam_of_triangle(self.T.v[self.ET], p, self.T.v[(self.ET+1)%3])
+            if(upper_bound1 - diam1 <= upper_bound2 - diam2):
+            #if(helpers.distance(self.T.v[(self.ET+2)%3], points[0]) >= helpers.distance(self.T.v[(self.ET+1)%3], points[1])):
+                child1, child2 = self.bisect(points[1])
+                return (child1, child2)
+            else:
+                child1, child2 = self.bisect(points[0])
+                return (child1, child2)
 
 def ear_tip_status(v,reflex_v):
     """ 
@@ -370,11 +436,20 @@ def earclipping(vertices):
         update_ear_tip_status(v_prev,convex_v,reflex_v,ear_tips)
         update_ear_tip_status(v_next,convex_v,reflex_v,ear_tips)
     
+    sigma = 0
+    for elem in triangulation:
+        temp = helpers.diam_of_triangle(elem.T.v[0],elem.T.v[1],elem.T.v[2])/helpers.diam_of_inscribed_circle(elem.T.v[0],elem.T.v[1],elem.T.v[2]) 
+        if(temp > sigma):
+            sigma = temp
+
     initial_mesh = []
     for elem in triangulation:
-        child1, child2 = elem.bisect()
-        grandchild1, grandchild2 = child1.bisect()
-        grandchild3, grandchild4 = child2.bisect()
+        #child1, child2 = elem.shape_regularity_bisect(sigma)
+        #grandchild1, grandchild2 = child1.shape_regularity_bisect(sigma)
+        #grandchild3, grandchild4 = child2.shape_regularity_bisect(sigma)
+        child1, child2 = elem.bisect(helpers.midpoint(elem.T.v[(elem.ET+1)%3], elem.T.v[(elem.ET+2)%3]))
+        grandchild1, grandchild2 = child1.bisect(helpers.midpoint(child1.T.v[(child1.ET+1)%3], child1.T.v[(child1.ET+2)%3]))
+        grandchild3, grandchild4 = child2.bisect(helpers.midpoint(child2.T.v[(child2.ET+1)%3], child2.T.v[(child2.ET+2)%3]))
         grandchildren = [grandchild1, grandchild2, grandchild3, grandchild4]
         for grandchild in grandchildren:
             neighbors = [grandchild.neighbor0, grandchild.neighbor1, grandchild.neighbor2]

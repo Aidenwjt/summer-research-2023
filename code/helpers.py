@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
 import numpy as np
+import triangulation
 
 class Point:
-    def __init__(self,x,y):
+    def __init__(self, x, y):
         self.x = x
         self.y = y
 
@@ -40,13 +41,17 @@ def section_formula(A,B,m,n):
 
 def diam_of_inscribed_circle(A,B,C):
     """ Returns the diameter of the circle inscribed in the triangle ABC. """
-    bisector1 = section_formula(A, C, distance(A, B), distance(B, C))
-    m1 = (bisector1.y - B.y) / (bisector1.x - B.x)
-    b1 =  B.y - m1 * B.x
-    bisector2 = section_formula(B, A,distance(B, C),distance(C, A))
-    m2 = (bisector2.y - C.y)/(bisector2.x - C.x)
-    b2 =  C.y - m2 * C.x
-    x = (b2 - b1)/(m1 - m2)
-    y = m2*x + b2
-    radius = nearest_distance_to_line(A,B,Point(x,y))
-    return 2*radius
+    D = section_formula(A, C, distance(A, B), distance(B, C))
+    F = section_formula(B, D, distance(B, C), distance(D, C))
+    return 2*nearest_distance_to_line(A,B,F)
+
+def barycentric_point_check(A,B,C,P):
+    a = ( ((B.y - C.y)*(P.x - C.x) + (C.x - B.x)*(P.y - C.y)) / 
+         ((B.y - C.y)*(A.x - C.x) + (C.x - B.x)*(A.y - C.y)) )
+    b = ( ((C.y - A.y)*(P.x - C.x) + (A.x - C.x)*(P.y - C.y)) / 
+         ((B.y - C.y)*(A.x - C.x) + (C.x - B.x)*(A.y - C.y)))
+    c = 1 - a - b
+    print(a, b, c)
+    if((a >= 0 and a <= 1) and (b >= 0 and b <= 1) and (c >= 0 and c <= 1)):
+        return True
+    return False

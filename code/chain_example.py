@@ -162,14 +162,14 @@ mesh = refine(mesh, marked)
 marked = [root1.right.right.left]
 mesh = refine(mesh, marked)
 
-#marked = [root1.right.right.left.right]
-#mesh = refine(mesh, marked)
+marked = [root1.right.right.left.right]
+mesh = refine(mesh, marked)
 
-#marked = [root1.right.right.left.right.left]
-#mesh = refine(mesh, marked)
+marked = [root1.right.right.left.right.left]
+mesh = refine(mesh, marked)
 
-#marked = [root1.right.right.left.right.left.left]
-#mesh = refine(mesh, marked)
+marked = [root1.right.right.left.right.left.left]
+mesh = refine(mesh, marked)
 
 fig, ax = plt.subplots()
 for elem in mesh:
