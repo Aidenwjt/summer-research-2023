@@ -1,16 +1,11 @@
 #!/usr/bin/env python3
 
 import numpy as np
-import triangulation
-
-class Point:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+import structures as s
 
 def midpoint(P,Q):
     """ Returns the midpoint of two points in 2D. """
-    return Point((Q.x + P.x)/2, (Q.y + P.y)/2)
+    return s.Point((Q.x + P.x)/2, (Q.y + P.y)/2)
 
 def distance(P,Q):
     """ Returns the distance between two points in 2D. """
@@ -37,7 +32,7 @@ def triangle_area_root2(A,B,C):
 
 def section_formula(A,B,m,n):
     """ Returns the point on the line AB defined by the section formula, given ratios m and n. """
-    return Point((m*B.x + n*A.x)/(m+n),(m*B.y + n*A.y)/(m+n))
+    return s.Point((m*B.x + n*A.x)/(m+n),(m*B.y + n*A.y)/(m+n))
 
 def diam_of_inscribed_circle(A,B,C):
     """ Returns the diameter of the circle inscribed in the triangle ABC. """

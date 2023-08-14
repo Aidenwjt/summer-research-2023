@@ -145,7 +145,6 @@ root4.neighbor2 = root1
 
 # Initial mesh
 mesh = [root1, root2, root3, root4]
-
 # First iteration
 marked = [root1, root4]
 mesh = refine(mesh, marked)
@@ -165,12 +164,13 @@ mesh = refine(mesh, marked)
 marked = [root1.right.right.left.right]
 mesh = refine(mesh, marked)
 
+"""
 marked = [root1.right.right.left.right.left]
 mesh = refine(mesh, marked)
 
 marked = [root1.right.right.left.right.left.left]
 mesh = refine(mesh, marked)
-
+"""
 fig, ax = plt.subplots()
 for elem in mesh:
     ax.plot([elem.T.v[0].x,elem.T.v[1].x],[elem.T.v[0].y,elem.T.v[1].y],color='black',linestyle='-')
