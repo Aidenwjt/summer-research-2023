@@ -49,7 +49,8 @@ def update_ear_tip_status(v,convex_v,reflex_v,ear_tips):
     if(((v in reflex_v) or (ear_tip_status(v,reflex_v) == False)) and (v in ear_tips)):
             ear_tips.remove(v)
 
-def earclipping(vertices):
+# TODO: separate earclipping functionality so I can implement other triangulation methods
+def initial_mesh(vertices):
     """ Returns a triangulation of the given vertices of a simple polygon using the ear clipping method. """
     # Construct polygon
     polygon = s.Polygon()
