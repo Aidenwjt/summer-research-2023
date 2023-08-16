@@ -55,7 +55,9 @@ def create(vertices):
     # Construct polygon
     polygon = s.Polygon()
     for v in vertices:
-        polygon.append(s.Point(v[0],v[1]))
+        vertex = s.Point(v[0],v[1])
+        vertex.boundary = True
+        polygon.append(vertex)
 
     # Calculate interior angles of each vertex in the simple polygon
     v = polygon.head

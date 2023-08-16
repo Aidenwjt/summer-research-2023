@@ -8,6 +8,11 @@ class Point:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        self.boundary = False
+    def equals(self, v):
+        if(self.x == v.x and self.y == v.y):
+            return True
+        return False
 
 class Vertex:
     def __init__(self, coords):
@@ -238,6 +243,8 @@ class Node:
                     else:
                         self.update_neighbor(neighbor)
     def bisect(self, p):
+        if(self.T.v[(self.ET+1)%3].boundary == True and self.T.v[(self.ET+2)%3].boundary == True):
+            p.boundary = True
         new_edge1 = Edge(p, self.T.v[(self.ET+1)%3])
         new_edge1.label = self.T.e[self.ET].label + 2
         new_edge2 = Edge(p, self.T.v[self.ET])

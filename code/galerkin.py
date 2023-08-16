@@ -17,16 +17,51 @@ import helpers as h
 #       -> returns the value of the Galerkin solution, recreated with the nodal basis functions, evaluated at some value x in the domain
 
 def unique_vertices_excluding_boundary(mesh):
-    pass
+    vertices = []
+    for elem in mesh:
+        for v in elem.T.v:
+            if(v.boundary == False):
+                flag = False
+                for v1 in vertices:
+                    if(v.equals(v1) == True):
+                        flag = True
+                if(flag == False):
+                    vertices.append(v)
+    return vertices
 
 def grad_phi(elem):
-    pass
+    det_XT = (elem.T.v[1].x * elem.T.v[2].y) + (elem.T.v[2].x * elem.T.v[0].y) + (elem.T.v[0].x * elem.T.v[1].y)
+            - (elem.T.v[1].x * elem.T.v[0].y) - (elem.T.v[0].x * elem.T.v[2].y) - (elem.T.v[2].x * elem.T.v[1].y)
+    grad_phi_v0 = [((elem.T.v[2].x * elem.T.v[0].y)-(elem.T.v[0].x * elem.T.v[2].y))/det_XT, ((elem.T.v[0].x * elem.T.v[1].y)-(elem.T.v[1].x * elem.T.v[0].y))/det_XT]
+    grad_phi_v1 = [(elem.T.v[2].y - elem.T.v[0].y)/det_XT, (elem.T.v[0].y  - elem.T.v[1].y)/det_XT]
+    grad_phi_v2 = [(elem.T.v[0].x - elem.T.v[2].x)/det_XT, (elem.T.v[1].x  - elem.T.v[0].x)/det_XT]
+    return [grad_phi_v0, grad_phi_v1, grad_phi_v2]
 
-def galerkin_basis_coeffcients(mesh, vertices):
-    pass
+def galerkin_basis_coeffcients(mesh, vertices, f):
+    # Compute T matrix and f vector
+    T = [[0]*len(vertices) for i in range(0, len(vertices))]
+    f = [0]*len(vertices)
+    for i in range(0, len(vertices)):
+        sum_fi = 0
+        for elem in mesh:
+            if(elem.T.v[i] is in vertices):
+                sum_fi += f*((h.triangle_area_root2(elem.T.v[0], elem.T.v[1], elem.T.v[2])**2)/3)
+        f[i] = sum_fi
+        for j in range(0, len(vertices)):
+            sum_Tij = 0
+            for elem in mesh:
+                if((elem.T.v[i] is in vertices) and (elem.T.v[j] is in vertices)):
+                    grads = grad_phi(elem)
+                    grad_phi_vi = grads[i]
+                    grad_phi_vj = grads[j]
+                    dot_grads = (grad_phi_vi[0] * grad_phi_vj[0]) + (grad_phi_vi[1] * grad_phi_vj[1])
+                    area_of_T = h.triangle_area_root2(elem.T.v[0], elem.T.v[1], elem.T.v[2])**2
+                    sum_Tij += dot_grads * area_of_T
+            T[i][j] = sum_Tij
+    return np.linalg.solve(np.array(T), np.array(f)).tolist()
 
 def phi_of_x(z, x):
     pass
 
-def recreate_galerkin_solution(U, vertices, x):
+def recreate_galerkin_solution_at_x(U, vertices, x):
     pass
