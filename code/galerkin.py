@@ -44,13 +44,13 @@ def galerkin_basis_coeffcients(mesh, vertices, f):
     for i in range(0, len(vertices)):
         sum_fi = 0
         for elem in mesh:
-            if(elem.T.v[i] is in vertices):
+            if(elem.T.v[i] in vertices):
                 sum_fi += f*((h.triangle_area_root2(elem.T.v[0], elem.T.v[1], elem.T.v[2])**2)/3)
         f[i] = sum_fi
         for j in range(0, len(vertices)):
             sum_Tij = 0
             for elem in mesh:
-                if((elem.T.v[i] is in vertices) and (elem.T.v[j] is in vertices)):
+                if((elem.T.v[i] in vertices) and (elem.T.v[j] in vertices)):
                     grads = grad_phi(elem)
                     grad_phi_vi = grads[i]
                     grad_phi_vj = grads[j]
@@ -60,8 +60,18 @@ def galerkin_basis_coeffcients(mesh, vertices, f):
             T[i][j] = sum_Tij
     return np.linalg.solve(np.array(T), np.array(f)).tolist()
 
-def phi_of_x(z, x):
-    pass
+def phi_of_x(mesh, v, x):
+    for elem in mesh:
+        if(h.barycentric_point_check(elem.T.v[0], elem.T.v[1], elem.T.v[2], x) == True):
+            for j in range(0,3):
+                if(v == elem.T.v[j]):
+                    det = (elem.T.v[(j+1)%3].x * elem.T.v[(j+2)%3].y) + (elem.T.v[(j+2)%3].x * x.y) + (x.x * elem.T.v[(j+1)%3].x)
+                            - (elem.T.v[(j+1)%3].x * x.y) - (x.x * elem.T.v[(j+2)%3].x) - (elem.T.v[(j+2)%3].x * elem.T.v[(j+1)%3].y)
+                    return (1/(2 * (h.triangle_area_root2(elem.T.v[0], elem.T.v[1], elem.T.v[2])**2)))*det
+    return 0 # NOTE: I guess return nothing if the x value is not in the domain at all?
 
-def recreate_galerkin_solution_at_x(U, vertices, x):
-    pass
+def recreate_galerkin_solution_at_x(mesh, U, vertices, x):
+    galerkin_solution = 0
+    for i in range(0, len(vertices)):
+        galerkin_solution += U[i] * phi_of_x(mesh, vertices[i], x)
+    return galerkin_solution
