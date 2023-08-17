@@ -3,6 +3,7 @@
 import numpy as np
 import multiprocessing as mp
 import helpers as h
+from shapely import geometry
 
 class Point:
     def __init__(self, x, y):
@@ -211,6 +212,7 @@ class Node:
         self.neighbor1 = None
         self.neighbor2 = None
         self.root = None
+        self.marked = False
     def find_refinement_edge(self):
         for i in range(0,3):
             if(np.minimum(self.T.e[i].label, np.minimum(self.T.e[(i+1)%3].label, self.T.e[(i+2)%3].label)) == self.T.e[i].label):
@@ -242,8 +244,12 @@ class Node:
                             self.update_neighbor(child)
                     else:
                         self.update_neighbor(neighbor)
-    def bisect(self, p):
-        if(self.T.v[(self.ET+1)%3].boundary == True and self.T.v[(self.ET+2)%3].boundary == True):
+    def bisect(self, p, vertices):
+        #if(self.T.v[(self.ET+1)%3].boundary == True and self.T.v[(self.ET+2)%3].boundary == True):
+        poly = geometry.Polygon(vertices)
+        boundary = poly.boundary
+        point = geometry.Point(p.x, p.y)
+        if(boundary.contains(point) == True):
             p.boundary = True
         new_edge1 = Edge(p, self.T.v[(self.ET+1)%3])
         new_edge1.label = self.T.e[self.ET].label + 2

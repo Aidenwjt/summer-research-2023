@@ -46,7 +46,6 @@ def barycentric_point_check(A,B,C,P):
     b = ( ((C.y - A.y)*(P.x - C.x) + (A.x - C.x)*(P.y - C.y)) / 
          ((B.y - C.y)*(A.x - C.x) + (C.x - B.x)*(A.y - C.y)))
     c = 1 - a - b
-    print(a, b, c)
     if((a >= 0 and a <= 1) and (b >= 0 and b <= 1) and (c >= 0 and c <= 1)):
         return True
     return False

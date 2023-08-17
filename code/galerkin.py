@@ -30,30 +30,34 @@ def unique_vertices_excluding_boundary(mesh):
     return vertices
 
 def grad_phi(elem):
-    det_XT = (elem.T.v[1].x * elem.T.v[2].y) + (elem.T.v[2].x * elem.T.v[0].y) + (elem.T.v[0].x * elem.T.v[1].y)
-            - (elem.T.v[1].x * elem.T.v[0].y) - (elem.T.v[0].x * elem.T.v[2].y) - (elem.T.v[2].x * elem.T.v[1].y)
+    det_XT = (elem.T.v[1].x * elem.T.v[2].y) + (elem.T.v[2].x * elem.T.v[0].y) + (elem.T.v[0].x * elem.T.v[1].y) - (elem.T.v[1].x * elem.T.v[0].y) - (elem.T.v[0].x * elem.T.v[2].y) - (elem.T.v[2].x * elem.T.v[1].y)
     grad_phi_v0 = [((elem.T.v[2].x * elem.T.v[0].y)-(elem.T.v[0].x * elem.T.v[2].y))/det_XT, ((elem.T.v[0].x * elem.T.v[1].y)-(elem.T.v[1].x * elem.T.v[0].y))/det_XT]
     grad_phi_v1 = [(elem.T.v[2].y - elem.T.v[0].y)/det_XT, (elem.T.v[0].y  - elem.T.v[1].y)/det_XT]
     grad_phi_v2 = [(elem.T.v[0].x - elem.T.v[2].x)/det_XT, (elem.T.v[1].x  - elem.T.v[0].x)/det_XT]
     return [grad_phi_v0, grad_phi_v1, grad_phi_v2]
 
-def galerkin_basis_coeffcients(mesh, vertices, f):
+def galerkin_basis_coefficients(mesh, vertices, scalar_f):
     # Compute T matrix and f vector
     T = [[0]*len(vertices) for i in range(0, len(vertices))]
     f = [0]*len(vertices)
     for i in range(0, len(vertices)):
         sum_fi = 0
         for elem in mesh:
-            if(elem.T.v[i] in vertices):
-                sum_fi += f*((h.triangle_area_root2(elem.T.v[0], elem.T.v[1], elem.T.v[2])**2)/3)
+            if(vertices[i] in elem.T.v):
+                sum_fi += scalar_f*((h.triangle_area_root2(elem.T.v[0], elem.T.v[1], elem.T.v[2])**2)/3)
         f[i] = sum_fi
         for j in range(0, len(vertices)):
             sum_Tij = 0
             for elem in mesh:
-                if((elem.T.v[i] in vertices) and (elem.T.v[j] in vertices)):
+                if((vertices[i] in elem.T.v) and (vertices[j] in elem.T.v)):
+                #if((elem.T.v[i] in vertices) and (elem.T.v[j] in vertices)):
                     grads = grad_phi(elem)
-                    grad_phi_vi = grads[i]
-                    grad_phi_vj = grads[j]
+                    for k in range(0, 3):
+                        if(vertices[i].equals(elem.T.v[k])):
+                            grad_phi_vi = grads[k]
+                    for l in range(0, 3):
+                        if(vertices[j].equals(elem.T.v[l])):
+                            grad_phi_vj = grads[l]
                     dot_grads = (grad_phi_vi[0] * grad_phi_vj[0]) + (grad_phi_vi[1] * grad_phi_vj[1])
                     area_of_T = h.triangle_area_root2(elem.T.v[0], elem.T.v[1], elem.T.v[2])**2
                     sum_Tij += dot_grads * area_of_T
@@ -61,13 +65,15 @@ def galerkin_basis_coeffcients(mesh, vertices, f):
     return np.linalg.solve(np.array(T), np.array(f)).tolist()
 
 def phi_of_x(mesh, v, x):
+    test_count = 0
     for elem in mesh:
-        if(h.barycentric_point_check(elem.T.v[0], elem.T.v[1], elem.T.v[2], x) == True):
+        # TODO: do I only need to consider one triangle that contains x? what if x is contained in multiple triangles?
+        if(h.barycentric_point_check(elem.T.v[0], elem.T.v[1], elem.T.v[2], x) == True and test_count !=0):
             for j in range(0,3):
                 if(v == elem.T.v[j]):
-                    det = (elem.T.v[(j+1)%3].x * elem.T.v[(j+2)%3].y) + (elem.T.v[(j+2)%3].x * x.y) + (x.x * elem.T.v[(j+1)%3].x)
-                            - (elem.T.v[(j+1)%3].x * x.y) - (x.x * elem.T.v[(j+2)%3].x) - (elem.T.v[(j+2)%3].x * elem.T.v[(j+1)%3].y)
+                    det = (elem.T.v[(j+1)%3].x * elem.T.v[(j+2)%3].y) + (elem.T.v[(j+2)%3].x * x.y) + (x.x * elem.T.v[(j+1)%3].y) - (elem.T.v[(j+1)%3].x * x.y) - (x.x * elem.T.v[(j+2)%3].y) - (elem.T.v[(j+2)%3].x * elem.T.v[(j+1)%3].y)
                     return (1/(2 * (h.triangle_area_root2(elem.T.v[0], elem.T.v[1], elem.T.v[2])**2)))*det
+        test_count += 1
     return 0 # NOTE: I guess return nothing if the x value is not in the domain at all?
 
 def recreate_galerkin_solution_at_x(mesh, U, vertices, x):

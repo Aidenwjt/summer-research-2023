@@ -114,9 +114,9 @@ def create(vertices):
 
     initial_mesh = []
     for elem in triangulation:
-        child1, child2 = elem.bisect(h.midpoint(elem.T.v[(elem.ET+1)%3], elem.T.v[(elem.ET+2)%3]))
-        grandchild1, grandchild2 = child1.bisect(h.midpoint(child1.T.v[(child1.ET+1)%3], child1.T.v[(child1.ET+2)%3]))
-        grandchild3, grandchild4 = child2.bisect(h.midpoint(child2.T.v[(child2.ET+1)%3], child2.T.v[(child2.ET+2)%3]))
+        child1, child2 = elem.bisect(h.midpoint(elem.T.v[(elem.ET+1)%3], elem.T.v[(elem.ET+2)%3]), vertices)
+        grandchild1, grandchild2 = child1.bisect(h.midpoint(child1.T.v[(child1.ET+1)%3], child1.T.v[(child1.ET+2)%3]), vertices)
+        grandchild3, grandchild4 = child2.bisect(h.midpoint(child2.T.v[(child2.ET+1)%3], child2.T.v[(child2.ET+2)%3]), vertices)
         grandchildren = [grandchild1, grandchild2, grandchild3, grandchild4]
         for grandchild in grandchildren:
             neighbors = [grandchild.neighbor0, grandchild.neighbor1, grandchild.neighbor2]
