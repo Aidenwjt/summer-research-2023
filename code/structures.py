@@ -217,6 +217,9 @@ class Node:
         for i in range(0,3):
             if(np.minimum(self.T.e[i].label, np.minimum(self.T.e[(i+1)%3].label, self.T.e[(i+2)%3].label)) == self.T.e[i].label):
                 self.ET = i
+    def FT(self):
+        neighbors = [self.neighbor0, self.neighbor1, self.neighbor2]
+        return neighbors[self.ET]
     def update_neighbor(self, elem):
         edges = self.T.shared_edges(elem.T)
         if(edges != None):

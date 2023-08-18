@@ -1,0 +1,32 @@
+(0.5,0.5)
+Galerkin solution at x = (0.5,0.5) with f = 4: 0.44444444444444436
+Galerkin solution at x = (1,1) with f = 4: 0.0
+Galerkin solution at x = (0,0) with f = 4: 0.0
+Galerkin solution at x = (0,0.5) with f = 4: 0.0
+Galerkin solution at x = (0.25,0.25) with f = 4: 0.22222222222222218
+Galerkin solution at x = (0.75,0.75) with f = 4: 0.0
+Galerkin solution at x = (0.25,0.75) with f = 4: 0.22222222222222218
+[<structures.Node object at 0x7f3f5575cc10>, <structures.Node object at 0x7f3f5575cd50>, <structures.Node object at 0x7f3f5575cf90>, <structures.Node object at 0x7f3f5575d0d0>, <structures.Node object at 0x7f3f5575d710>, <structures.Node object at 0x7f3f5575d850>, <structures.Node object at 0x7f3f5575da90>, <structures.Node object at 0x7f3f5575dbd0>]
+<structures.Node object at 0x7f3f5575cc10>
+<structures.Node object at 0x7f3f5575d0d0>
+[<structures.Node object at 0x7f3f5575cd50>, <structures.Node object at 0x7f3f5575cf90>, <structures.Node object at 0x7f3f5575d710>, <structures.Node object at 0x7f3f5575d850>, <structures.Node object at 0x7f3f5575da90>, <structures.Node object at 0x7f3f5575dbd0>, <structures.Node object at 0x7f3f5575de10>, <structures.Node object at 0x7f3f5575df50>, <structures.Node object at 0x7f3f5575e050>, <structures.Node object at 0x7f3f5575e190>]
+<structures.Node object at 0x7f3f5575cf90>
+<structures.Node object at 0x7f3f5575d850>
+[<structures.Node object at 0x7f3f5575cd50>, <structures.Node object at 0x7f3f5575d710>, <structures.Node object at 0x7f3f5575da90>, <structures.Node object at 0x7f3f5575dbd0>, <structures.Node object at 0x7f3f5575de10>, <structures.Node object at 0x7f3f5575df50>, <structures.Node object at 0x7f3f5575e050>, <structures.Node object at 0x7f3f5575e190>, <structures.Node object at 0x7f3f5575e350>, <structures.Node object at 0x7f3f5575e490>, <structures.Node object at 0x7f3f5575e6d0>, <structures.Node object at 0x7f3f5575e810>]
+<structures.Node object at 0x7f3f5575da90>
+<structures.Node object at 0x7f3f5575cd50>
+[<structures.Node object at 0x7f3f5575d710>, <structures.Node object at 0x7f3f5575dbd0>, <structures.Node object at 0x7f3f5575de10>, <structures.Node object at 0x7f3f5575df50>, <structures.Node object at 0x7f3f5575e050>, <structures.Node object at 0x7f3f5575e190>, <structures.Node object at 0x7f3f5575e350>, <structures.Node object at 0x7f3f5575e490>, <structures.Node object at 0x7f3f5575e6d0>, <structures.Node object at 0x7f3f5575e810>, <structures.Node object at 0x7f3f5575eb10>, <structures.Node object at 0x7f3f5575ebd0>, <structures.Node object at 0x7f3f5575ee10>, <structures.Node object at 0x7f3f5575ef50>]
+<structures.Node object at 0x7f3f5575df50>
+<structures.Node object at 0x7f3f5575de10>
+[<structures.Node object at 0x7f3f5575d710>, <structures.Node object at 0x7f3f5575dbd0>, <structures.Node object at 0x7f3f5575e050>, <structures.Node object at 0x7f3f5575e190>, <structures.Node object at 0x7f3f5575e350>, <structures.Node object at 0x7f3f5575e490>, <structures.Node object at 0x7f3f5575e6d0>, <structures.Node object at 0x7f3f5575e810>, <structures.Node object at 0x7f3f5575eb10>, <structures.Node object at 0x7f3f5575ebd0>, <structures.Node object at 0x7f3f5575ee10>, <structures.Node object at 0x7f3f5575ef50>, <structures.Node object at 0x7f3f5575f190>, <structures.Node object at 0x7f3f5575f2d0>, <structures.Node object at 0x7f3f5575f510>, <structures.Node object at 0x7f3f5575f650>]
+<structures.Node object at 0x7f3f5575e350>
+<structures.Node object at 0x7f3f5575e190>
+[<structures.Node object at 0x7f3f5575d710>, <structures.Node object at 0x7f3f5575dbd0>, <structures.Node object at 0x7f3f5575e050>, <structures.Node object at 0x7f3f5575e490>, <structures.Node object at 0x7f3f5575e6d0>, <structures.Node object at 0x7f3f5575e810>, <structures.Node object at 0x7f3f5575eb10>, <structures.Node object at 0x7f3f5575ebd0>, <structures.Node object at 0x7f3f5575ee10>, <structures.Node object at 0x7f3f5575ef50>, <structures.Node object at 0x7f3f5575f190>, <structures.Node object at 0x7f3f5575f2d0>, <structures.Node object at 0x7f3f5575f510>, <structures.Node object at 0x7f3f5575f650>, <structures.Node object at 0x7f3f5575f890>, <structures.Node object at 0x7f3f5575f9d0>, <structures.Node object at 0x7f3f5575fc10>, <structures.Node object at 0x7f3f5575fd50>]
+<structures.Node object at 0x7f3f5575d710>
+<structures.Node object at 0x7f3f5575dbd0>
+[<structures.Node object at 0x7f3f5575e050>, <structures.Node object at 0x7f3f5575e490>, <structures.Node object at 0x7f3f5575e6d0>, <structures.Node object at 0x7f3f5575e810>, <structures.Node object at 0x7f3f5575eb10>, <structures.Node object at 0x7f3f5575ebd0>, <structures.Node object at 0x7f3f5575ee10>, <structures.Node object at 0x7f3f5575ef50>, <structures.Node object at 0x7f3f5575f190>, <structures.Node object at 0x7f3f5575f2d0>, <structures.Node object at 0x7f3f5575f510>, <structures.Node object at 0x7f3f5575f650>, <structures.Node object at 0x7f3f5575f890>, <structures.Node object at 0x7f3f5575f9d0>, <structures.Node object at 0x7f3f5575fc10>, <structures.Node object at 0x7f3f5575fd50>, <structures.Node object at 0x7f3f55768050>, <structures.Node object at 0x7f3f55768110>, <structures.Node object at 0x7f3f55768350>, <structures.Node object at 0x7f3f55768490>]
+<structures.Node object at 0x7f3f5575e810>
+<structures.Node object at 0x7f3f55768050>
+[<structures.Node object at 0x7f3f5575e050>, <structures.Node object at 0x7f3f5575e490>, <structures.Node object at 0x7f3f5575e6d0>, <structures.Node object at 0x7f3f5575eb10>, <structures.Node object at 0x7f3f5575ebd0>, <structures.Node object at 0x7f3f5575ee10>, <structures.Node object at 0x7f3f5575ef50>, <structures.Node object at 0x7f3f5575f190>, <structures.Node object at 0x7f3f5575f2d0>, <structures.Node object at 0x7f3f5575f510>, <structures.Node object at 0x7f3f5575f650>, <structures.Node object at 0x7f3f5575f890>, <structures.Node object at 0x7f3f5575f9d0>, <structures.Node object at 0x7f3f5575fc10>, <structures.Node object at 0x7f3f5575fd50>, <structures.Node object at 0x7f3f55768110>, <structures.Node object at 0x7f3f55768350>, <structures.Node object at 0x7f3f55768490>, <structures.Node object at 0x7f3f55768650>, <structures.Node object at 0x7f3f55768790>, <structures.Node object at 0x7f3f557689d0>, <structures.Node object at 0x7f3f55768b10>]
+<structures.Node object at 0x7f3f5575ef50>
+<structures.Node object at 0x7f3f5575de10>

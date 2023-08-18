@@ -13,7 +13,10 @@ class Edge:
     def __init__(self, p, q):
         self.p = p
         self.q = q
-    def equals(self, e): if(( (self.p.x == e.p.x and self.p.y == e.p.y) and (self.q.x == e.q.x and self.q.y == e.q.y) ) or ( (self.p.x == e.q.x and self.p.y == e.q.y) and (self.q.x == e.p.x and self.q.y == e.p.y) )): return True return False
+    def equals(self, e): 
+        if(( (self.p.x == e.p.x and self.p.y == e.p.y) and (self.q.x == e.q.x and self.q.y == e.q.y) ) or ( (self.p.x == e.q.x and self.p.y == e.q.y) and (self.q.x == e.p.x and self.q.y == e.p.y) )):
+            return True
+        return False
 
 class Triangle:
     def __init__(self, v0, v1, v2, e0, e1, e2):
@@ -142,9 +145,12 @@ root4.neighbor2 = root1
 # Initial mesh
 mesh = [root1, root2, root3, root4]
 # First iteration
-marked = [root1, root4]
+marked = [root1,root2, root3, root4]
 mesh = refine(mesh, marked)
 
+marked = [root1.left, root1.right, root2.left, root2.right, root3.left, root3.right, root4.left, root4.right]
+mesh = refine(mesh, marked)
+"""
 # Second iteration
 marked = [root1.right]
 mesh = refine(mesh, marked)
@@ -160,7 +166,6 @@ mesh = refine(mesh, marked)
 marked = [root1.right.right.left.right]
 mesh = refine(mesh, marked)
 
-"""
 marked = [root1.right.right.left.right.left]
 mesh = refine(mesh, marked)
 
