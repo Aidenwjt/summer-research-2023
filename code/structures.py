@@ -4,6 +4,7 @@ import numpy as np
 import multiprocessing as mp
 import helpers as h
 from shapely import geometry
+import copy
 
 class Point:
     def __init__(self, x, y):
@@ -169,24 +170,31 @@ class Triangle:
     def __init__(self, v0, v1, v2, e0, e1, e2):
         self.v = [v0, v1, v2]
         self.e = [e0, e1, e2]
+        """
+        v = [v0, v1, v2]
+        e = [e0, e1, e2]
+        # TODO: this is most likely not actually doing anything
         for i in range(0,3):
-            tau1 = Point(self.v[1].x - self.v[0].x, self.v[1].y - self.v[0].y)
+            tau1 = Point(v[1].x - v[0].x, v[1].y - v[0].y)
             tau1_perp = Point(-tau1.y, tau1.x)
-            tau2 = Point(self.v[2].x - self.v[0].x, self.v[2].y - self.v[0].y)
+            tau2 = Point(v[2].x - v[0].x, v[2].y - v[0].y)
             if( ((tau2.x * tau1_perp.x) + (tau2.y * tau1_perp.y)) > 0 ):
                 break
-            temp_v0 = self.v[0]
-            temp_v1 = self.v[1]
-            temp_v2 = self.v[2]
-            self.v[0] = temp_v2
-            self.v[1] = temp_v0
-            self.v[2] = temp_v1
-            temp_e0 = self.e[0]
-            temp_e1 = self.e[1]
-            temp_e2 = self.e[2]
-            self.e[0] = temp_e2
-            self.e[1] = temp_e0
-            self.e[2] = temp_e1
+            temp_v0 = v[0]
+            temp_v1 = v[1]
+            temp_v2 = v[2]
+            v[0] = temp_v2
+            v[1] = temp_v0
+            v[2] = temp_v1
+            temp_e0 = e[0]
+            temp_e1 = e[1]
+            temp_e2 = e[2]
+            e[0] = temp_e2
+            e[1] = temp_e0
+            e[2] = temp_e1
+        self.v = v.copy()
+        self.e = e.copy()
+        """
     def label_longest_edge(self):
         for i in range(0,3):
             if(np.maximum(self.e[i].dist, np.maximum(self.e[(i+1)%3].dist, self.e[(i+2)%3].dist)) == self.e[i].dist):
@@ -217,9 +225,6 @@ class Node:
         for i in range(0,3):
             if(np.minimum(self.T.e[i].label, np.minimum(self.T.e[(i+1)%3].label, self.T.e[(i+2)%3].label)) == self.T.e[i].label):
                 self.ET = i
-    def FT(self):
-        neighbors = [self.neighbor0, self.neighbor1, self.neighbor2]
-        return neighbors[self.ET]
     def update_neighbor(self, elem):
         edges = self.T.shared_edges(elem.T)
         if(edges != None):
@@ -254,16 +259,22 @@ class Node:
         point = geometry.Point(p.x, p.y)
         if(boundary.contains(point) == True):
             p.boundary = True
-        new_edge1 = Edge(p, self.T.v[(self.ET+1)%3])
-        new_edge1.label = self.T.e[self.ET].label + 2
-        new_edge2 = Edge(p, self.T.v[self.ET])
-        new_edge2.label = self.T.e[(self.ET+1)%3].label + 1
-        child_triangle1 = Triangle(self.T.v[self.ET], self.T.v[(self.ET+1)%3], p, new_edge1, new_edge2, self.T.e[(self.ET+2)%3])
-        new_edge3 = Edge(p, self.T.v[(self.ET+2)%3])
-        new_edge3.label = self.T.e[self.ET].label + 2
-        new_edge4 = Edge(p, self.T.v[self.ET])
-        new_edge4.label = self.T.e[(self.ET+2)%3].label + 1
-        child_triangle2 = Triangle(self.T.v[self.ET], p, self.T.v[(self.ET+2)%3], new_edge3, self.T.e[(self.ET+1)%3], new_edge4)
+        ordered_v = [self.T.v[self.ET], self.T.v[(self.ET+1)%3], self.T.v[(self.ET+2)%3]]
+        ordered_e = [self.T.e[self.ET], self.T.e[(self.ET+1)%3], self.T.e[(self.ET+2)%3]]
+        e0 = Edge(ordered_v[1], p)
+        e1 = Edge(p, ordered_v[0])
+        e2 = Edge(ordered_v[0], ordered_v[1])
+        e0.label = ordered_e[0].label + 2
+        e1.label = ordered_e[1].label + 1
+        e2.label = ordered_e[2].label
+        child_triangle1 = Triangle(ordered_v[0], ordered_v[1], p, e0, e1, e2)
+        e3 = Edge(p, ordered_v[2])
+        e4 = Edge(ordered_v[2], ordered_v[0])
+        e5 = Edge(ordered_v[0], p)
+        e3.label = ordered_e[0].label + 2
+        e4.label = ordered_e[1].label
+        e5.label = ordered_e[2].label + 1
+        child_triangle2 = Triangle(ordered_v[0], p, ordered_v[2], e3, e4, e5)
         child_node1 = Node(child_triangle1, self.GT + 1)
         child_node2 = Node(child_triangle2, self.GT + 1)
         child_node1.root = self.root

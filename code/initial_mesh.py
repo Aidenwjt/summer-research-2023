@@ -128,6 +128,7 @@ def create(vertices):
             initial_mesh.append(grandchild)
 
     for i in range(0, len(initial_mesh)):
+        initial_mesh[i].find_refinement_edge()
         for j in range(0, len(initial_mesh)):
             if(i != j):
                 initial_mesh[i].update_neighbor(initial_mesh[j])
