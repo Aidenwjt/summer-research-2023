@@ -319,10 +319,10 @@ class Node:
                 return_dict[i] = None
                 return
         self.iterate_along_line(i, return_dict, sigma, p, t, step)
-    def shape_regularity_bisect(self, sigma):
+    def shape_regularity_bisect(self, sigma, poly):
         p = h.midpoint(self.T.v[(self.ET+1)%3], self.T.v[(self.ET+2)%3])
         t = h.distance(self.T.v[(self.ET+1)%3], p)
-        step = t/100 # TODO: smaller step?
+        step = t/1000 # TODO: smaller step?
         manager = mp.Manager()
         return_dict = manager.dict()
         processes = []
@@ -338,10 +338,10 @@ class Node:
         if(points[0] == None and points[1] == None):
             print("Error") # NOTE: should never get here
         elif(points[0] != None and points[1] == None):
-            child1, child2 = self.bisect(points[0])
+            child1, child2 = self.bisect(points[0], poly)
             return (child1, child2)
         elif(points[0] == None and points[1] != None):
-            child1, child2 = self.bisect(points[1])
+            child1, child2 = self.bisect(points[1], poly)
             return (child1, child2)
         else:
             upper_bound1 = sigma*h.diam_of_inscribed_circle(self.T.v[self.ET], p, self.T.v[(self.ET+2)%3])
@@ -349,8 +349,8 @@ class Node:
             upper_bound2 = sigma*h.diam_of_inscribed_circle(self.T.v[self.ET], p, self.T.v[(self.ET+1)%3])
             diam2 = h.diam_of_triangle(self.T.v[self.ET], p, self.T.v[(self.ET+1)%3])
             if(upper_bound1 - diam1 <= upper_bound2 - diam2):
-                child1, child2 = self.bisect(points[1])
+                child1, child2 = self.bisect(points[1], poly)
                 return (child1, child2)
             else:
-                child1, child2 = self.bisect(points[0])
+                child1, child2 = self.bisect(points[0], poly)
                 return (child1, child2)

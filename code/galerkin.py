@@ -30,6 +30,7 @@ def unique_vertices_excluding_boundary(mesh):
     return vertices
 
 def grad_phi(elem):
+    print("({},{})({},{})({},{})".format(elem.T.v[0].x, elem.T.v[0].y, elem.T.v[1].x, elem.T.v[1].y, elem.T.v[2].x, elem.T.v[2].y))
     det_XT = (elem.T.v[1].x * elem.T.v[2].y) + (elem.T.v[2].x * elem.T.v[0].y) + (elem.T.v[0].x * elem.T.v[1].y) - (elem.T.v[1].x * elem.T.v[0].y) - (elem.T.v[0].x * elem.T.v[2].y) - (elem.T.v[2].x * elem.T.v[1].y)
     grad_phi_v0 = [((elem.T.v[2].x * elem.T.v[0].y)-(elem.T.v[0].x * elem.T.v[2].y))/det_XT, ((elem.T.v[0].x * elem.T.v[1].y)-(elem.T.v[1].x * elem.T.v[0].y))/det_XT]
     grad_phi_v1 = [(elem.T.v[2].y - elem.T.v[0].y)/det_XT, (elem.T.v[0].y  - elem.T.v[1].y)/det_XT]
@@ -65,16 +66,23 @@ def galerkin_basis_coefficients(mesh, vertices, scalar_f):
     return np.linalg.solve(np.array(T), np.array(f)).tolist()
 
 def phi_of_x(mesh, v, x):
-    test_count = 0
     for elem in mesh:
-        # TODO: do I only need to consider one triangle that contains x? what if x is contained in multiple triangles?
-        if(h.barycentric_point_check(elem.T.v[0], elem.T.v[1], elem.T.v[2], x) == True and test_count !=0):
+        if(v in elem.T.v):
+            if(h.barycentric_point_check(elem.T.v[0], elem.T.v[1], elem.T.v[2], x) == True):
+                for j in range(0,3):
+                    if(v.equals(elem.T.v[j])):
+                        det = (elem.T.v[(j+1)%3].x * elem.T.v[(j+2)%3].y) + (elem.T.v[(j+2)%3].x * x.y) + (x.x * elem.T.v[(j+1)%3].y) - (elem.T.v[(j+1)%3].x * x.y) - (x.x * elem.T.v[(j+2)%3].y) - (elem.T.v[(j+2)%3].x * elem.T.v[(j+1)%3].y)
+                        return (1/(2 * (h.triangle_area_root2(elem.T.v[0], elem.T.v[1], elem.T.v[2])**2)))*det
+            return 0
+"""
+        if(h.barycentric_point_check(elem.T.v[0], elem.T.v[1], elem.T.v[2], x) == True):
             for j in range(0,3):
                 if(v == elem.T.v[j]):
                     det = (elem.T.v[(j+1)%3].x * elem.T.v[(j+2)%3].y) + (elem.T.v[(j+2)%3].x * x.y) + (x.x * elem.T.v[(j+1)%3].y) - (elem.T.v[(j+1)%3].x * x.y) - (x.x * elem.T.v[(j+2)%3].y) - (elem.T.v[(j+2)%3].x * elem.T.v[(j+1)%3].y)
                     return (1/(2 * (h.triangle_area_root2(elem.T.v[0], elem.T.v[1], elem.T.v[2])**2)))*det
         test_count += 1
     return 0 # NOTE: I guess return nothing if the x value is not in the domain at all?
+"""
 
 def recreate_galerkin_solution_at_x(mesh, U, vertices, x):
     galerkin_solution = 0
