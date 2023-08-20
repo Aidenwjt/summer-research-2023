@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 """
 Problem:
     -div(grad(u)) = 2 in [0,1]
-    u(0) = 0, u(1) = 1.
+    u(0) = 0, u(1) = 1
 
 Exact solution:
     u(x) = x(1 - x)
@@ -21,23 +21,17 @@ Galerkin approach:
     - After the coefficients are calculated, reconstruct the solution at some x in [0,1] again using lemma 3.9 from Bartels, and compare against the exact solution
 """
 
-n = int(input("Enter n value: "))
+n = int(input("Enter n value to divide [0,1] into 2^n sub-intervals: "))
 
 # Partition the domain
 partition = [j/(2**n) for j in range(0, 2**n + 1)]
+PNB = [i for i in range(1, 2**n)]
 #print(partition)
+#print(PNB)
 
-# Keep track of all the sub-intervals
-intervals = []
-for i in range(0, 2**n):
-    intervals.append([partition[i], partition[i+1]])
-#print(intervals)
-
-# Initialize the stiffness matrix
 A = [[0]*(2**n - 1) for j in range(0, 2**n - 1)]
 #print(A)
 
-# Compute all the entries in the stiffness matrix
 for j in range(1, 2**n):
     for k in range(1, 2**n):
         if(j == k):
@@ -56,11 +50,11 @@ for j in range(1, 2**n):
         """
 
 f = [2**(1-n)]*(2**n - 1)
-
-#for j in range(0, 2**n - 1):
-#    print(A[j])
-#print(f)
-
+"""
+for j in range(0, 2**n - 1):
+    print(A[j])
+print(f)
+"""
 A_np = np.array(A)
 f_np = np.array(f)
 U_np = np.linalg.solve(A_np, f_np)
@@ -68,33 +62,32 @@ U_np = np.linalg.solve(A_np, f_np)
 U = U_np.tolist()
 #print(U)
 
-def phi_of_x(x1, x2, k, x):
-    if(k == 0):
-        if((x - x1)/(x2 - x1) >= 0 and (x - x1)/(x2 - x1) <= 1):
-            return 1 - ((x - x1)/(x2 - x1))
-        return 0
-    if((x - x1)/(x2 - x1) >= 0 and (x - x1)/(x2 - x1) <= 1):
-        return ((x - x1)/(x2 - x1))
-    return 0
+def phi_j(x, j):
+    total = 0
+    if(x > partition[j] and x <= partition[j+1]):
+        total += (partition[j+1] - x)/(partition[j+1] - partition[j])
+    if(x >= partition[j-1] and x < partition[j]):
+        total += (x - partition[j-1])/(partition[j] - partition[j-1])
+    if(x == partition[j]):
+        total += 1
+    return total
 
 x = 0
 x_coords = []
 y_coords = []
-while(x < 1):
+while(x <= 1):
     galerkin_solution = 0
-    for j in range(1, 2**n):
-        for k in range(0,1):
-            galerkin_solution += U[j-1+k]*phi_of_x(intervals[j][0], intervals[j][1], k, x)
-    #print("U({}) = {}".format(x, galerkin_solution))
+    for j in range(0, 2**n - 1):
+        galerkin_solution += U[j]*phi_j(x, PNB[j])
+    print("U({}) = {}".format(x, galerkin_solution))
     x_coords.append(x)
     y_coords.append(galerkin_solution)
     x += 0.001
 
-
 fig, ax = plt.subplots()
-ax.plot(x_coords, y_coords, color='b')
 x = np.linspace(0, 1)
 y = x*(1 - x)
 ax.plot(x, y, color='r')
+ax.plot(x_coords, y_coords, color='b', linewidth=2.0)
 
 plt.show()
