@@ -37,7 +37,39 @@ def refine(mesh, poly, sigma):
 poly = [(0,0),(1,0),(1,1),(0,1)]
 #poly = [(0,0),(4,0),(4,3),(6,3),(6,4),(3,4),(3,2),(0,2)]
 #poly = [(1,0),(2,0),(3,1),(3,2),(2,3),(1,3),(0,2),(0,1)]
-mesh = im.create(poly)
+#mesh = im.create(poly)
+p0 = s.Point(0.5,0.5)
+p1 = s.Point(1,0)
+p1.boundary = True
+p2 = s.Point(1,1)
+p2.boundary = True
+p3 = s.Point(0,1)
+p3.boundary = True
+p4 = s.Point(0,0)
+p4.boundary = True
+points = [p0, p1, p2, p3, p4]
+root0 = s.Node(s.Triangle(points[0], points[1], points[2], s.Edge(points[1], points[2]), s.Edge(points[0], points[2]), s.Edge(points[0], points[1])), 0)
+root1 = s.Node(s.Triangle(points[0], points[4], points[1], s.Edge(points[1], points[4]), s.Edge(points[0], points[1]), s.Edge(points[0], points[4])), 0)
+root2 = s.Node(s.Triangle(points[0], points[3], points[4], s.Edge(points[3], points[2]), s.Edge(points[0], points[4]), s.Edge(points[0], points[3])), 0)
+root3 = s.Node(s.Triangle(points[0], points[2], points[3], s.Edge(points[3], points[2]), s.Edge(points[0], points[3]), s.Edge(points[0], points[2])), 0)
+root0.root = root0
+root1.root = root1
+root2.root = root2
+root3.root = root3
+root0.T.label_longest_edge()
+root1.T.label_longest_edge()
+root2.T.label_longest_edge()
+root3.T.label_longest_edge()
+root0.find_refinement_edge()
+root1.find_refinement_edge()
+root2.find_refinement_edge()
+root3.find_refinement_edge()
+
+mesh = [root0, root1, root2, root3]
+for i in range(0, len(mesh)):
+    for j in range(0, len(mesh)):
+        if(i != j):
+            mesh[i].update_neighbor(mesh[j])
 
 sigma = 0
 for elem in mesh:
@@ -46,30 +78,30 @@ for elem in mesh:
         sigma = temp
 
 vertices = g.unique_vertices_excluding_boundary(mesh)
-for v in vertices:
-    print("({},{})".format(v.x,v.y))
 U = g.galerkin_basis_coefficients(mesh, vertices, 4)
 print("Galerkin solution at x = ({},{}) with f = 4: {}".format(0.5, 0.5, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(0.5,0.5))))
-print("Galerkin solution at x = ({},{}) with f = 4: {}".format(1, 1, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(1,1))))
-print("Galerkin solution at x = ({},{}) with f = 4: {}".format(0, 0, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(0,0))))
-print("Galerkin solution at x = ({},{}) with f = 4: {}".format(0, 0.5, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(0,0.5))))
 print("Galerkin solution at x = ({},{}) with f = 4: {}".format(0.25, 0.25, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(0.25,0.25))))
+print("Galerkin solution at x = ({},{}) with f = 4: {}".format(0.2, 0.2, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(0.2,0.2))))
 print("Galerkin solution at x = ({},{}) with f = 4: {}".format(0.75, 0.75, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(0.75,0.75))))
-print("Galerkin solution at x = ({},{}) with f = 4: {}".format(0.25, 0.75, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(0.25,0.75))))
+print("Galerkin solution at x = ({},{}) with f = 4: {}".format(0.7, 0.7, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(0.7,0.7))))
+print("Galerkin solution at x = ({},{}) with f = 4: {}".format(0,0, 0.0, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(0.0,0.0))))
+print("Galerkin solution at x = ({},{}) with f = 4: {}".format(1.5, 1.5, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(1.5,1.5))))
+print("Galerkin solution at x = ({},{}) with f = 4: {}".format(0, 0.25, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(0,0.25))))
 
 for k in range(0,0):
+    mesh = refine(mesh, poly, sigma)
     vertices = g.unique_vertices_excluding_boundary(mesh)
     for v in vertices:
         print("({},{})".format(v.x,v.y))
     U = g.galerkin_basis_coefficients(mesh, vertices, 4)
     print("Galerkin solution at x = ({},{}) with f = 4: {}".format(0.5, 0.5, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(0.5,0.5))))
-    print("Galerkin solution at x = ({},{}) with f = 4: {}".format(1, 1, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(1,1))))
-    print("Galerkin solution at x = ({},{}) with f = 4: {}".format(0, 0, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(0,0))))
-    print("Galerkin solution at x = ({},{}) with f = 4: {}".format(0, 0.5, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(0,0.5))))
     print("Galerkin solution at x = ({},{}) with f = 4: {}".format(0.25, 0.25, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(0.25,0.25))))
+    print("Galerkin solution at x = ({},{}) with f = 4: {}".format(0.2, 0.2, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(0.2,0.2))))
     print("Galerkin solution at x = ({},{}) with f = 4: {}".format(0.75, 0.75, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(0.75,0.75))))
-    print("Galerkin solution at x = ({},{}) with f = 4: {}".format(0.25, 0.75, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(0.25,0.75))))
-    mesh = refine(mesh, poly, sigma)
+    print("Galerkin solution at x = ({},{}) with f = 4: {}".format(0.7, 0.7, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(0.7,0.7))))
+    print("Galerkin solution at x = ({},{}) with f = 4: {}".format(0,0, 0.0, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(0.0,0.0))))
+    print("Galerkin solution at x = ({},{}) with f = 4: {}".format(1.5, 1.5, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(1.5,1.5))))
+    print("Galerkin solution at x = ({},{}) with f = 4: {}".format(0, 0.25, g.recreate_galerkin_solution_at_x(mesh, U, vertices, s.Point(0,0.25))))
 
 fig, ax = plt.subplots()
 for elem in mesh:
