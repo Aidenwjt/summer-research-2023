@@ -60,17 +60,24 @@ class Triangle:
         if((a >= 0 and a <= 1) and (b >= 0 and b <= 1) and (c >= 0 and c <= 1)):
             return True
         return False
-    def red_refine(self):
+    def red_refine(self, boundary, vEb):
         if(np.maximum(self.p.distance(self.q), np.maximum(self.q.distance(self.r), self.r.distance(self.p))) ==  self.p.distance(self.q)):
-            points = [self.p, self.q, self.r]
+            v = [self.p, self.q, self.r]
         elif(np.maximum(self.p.distance(self.q), np.maximum(self.q.distance(self.r), self.r.distance(self.p))) ==  self.q.distance(self.r)):
-            points = [self.q, self.r, self.p]
+            v = [self.q, self.r, self.p]
         else:
-            points = [self.r, self.p, self.q]
-        mp0 = points[0].midpoint(points[1]) 
-        mp1 = points[1].midpoint(points[2]) 
-        mp2 = points[2].midpoint(points[0]) 
-        return [Triangle(points[0],mp0,mp2), Triangle(mp0,points[1],mp1), Triangle(mp0,mp1,mp2), Triangle(mp1, points[2], mp2)], [mp0, mp1, mp2]
+            v = [self.r, self.p, self.q]
+        new_v = [v[0].midpoint(v[1]), v[1].midpoint(v[2]), v[2].midpoint(v[0])]
+        for vi in new_v:
+            if(boundary.contains(geometry.Point(vi.x, vi.y)) == False):
+                flag = False
+                for vj in vEb:
+                    if(vi.equals(vj)):
+                        flag = True
+                        break
+                if(flag == False):
+                    vEb.append(vi)
+        return [Triangle(v[0], new_v[0], new_v[2]), Triangle(new_v[0], v[1], new_v[1]), Triangle(new_v[0], new_v[1], new_v[2]), Triangle(new_v[1], v[2], new_v[2])]
 
 def galerkin_basis_coefficients(T, vEb, scalar_f):
     local_f_vectors = []
@@ -135,7 +142,6 @@ p0 = Point(0,0)
 p1 = Point(1,0)
 p2 = Point(1,1)
 p3 = Point(0,1)
-vertices = [p0, p1, p2, p3]
 domain = geometry.Polygon([(0,0),(1,0),(1,1),(0,1)])
 boundary = domain.boundary
 
@@ -143,30 +149,16 @@ t0 = Triangle(p0,p1,p2)
 t1 = Triangle(p0,p2,p3)
 
 T = [t0, t1]
-
-for k in range(0,6):
+vEb = []
+for k in range(0,5):
     T_copy = T.copy()
     for t in T_copy:
-        new_t, new_vertices = t.red_refine()
+        new_t = t.red_refine(boundary, vEb)
         for t1 in new_t:
             T.append(t1)
-        for v in  new_vertices:
-            vertices.append(v)
         T.remove(t)
 
-vEb = []
-for v in vertices:
-    if(boundary.contains(geometry.Point(v.x, v.y)) == False):
-        flag = False
-        for v1 in vEb:
-            if(v.equals(v1)):
-                flag = True
-                break
-        if(flag == False):
-            vEb.append(v)
-
 #print(len(T))
-#print(len(vertices))
 #print(len(vEb))
 U = galerkin_basis_coefficients(T, vEb, 4)
 u0 = recreate_galerkin_solution_at_x(T, U, vEb, Point(0.5,0.5))
