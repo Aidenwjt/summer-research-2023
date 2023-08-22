@@ -37,7 +37,8 @@ def refine(mesh, poly, sigma):
 poly = [(0,0),(1,0),(1,1),(0,1)]
 #poly = [(0,0),(4,0),(4,3),(6,3),(6,4),(3,4),(3,2),(0,2)]
 #poly = [(1,0),(2,0),(3,1),(3,2),(2,3),(1,3),(0,2),(0,1)]
-#mesh = im.create(poly)
+mesh = im.create(poly)
+"""
 p0 = s.Point(0.5,0.5)
 p1 = s.Point(1,0)
 p1.boundary = True
@@ -70,7 +71,7 @@ for i in range(0, len(mesh)):
     for j in range(0, len(mesh)):
         if(i != j):
             mesh[i].update_neighbor(mesh[j])
-
+"""
 sigma = 0
 for elem in mesh:
     temp = h.diam_of_triangle(elem.T.v[0],elem.T.v[1],elem.T.v[2])/h.diam_of_inscribed_circle(elem.T.v[0],elem.T.v[1],elem.T.v[2]) 
