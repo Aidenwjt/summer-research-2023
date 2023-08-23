@@ -38,7 +38,7 @@ class Triangle:
         self.q = q
         self.r = r
     def det_X_t(self):
-        return np.linalg.det(np.array([[1, self.p.x, self.p.y], [1, self.q.x, t.q.y], [1, self.r.x, self.r.y]]))
+        return np.linalg.det(np.array([[1, self.p.x, self.p.y], [1, self.q.x, self.q.y], [1, self.r.x, self.r.y]]))
     def vol_t(self):
         return self.det_X_t()/2
     def grad_phi(self, j):
@@ -60,63 +60,78 @@ class Triangle:
         if((a >= 0 and a <= 1) and (b >= 0 and b <= 1) and (c >= 0 and c <= 1)):
             return True
         return False
-    def red_refine(self, boundary, vEb):
+    def A(self, i, j):
+        grad_phi_i = self.grad_phi(i)
+        grad_phi_j = self.grad_phi(j)
+        dot_grads = (grad_phi_i[0] * grad_phi_j[0]) + (grad_phi_i[1] * grad_phi_j[1])
+        return dot_grads * self.vol_t()
+        """
+        b1 = self.r.y - self.p.y
+        b2 = self.p.y - self.q.y
+        c1 = self.p.x - self.r.x
+        c2 = self.q.x - self.p.x
+        if(i == 0 and j == 0):
+            return ((-b1 - b2)**2 + (-c1 - c2)**2)/(4*self.vol_t())
+        if((i == 1 and j == 0) or (i == 0 and j == 1)):
+            return (b1*(-b1 - b2) + c1*(-c1 - c2))/(4*self.vol_t())
+        if(i == 1 and j == 1):
+            return(b1**2 + c1**2)/(4*self.vol_t())
+        if((i == 2 and j == 1) or (i == 1 and j == 2)):
+            return (b1*b2 + c1*c2)/(4*self.vol_t())
+        if(i == 2 and j == 2):
+            return(b2**2 + c2**2)/(4*self.vol_t())
+        if((i == 2 and j == 0) or (i == 0 and j == 2)):
+            return (b2*(-b1 - b2) + c2*(-c1 - c2))/(4*self.vol_t())
+        """
+    def red_refine(self, vertices, P_copy, P, k, bv, boundary):
         if(np.maximum(self.p.distance(self.q), np.maximum(self.q.distance(self.r), self.r.distance(self.p))) ==  self.p.distance(self.q)):
+            v_indices = [P_copy[k][0], P_copy[k][1], P_copy[k][2]]
             v = [self.p, self.q, self.r]
         elif(np.maximum(self.p.distance(self.q), np.maximum(self.q.distance(self.r), self.r.distance(self.p))) ==  self.q.distance(self.r)):
+            v_indices = [P_copy[k][1], P_copy[k][2], P_copy[k][0]]
             v = [self.q, self.r, self.p]
         else:
+            v_indices = [P_copy[k][2], P_copy[k][0], P_copy[k][1]]
             v = [self.r, self.p, self.q]
         new_v = [v[0].midpoint(v[1]), v[1].midpoint(v[2]), v[2].midpoint(v[0])]
-        for vi in new_v:
-            if(boundary.contains(geometry.Point(vi.x, vi.y)) == False):
-                flag = False
-                for vj in vEb:
-                    if(vi.equals(vj)):
-                        flag = True
-                        break
-                if(flag == False):
-                    vEb.append(vi)
+        index0 = -1
+        index1 = -1
+        index2 = -1
+        for i in range(0,len(vertices)):
+            if(new_v[0].equals(vertices[i])):
+                index0 = i
+            if(new_v[1].equals(vertices[i])):
+                index1 = i
+            if(new_v[2].equals(vertices[i])):
+                index2 = i
+        if(index0 == -1):
+            vertices.append(new_v[0])
+            index0 = len(vertices) - 1
+            if(boundary.contains(geometry.Point(new_v[0].x, new_v[0].y))):
+                bv.append(index0)
+        if(index1 == -1):
+            vertices.append(new_v[1])
+            index1 = len(vertices) - 1
+            if(boundary.contains(geometry.Point(new_v[1].x, new_v[1].y))):
+                bv.append(index1)
+        if(index2 == -1):
+            vertices.append(new_v[2])
+            index2 = len(vertices) - 1
+            if(boundary.contains(geometry.Point(new_v[2].x, new_v[2].y))):
+                bv.append(index2)
+        P.append([v_indices[0], index0, index2])
+        P.append([index0, v_indices[1], index1])
+        P.append([index0, index1, index2])
+        P.append([index1, v_indices[2], index2])
         return [Triangle(v[0], new_v[0], new_v[2]), Triangle(new_v[0], v[1], new_v[1]), Triangle(new_v[0], new_v[1], new_v[2]), Triangle(new_v[1], v[2], new_v[2])]
-
-def galerkin_basis_coefficients(T, vEb, scalar_f):
-    local_f_vectors = []
-    for t in T:
-        local_f = [0]*len(vEb)
-        for i in range(0, len(vEb)):
-            #print("({},{})({},{})({},{}) ({},{})".format(t.p.x, t.p.y, t.q.x, t.q.y, t.r.x, t.r.y, vEb[i].x, vEb[i].y))
-            #print(t.vertex_of_t(vEb[i]))
-            if(t.vertex_of_t(vEb[i]) >= 0):
-                local_f[i] = scalar_f*(t.vol_t()/3)
-        local_f_vectors.append(local_f)
-    f = [0]*len(vEb)
-    for local_f in local_f_vectors:
-        f = np.add(np.array(f), np.array(local_f)).tolist()
-    local_A_matrices = []
-    for t in T:
-        local_A = [[0]*len(vEb) for i in range(0, len(vEb))]
-        for i in range(0, len(vEb)):
-            k = t.vertex_of_t(vEb[i])
-            for j in range(0, len(vEb)):
-                l = t.vertex_of_t(vEb[j])
-                if(k != -1 and l != -1):
-                    grad_phi_vi = t.grad_phi(k)
-                    grad_phi_vj = t.grad_phi(l)
-                    dot_grads = (grad_phi_vi[0] * grad_phi_vj[0]) + (grad_phi_vi[1] * grad_phi_vj[1])
-                    local_A[i][j] = dot_grads * t.vol_t()
-        local_A_matrices.append(local_A)
-    A = [[0]*len(vEb) for i in range(0, len(vEb))]
-    for local_A in local_A_matrices:
-        A = np.add(np.array(A),np.array(local_A)).tolist()
-    #print(A)
-    #print(f)
-    U = np.linalg.solve(np.array(A), np.array(f)).tolist()
-    return U
 
 def phi_of_x(T, v, x):
     for t in T:
         j = t.vertex_of_t(v)
-        if(j != False):
+        #print("({},{}),({},{}),({},{})".format(t.p.x, t.p.y, t.q.x, t.q.y, t.r.x, t.r.y))
+        #print("({},{})".format(v.x,v.y))
+        #print(j)
+        if(j > -1):
             if(t.x_in_closure_t(x)):
                 points = [t.p, t.q, t.r]
                 det1 = np.linalg.det(np.array([
@@ -131,43 +146,94 @@ def phi_of_x(T, v, x):
     return 0
 
 
-def recreate_galerkin_solution_at_x(T, U, vEb, x):
+def recreate_galerkin_solution_at_x(T, U, vertices, x):
     galerkin_solution = 0
-    for i in range(0, len(vEb)):
-        galerkin_solution += U[i] * phi_of_x(T, vEb[i], x)
+    for i in range(0, len(vertices)):
+        if(U[i] != 0):
+            #print(U[i])
+            galerkin_solution += U[i] * phi_of_x(T, vertices[i], x)
     return galerkin_solution
 
-
+scalar_f = 4
 p0 = Point(0,0)
 p1 = Point(1,0)
 p2 = Point(1,1)
 p3 = Point(0,1)
 domain = geometry.Polygon([(0,0),(1,0),(1,1),(0,1)])
 boundary = domain.boundary
-
 t0 = Triangle(p0,p1,p2)
 t1 = Triangle(p0,p2,p3)
-
 T = [t0, t1]
-vEb = []
-for k in range(0,5):
+vertices = [p0, p1, p2, p3]
+P = [[0, 1, 2], [0, 2, 3]]
+bv = [0, 1, 2, 3]
+
+for l in range(0,3):
     T_copy = T.copy()
-    for t in T_copy:
-        new_t = t.red_refine(boundary, vEb)
+    P_copy = P.copy()
+    for k in range(0, len(T_copy)):
+    #for t in T_copy:
+        new_t = T_copy[k].red_refine(vertices, P_copy, P, k, bv, boundary)
         for t1 in new_t:
             T.append(t1)
-        T.remove(t)
-
-#print(len(T))
-#print(len(vEb))
-U = galerkin_basis_coefficients(T, vEb, 4)
-u0 = recreate_galerkin_solution_at_x(T, U, vEb, Point(0.5,0.5))
-u1 = recreate_galerkin_solution_at_x(T, U, vEb, Point(0.25,0.25))
-u2 = recreate_galerkin_solution_at_x(T, U, vEb, Point(0.75,0.75))
-u3 = recreate_galerkin_solution_at_x(T, U, vEb, Point(0.0,0.0))
-u4 = recreate_galerkin_solution_at_x(T, U, vEb, Point(1,1))
-#print(U)
-print(u0, u1, u2, u3, u4)
+        T.remove(T_copy[k])
+        P = P[1:]
+    """
+    for t in T:
+        print("({},{}),({},{}),({},{})".format(t.p.x,t.p.y,t.q.x,t.q.y,t.r.x,t.r.y))
+    print("---")
+    for v in vertices:
+        print("({},{})".format(v.x,v.y))
+    print("---")
+    for i in range(0, len(T)):
+        print(P[i])
+    print("---")
+    """
+    A = [[0]*len(vertices) for i in range(0, len(vertices))]
+    f = [0]*len(vertices)
+    for k in range(0, len(T)):
+        for j in range(0, 3):
+            for i in range(0, 3):
+                A[P[k][i]][P[k][j]] += T[k].A(i, j)
+            f[P[k][j]] += ((scalar_f*T[k].vol_t())/3)
+    #for i in range(0, len(vertices)):
+    #    print(A[i])
+    #print("---")
+    #print(f)
+    #print("---")
+    for i in range(0, len(bv)):
+        for j in range(0, len(vertices)):
+            if(j == bv[i]):
+                A[j][bv[i]] = 1
+            else:
+                A[j][bv[i]] = 0
+                A[bv[i]][j] = 0
+            #A[vEb[i]-1][vEb[i]] = 0
+            #A[vEb[i]][vEb[i]-1] = 0
+            #A[vEb[i]+1][vEb[i]] = 0
+            #A[vEb[i]][vEb[i]+1] = 0
+        f[bv[i]] = 0
+    """
+    for i in range(0, len(vertices)):
+        print(A[i])
+    print("---")
+    print(f)
+    print("---")
+    """
+    U = np.linalg.solve(np.array(A), np.array(f)).tolist()
+    #print(U)
+    #print(len(T))
+    #print(len(vertices))
+    #print(len(P))
+    #print(len(bv))
+    u0 = recreate_galerkin_solution_at_x(T, U, vertices, Point(0.5,0.5))
+    u1 = recreate_galerkin_solution_at_x(T, U, vertices, Point(0,0))
+    u2 = recreate_galerkin_solution_at_x(T, U, vertices, Point(0.25,0.25))
+    u3 = recreate_galerkin_solution_at_x(T, U, vertices, Point(0.75,0.75))
+    print(u0)
+    print(u1)
+    print(u2)
+    print(u3)
 
 fig, ax = plt.subplots()
 for t in T:
