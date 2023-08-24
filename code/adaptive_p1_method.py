@@ -23,6 +23,8 @@ class Triangle:
         self.p = p
         self.q = q
         self.r = r
+    def diam_of_triangle(self):
+        return np.maximum(np.maximum(self.p.distance(self.q),self.q.distance(self.r)),self.r.distance(self.p))
     def det_X_t(self):
         return np.linalg.det(np.array([[1, self.p.x, self.p.y], [1, self.q.x, self.q.y], [1, self.r.x, self.r.y]]))
     def vol_t(self):
@@ -47,29 +49,39 @@ class Triangle:
             return True
         return False
     def A(self, i, j):
+        # NOTE: equivalent implementations below
+        """
+        G = np.matmul(np.linalg.inv(np.array([[1,1,1],[self.p.x, self.q.x, self.r.x],[self.p.y, self.q.y, self.r.y]])), np.array([[0,0],[1,0],[0,1]]))
+        GG_tran = np.matmul(G, np.transpose(G))
+        for row in GG_tran:
+            row[0] *= self.det_X_t()/2
+            row[1] *= self.det_X_t()/2
+            row[2] *= self.det_X_t()/2
+        print("---")
+        for row in GG_tran:
+            print(row)
+        print("---")
+        return GG_tran[i][j]
+        """
+        """
+        points = [self.p, self.q, self.r]
+        return ((points[(i+1)%3].y - points[(i+2)%3].y)*(points[(j+1)%3].y - points[(j+2)%3].y) + (points[(i+2)%3].x - points[(i+1)%3].x)*(points[(j+2)%3].x - points[(j+1)%3].x))/(4*self.vol_t())
+        """
+        """
         grad_phi_i = self.grad_phi(i)
         grad_phi_j = self.grad_phi(j)
         dot_grads = (grad_phi_i[0] * grad_phi_j[0]) + (grad_phi_i[1] * grad_phi_j[1])
-        return (dot_grads * self.vol_t())
-        # NOTE: below seems to be an equivalent implementation
+        return dot_grads*self.vol_t()
         """
+        b0 = self.q.y - self.r.y
         b1 = self.r.y - self.p.y
         b2 = self.p.y - self.q.y
+        c0 = self.r.x - self.q.x
         c1 = self.p.x - self.r.x
         c2 = self.q.x - self.p.x
-        if(i == 0 and j == 0):
-            return ((-b1 - b2)**2 + (-c1 - c2)**2)/(4*self.vol_t())
-        if((i == 1 and j == 0) or (i == 0 and j == 1)):
-            return (b1*(-b1 - b2) + c1*(-c1 - c2))/(4*self.vol_t())
-        if(i == 1 and j == 1):
-            return(b1**2 + c1**2)/(4*self.vol_t())
-        if((i == 2 and j == 1) or (i == 1 and j == 2)):
-            return (b1*b2 + c1*c2)/(4*self.vol_t())
-        if(i == 2 and j == 2):
-            return(b2**2 + c2**2)/(4*self.vol_t())
-        if((i == 2 and j == 0) or (i == 0 and j == 2)):
-            return (b2*(-b1 - b2) + c2*(-c1 - c2))/(4*self.vol_t())
-        """
+        b = [b0, b1, b2]
+        c = [c0, c1, c2]
+        return (b[i]*b[j] + c[i]*c[j])/(4*self.vol_t())
     def shared_edges(self, T):
         v0 = [self.p, self.q, self.r]
         v1 = [T.p, T.q, T.r]
@@ -263,7 +275,7 @@ def phi_of_x(T, v, x):
     return 0
 
 # Define the scalar function f, which will just be constant in our case
-scalar_f = 4
+scalar_f = 1
 
 # Define the points/vertices of the polygonal domain
 p0 = Point(0,0)
@@ -304,7 +316,6 @@ theta = 0.5 # NOTE: theta in (0,1]
 eps_stop = 0.05 # NOTE: eps_stop > 0
 error_bound = 1 # NOTE: variable for computing the error estimate
 
-
 test = 0
 # Main loop that implements the Solve->Estimate->Mark->Refine algorithm
 while(error_bound > eps_stop):
@@ -312,13 +323,26 @@ while(error_bound > eps_stop):
     A = [[0]*len(vertices) for i in range(0, len(vertices))]
     f = [0]*len(vertices)
     # Construct the preliminary stiffness matrix my adding up all of the local contributions
+    #for v in vertices:
+    #    print("({},{})".format(v.x,v.y))
     for elem in T:
+        #print("---")
+        #print("(({},{}),({},{}),({},{})".format(elem.T.p.x, elem.T.p.y, elem.T.q.x, elem.T.q.y, elem.T.r.x, elem.T.r.y))
+        #G = np.matmul(np.linalg.inv(np.array([[1,1,1],[elem.T.p.x, elem.T.q.x, elem.T.r.x],[elem.T.p.y, elem.T.q.y, elem.T.r.y]])), np.array([[0,0],[1,0],[0,1]]))
+        #GG_tran = np.matmul(G, np.transpose(G))
+        #for row in GG_tran:
+        #    row[0] *= elem.T.det_X_t()/2
+        #    row[1] *= elem.T.det_X_t()/2
+        #    row[2] *= elem.T.det_X_t()/2
+        #for row in GG_tran:
+        #    print(row)
+        #print("---")
         for j in range(0, 3):
             for i in range(0, 3):
-                A[elem.P[i]][elem.P[j]] += elem.T.A(i, j)
-            f[elem.P[j]] += ((scalar_f * elem.T.vol_t())/3)
+                A[elem.P[i]][elem.P[j]] = A[elem.P[i]][elem.P[j]] + elem.T.A(i, j)
+            f[elem.P[j]] = f[elem.P[j]] + scalar_f*(elem.T.vol_t()/3)
     #print("---")
-    #for i in range(0, len(A)):
+    ##for i in range(0, len(A)):
     #    print(A[i])
     #print("---")
     # After the preliminary matrix has been formed, enforce the boundary conditions
@@ -330,6 +354,15 @@ while(error_bound > eps_stop):
                 A[j][bv[i]] = 0
                 A[bv[i]][j] = 0
         f[bv[i]] = 0
+    eigenvalues,_ = np.linalg.eig(A)
+    lambda_min = np.amin(eigenvalues)
+    lambda_max = np.amax(eigenvalues)
+    print(lambda_max/lambda_min)
+    #print("---")
+    #for i in range(0, len(A)):
+    #    print(A[i])
+    #print("---")
+    #print(f)
     # Now with the stiffness matrix and f vector, we can solve for the Galerkin coefficients
     U = np.linalg.solve(np.array(A), np.array(f)).tolist()
     #for v in vertices:
@@ -347,13 +380,15 @@ while(error_bound > eps_stop):
     for i in range(0, len(vertices)):
         if(U[i] != 0):
             galerkin_solution += U[i] * phi_of_x(T, vertices[i], Point(0.5, 0.5))
-    print(galerkin_solution)
+    #print(galerkin_solution)
     #print("---")
     # With the Galerkin coefficients, we now compute the a posteriori error estimator, keeping track of the maximum
     max_eta = 0
     etas = []
     for elem in T:
-        elem.eta = np.sqrt((scalar_f**2)*(elem.T.vol_t()**2) + elem.jump(boundary, vertices, U))
+        #elem.eta = np.sqrt((scalar_f**2)*(elem.T.vol_t()**2)) + elem.jump(boundary, vertices, U))
+        #elem.eta = np.sqrt((scalar_f**2)*(elem.T.vol_t()*(elem.T.diam_of_triangle()**2)) + elem.jump(boundary, vertices, U))
+        elem.eta = np.sqrt((scalar_f**2)*((elem.T.vol_t()**2)*(elem.T.diam_of_triangle()**2)) + elem.jump(boundary, vertices, U))
         etas.append(elem.eta)
         if(elem.eta > max_eta):
             max_eta = elem.eta
@@ -361,23 +396,28 @@ while(error_bound > eps_stop):
     for eta in etas:
         error_bound += eta**2
     error_bound = np.sqrt(error_bound)
-    print(error_bound)
+    #print(error_bound)
     for elem in T:
         if(elem.eta >= theta*max_eta):
             elem.marked = True
     test +=1
-    if test == 9:
-        break
+    #if test == 1:
+    #    break
     if(error_bound > eps_stop):
         refine(T, vertices, bv, boundary)
 
-
-fig, ax = plt.subplots(1, 2, subplot_kw={"projection": "3d"})
+fig, ax = plt.subplots(1, 3, subplot_kw={"projection": "3d"})
+triangles = []
 for elem in T:
-    ax[0].plot([elem.T.p.x,elem.T.q.x],[elem.T.p.y,elem.T.q.y],color='black',linestyle='-')
-    ax[0].plot([elem.T.q.x,elem.T.r.x],[elem.T.q.y,elem.T.r.y],color='black',linestyle='-')
-    ax[0].plot([elem.T.r.x,elem.T.p.x],[elem.T.r.y,elem.T.p.y],color='black',linestyle='-')
+    triangles.append((
+        (elem.T.p.x, elem.T.p.y, 0), 
+        (elem.T.q.x, elem.T.q.y, 0), 
+        (elem.T.r.x, elem.T.r.y, 0) 
+    ))
+ax[0].add_collection(Poly3DCollection(triangles, edgecolor='black', facecolor='white'))
 ax[0].set_zlim(0)
+ax[0].set_title("2D Mesh")
+
 triangles = []
 for elem in T:
     triangles.append((
@@ -386,6 +426,18 @@ for elem in T:
         (elem.T.r.x, elem.T.r.y, U[elem.P[2]] * phi_of_x(T, vertices[elem.P[2]], vertices[elem.P[2]])) 
     ))
 
-polygon = Poly3DCollection(triangles, edgecolor='black', facecolor='white')
-surf = ax[1].add_collection(polygon)
+ax[1].add_collection(Poly3DCollection(triangles, edgecolor='black', facecolor='white'))
+ax[1].set_title("3D Mesh")
+
+X = np.linspace(0,1)
+Y = np.linspace(0,1)
+X, Y = np.meshgrid(X, Y)
+Z = X*(1-X) + Y*(1-Y)
+surf = ax[2].plot_surface(X, Y, Z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+ax[2].set_title("Exact Solution")
+ax[2].set_zlim(0,1)
+
+#fig.colorbar(surf, shrink=0.2, aspect=5)
+
+
 plt.show()
