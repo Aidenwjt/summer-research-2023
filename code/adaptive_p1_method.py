@@ -65,6 +65,7 @@ class Triangle:
         grad_phi_j = self.grad_phi(j)
         dot_grads = (grad_phi_i[0] * grad_phi_j[0]) + (grad_phi_i[1] * grad_phi_j[1])
         return dot_grads * self.vol_t()
+        # NOTE: below seems to be an equivalent implementation
         """
         b1 = self.r.y - self.p.y
         b2 = self.p.y - self.q.y
@@ -83,57 +84,136 @@ class Triangle:
         if((i == 2 and j == 0) or (i == 0 and j == 2)):
             return (b2*(-b1 - b2) + c2*(-c1 - c2))/(4*self.vol_t())
         """
-    def red_refine(self, vertices, P_copy, P, k, bv, boundary):
-        if(np.maximum(self.p.distance(self.q), np.maximum(self.q.distance(self.r), self.r.distance(self.p))) ==  self.p.distance(self.q)):
-            v_indices = [P_copy[k][0], P_copy[k][1], P_copy[k][2]]
-            v = [self.p, self.q, self.r]
-        elif(np.maximum(self.p.distance(self.q), np.maximum(self.q.distance(self.r), self.r.distance(self.p))) ==  self.q.distance(self.r)):
-            v_indices = [P_copy[k][1], P_copy[k][2], P_copy[k][0]]
-            v = [self.q, self.r, self.p]
-        else:
-            v_indices = [P_copy[k][2], P_copy[k][0], P_copy[k][1]]
-            v = [self.r, self.p, self.q]
-        new_v = [v[0].midpoint(v[1]), v[1].midpoint(v[2]), v[2].midpoint(v[0])]
-        index0 = -1
-        index1 = -1
-        index2 = -1
-        for i in range(0,len(vertices)):
-            if(new_v[0].equals(vertices[i])):
-                index0 = i
-            if(new_v[1].equals(vertices[i])):
-                index1 = i
-            if(new_v[2].equals(vertices[i])):
-                index2 = i
-        if(index0 == -1):
-            vertices.append(new_v[0])
-            index0 = len(vertices) - 1
-            if(boundary.contains(geometry.Point(new_v[0].x, new_v[0].y))):
-                bv.append(index0)
-        if(index1 == -1):
-            vertices.append(new_v[1])
-            index1 = len(vertices) - 1
-            if(boundary.contains(geometry.Point(new_v[1].x, new_v[1].y))):
-                bv.append(index1)
-        if(index2 == -1):
-            vertices.append(new_v[2])
-            index2 = len(vertices) - 1
-            if(boundary.contains(geometry.Point(new_v[2].x, new_v[2].y))):
-                bv.append(index2)
-        P.append([v_indices[0], index0, index2])
-        P.append([index0, v_indices[1], index1])
-        P.append([index0, index1, index2])
-        P.append([index1, v_indices[2], index2])
-        return [Triangle(v[0], new_v[0], new_v[2]), Triangle(new_v[0], v[1], new_v[1]), Triangle(new_v[0], new_v[1], new_v[2]), Triangle(new_v[1], v[2], new_v[2])]
+    def shared_edges(self, T):
+        v0 = [self.p, self.q, self.r]
+        v1 = [T.p, T.q, T.r]
+        for i in range(0,3):
+            for j in range(0,3):
+                if(( (v0[(i+1)%3].x == v1[(j+1)%3].x and v0[(i+1)%3].y == v1[(j+1)%3].y) and (v0[(i+2)%3].x == v1[(j+2)%3].x and v0[(i+2)%3].y == v1[(j+2)%3].y) )
+                   or ( (v0[(i+1)%3].x == v1[(j+2)%3].x and v0[(i+1)%3].y == v1[(j+2)%3].y) and (v0[(i+2)%3].x == v1[(j+1)%3].x and v0[(i+2)%3].y == v1[(j+1)%3].y) )):
+                    return (i, j)
+        return None
+
+class Node:
+    def __init__(self, T, i, j, k, GT):
+        self.parent = None
+        self.left = None
+        self.right = None
+        self.T = T
+        self.GT = GT
+        self.P = [i, j, k] # NOTE: this keeps track of the indices of the elements vertices in the vertices list
+        self.ET = None
+        self.neighbor0 = None
+        self.neighbor1 = None
+        self.neighbor2 = None
+        self.marked = False
+    def find_refinement_edge(self):
+        # NOTE: ET = 0 corresponds to the edge opposite p, ET = 1 edge opposite q, ET = 2 edge opposite r.
+        if(np.maximum(self.T.q.distance(self.T.r), np.maximum(self.T.r.distance(self.T.p), self.T.p.distance(self.T.q))) == self.T.q.distance(self.T.r)):
+            self.ET = 0
+        if(np.maximum(self.T.q.distance(self.T.r), np.maximum(self.T.r.distance(self.T.p), self.T.p.distance(self.T.q))) == self.T.r.distance(self.T.p)):
+            self.ET = 1
+        if(np.maximum(self.T.q.distance(self.T.r), np.maximum(self.T.r.distance(self.T.p), self.T.p.distance(self.T.q))) == self.T.p.distance(self.T.q)):
+            self.ET = 2
+    def update_neighbor(self, elem):
+        edges = self.T.shared_edges(elem.T)
+        if(edges != None):
+            i,j = edges
+            if(i == 0):
+                self.neighbor0 = elem
+            if(i == 1):
+                self.neighbor1 = elem
+            if(i == 2):
+                self.neighbor2 = elem
+            if(j == 0):
+                elem.neighbor0 = self
+            if(j == 1):
+                elem.neighbor1 = self
+            if(j == 2):
+                elem.neighbor2 = self
+    def update_neighbors(self):
+        if self.parent != None:
+            parents_neighbors = [self.parent.neighbor0, self.parent.neighbor1, self.parent.neighbor2]
+            for neighbor in parents_neighbors:
+                if neighbor != None:
+                    if neighbor.left != None:
+                        children = [neighbor.left, neighbor.right]
+                        for child in children:
+                            self.update_neighbor(child)
+                    else:
+                        self.update_neighbor(neighbor)
+    def green_bisect(self, T, vertices, bv, boundary):
+        # Define a list of vertices of the element
+        v_elem = [self.T.p, self.T.q, self.T.r]
+        v_indices = [self.P[0], self.P[1], self.P[2]]
+        # Define the new point, which is the midpoint on the refinement edge
+        mp = v_elem[(self.ET+1)%3].midpoint(v_elem[(self.ET+2)%3])
+        # Check if this point is already in vertices, and if it is on the boundary
+        index = -1
+        for i in range(0, len(vertices)):
+            if(mp.equals(vertices[i])):
+                index = i
+                break
+        if(index == -1):
+            vertices.append(mp)
+            index = len(vertices) - 1
+            if(boundary.contains(geometry.Point(mp.x, mp.y))):
+                bv.append(index)
+        # Construct the new triangles
+        child_triangle1 = Triangle(v_elem[self.ET], v_elem[(self.ET+1)%3], mp)
+        child_triangle2 = Triangle(v_elem[self.ET], mp, v_elem[(self.ET+2)%3])
+        # Construct the new nodes
+        child1 = Node(child_triangle1, v_indices[self.ET], v_indices[(self.ET+1)%3], index, self.GT + 1)
+        child2 = Node(child_triangle2, v_indices[self.ET], index, v_indices[(self.ET+2)%3], self.GT + 1)
+        # Update their parents, neighbors, and refinement edges
+        child1.parent = self
+        child2.parent = self
+        self.left = child1
+        self.right = child2
+        child1.update_neighbor(child2)
+        child1.update_neighbors()
+        child2.update_neighbors()
+        child1.find_refinement_edge()
+        child2.find_refinement_edge()
+        # Remove the element from the triangulation and add the two new elements
+        T.remove(self)
+        T.append(child1)
+        T.append(child2)
+        return
+
+def refine_recursive(T, elem, vertices, bv, boundary):
+    # Create a list of the elements neighbors
+    neighbors = [elem.neighbor0, elem.neighbor1, elem.neighbor2]
+    # Create a reference to the neighbors sharing its refinement edge
+    FT = neighbors[elem.ET]
+    # If FT is not None and has an older generation, then it needs to be refined first
+    if(FT != None and FT.GT < elem.GT):
+        refine_recursive(T, FT, vertices, bv, boundary)
+    # Else, we have a compatible refinement patch, so bisect the current element
+    elem.green_bisect(T, vertices, bv, boundary)
+    # If we just returned from a recursive call, and FT is still None, then just return from this function call
+    if FT == None:
+        return
+    # Else, we also need to to bisect FT
+    FT.green_bisect(T, vertices, bv, boundary)
+    return
+
+def refine(T, vertices, bv, boundary):
+    # Create a shallow copy of T as we will be removing elements from it
+    T_copy = T.copy()
+    # Loop through all the elements
+    #for k in range(0, len(T_copy)):
+    for elem in T_copy:
+        # If an element is marked for refinement, and it has not already been refined, then refine it
+        if elem.marked == True and elem.left == None and elem.right == None:
+            refine_recursive(T, elem, vertices, bv, boundary)
 
 def phi_of_x(T, v, x):
-    for t in T:
-        j = t.vertex_of_t(v)
-        #print("({},{}),({},{}),({},{})".format(t.p.x, t.p.y, t.q.x, t.q.y, t.r.x, t.r.y))
-        #print("({},{})".format(v.x,v.y))
-        #print(j)
+    for elem in T:
+        j = elem.T.vertex_of_t(v)
         if(j > -1):
-            if(t.x_in_closure_t(x)):
-                points = [t.p, t.q, t.r]
+            if(elem.T.x_in_closure_t(x)):
+                points = [elem.T.p, elem.T.q, elem.T.r]
                 det1 = np.linalg.det(np.array([
                     [1, x.x, x.y],
                     [1, points[(j+1)%3].x, points[(j+1)%3].y],
@@ -142,65 +222,63 @@ def phi_of_x(T, v, x):
                     [1, points[j].x, points[j].y],
                     [1, points[(j+1)%3].x, points[(j+1)%3].y],
                     [1, points[(j+2)%3].x, points[(j+2)%3].y]]))
+                print(det1/det2)
                 return det1/det2
     return 0
 
-
-def recreate_galerkin_solution_at_x(T, U, vertices, x):
-    galerkin_solution = 0
-    for i in range(0, len(vertices)):
-        if(U[i] != 0):
-            #print(U[i])
-            galerkin_solution += U[i] * phi_of_x(T, vertices[i], x)
-    return galerkin_solution
-
+# Define the scalar function f, which will just be constant in our case
 scalar_f = 4
+
+# Define the points/vertices of the polygonal domain
 p0 = Point(0,0)
 p1 = Point(1,0)
 p2 = Point(1,1)
 p3 = Point(0,1)
+
+# Construct a boundary object to check if points are on the boundary in the future
 domain = geometry.Polygon([(0,0),(1,0),(1,1),(0,1)])
 boundary = domain.boundary
+
+# Define the triangles in the initial triangulation
 t0 = Triangle(p0,p1,p2)
 t1 = Triangle(p0,p2,p3)
-T = [t0, t1]
+
+# Create a list that keeps track of all the individual vertices in the triangulation
 vertices = [p0, p1, p2, p3]
-P = [[0, 1, 2], [0, 2, 3]]
+
+# Create a conectivity matrix which will be necessary for Galerkin approximation
+#P = [[0, 1, 2], [0, 2, 3]]
+
+# Create a list to keep track of the indices in the vertices list that are on the boundary
 bv = [0, 1, 2, 3]
 
+# Use the initial triangles to construct roots of binary tree to keep track of neighbors, generation, etc...
+root0 = Node(t0, 0, 1, 2, 0)
+root1 = Node(t1, 0, 2, 3, 0)
+T = [root0, root1]
+for i in range(0, len(T)):
+    T[i].marked = True
+    T[i].find_refinement_edge()
+    for j in range(0, len(T)):
+        if(i != j):
+            T[i].update_neighbor(T[j])
+
+# Main loop that implements the Solve->Estimate->Mark->Refine algorithm
 for l in range(0,3):
-    T_copy = T.copy()
-    P_copy = P.copy()
-    for k in range(0, len(T_copy)):
-    #for t in T_copy:
-        new_t = T_copy[k].red_refine(vertices, P_copy, P, k, bv, boundary)
-        for t1 in new_t:
-            T.append(t1)
-        T.remove(T_copy[k])
-        P = P[1:]
-    """
-    for t in T:
-        print("({},{}),({},{}),({},{})".format(t.p.x,t.p.y,t.q.x,t.q.y,t.r.x,t.r.y))
-    print("---")
-    for v in vertices:
-        print("({},{})".format(v.x,v.y))
-    print("---")
-    for i in range(0, len(T)):
-        print(P[i])
-    print("---")
-    """
+    # Our current triangulation requires us to do an initial refinement, which we will do here
+    refine(T, vertices, bv, boundary) # NOTE: python will update the lists passed to a function, so no need for a return
     A = [[0]*len(vertices) for i in range(0, len(vertices))]
     f = [0]*len(vertices)
-    for k in range(0, len(T)):
+    #for k in range(0, len(T)):
+    for elem in T:
         for j in range(0, 3):
             for i in range(0, 3):
-                A[P[k][i]][P[k][j]] += T[k].A(i, j)
-            f[P[k][j]] += ((scalar_f*T[k].vol_t())/3)
-    #for i in range(0, len(vertices)):
-    #    print(A[i])
-    #print("---")
-    #print(f)
-    #print("---")
+                A[elem.P[i]][elem.P[j]] += elem.T.A(i, j)
+            f[elem.P[j]] += ((scalar_f * elem.T.vol_t())/3)
+    print("---")
+    for i in range(0, len(A)):
+        print(A[i])
+    print("---")
     for i in range(0, len(bv)):
         for j in range(0, len(vertices)):
             if(j == bv[i]):
@@ -208,37 +286,31 @@ for l in range(0,3):
             else:
                 A[j][bv[i]] = 0
                 A[bv[i]][j] = 0
-            #A[vEb[i]-1][vEb[i]] = 0
-            #A[vEb[i]][vEb[i]-1] = 0
-            #A[vEb[i]+1][vEb[i]] = 0
-            #A[vEb[i]][vEb[i]+1] = 0
         f[bv[i]] = 0
-    """
-    for i in range(0, len(vertices)):
+    U = np.linalg.solve(np.array(A), np.array(f)).tolist()
+    for v in vertices:
+        print("({},{})".format(v.x, v.y))
+    print("---")
+    for i in range(0, len(A)):
         print(A[i])
+    print("---")
+    print(U)
     print("---")
     print(f)
     print("---")
-    """
-    U = np.linalg.solve(np.array(A), np.array(f)).tolist()
-    #print(U)
-    #print(len(T))
-    #print(len(vertices))
-    #print(len(P))
-    #print(len(bv))
-    u0 = recreate_galerkin_solution_at_x(T, U, vertices, Point(0.5,0.5))
-    u1 = recreate_galerkin_solution_at_x(T, U, vertices, Point(0,0))
-    u2 = recreate_galerkin_solution_at_x(T, U, vertices, Point(0.25,0.25))
-    u3 = recreate_galerkin_solution_at_x(T, U, vertices, Point(0.75,0.75))
-    print(u0)
-    print(u1)
-    print(u2)
-    print(u3)
+    galerkin_solution = 0
+    for i in range(0, len(vertices)):
+        if(U[i] != 0):
+            galerkin_solution += U[i] * phi_of_x(T, vertices[i], Point(0.5, 0.5))
+    print(galerkin_solution)
+    print("---")
+    for i in range(0, len(T)):
+        T[i].marked = True
 
 fig, ax = plt.subplots()
-for t in T:
-    ax.plot([t.p.x,t.q.x],[t.p.y,t.q.y],color='black',linestyle='-')
-    ax.plot([t.q.x,t.r.x],[t.q.y,t.r.y],color='black',linestyle='-')
-    ax.plot([t.r.x,t.p.x],[t.r.y,t.p.y],color='black',linestyle='-')
+for elem in T:
+    ax.plot([elem.T.p.x,elem.T.q.x],[elem.T.p.y,elem.T.q.y],color='black',linestyle='-')
+    ax.plot([elem.T.q.x,elem.T.r.x],[elem.T.q.y,elem.T.r.y],color='black',linestyle='-')
+    ax.plot([elem.T.r.x,elem.T.p.x],[elem.T.r.y,elem.T.p.y],color='black',linestyle='-')
 
 plt.show()
