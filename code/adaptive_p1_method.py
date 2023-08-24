@@ -1,24 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from shapely import geometry
+from mpl_toolkits.mplot3d import Axes3D
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+from matplotlib import cm
 
-"""
-Consider the model problem
-    -div(grad(u)) = f  in [0,1]x[0,1]
-                u = 0  on the boundary of [0,1]x[0,1].
-
-For certain f we have exact solutions for u, however, we wish to use AFEM to approximate the solution to u.
-To do this we implement the algorithm Solve-Estimate-Mark-Refine.
-
-The algorithm is described as follows:
-Given a triangulation T_0 of [0,1]x[0,1] and parameters 0 < p < 1  and end_k > 0, set k = 0.
-Then
-    1. Compute the Galerkin approximation U satisfying the weak formulation of the model problem.
-    2. For every element t in T_k compute the refinement indicator E_t(U).
-    3. Choose a set of marked elements M_k in T_k such that E_t(U) > p*max(E_t'(U)) where t' also exists in T_k.
-    4. Apply red-refinement to every t in M_k to produce a new triangulation.
-    5. Set k = k + 1, and if k == end_k then stop, otherwise go back to 1.
-"""
 class Point:
     def __init__(self, x, y):
         self.x = x
@@ -64,7 +50,7 @@ class Triangle:
         grad_phi_i = self.grad_phi(i)
         grad_phi_j = self.grad_phi(j)
         dot_grads = (grad_phi_i[0] * grad_phi_j[0]) + (grad_phi_i[1] * grad_phi_j[1])
-        return dot_grads * self.vol_t()
+        return (dot_grads * self.vol_t())
         # NOTE: below seems to be an equivalent implementation
         """
         b1 = self.r.y - self.p.y
@@ -103,10 +89,56 @@ class Node:
         self.GT = GT
         self.P = [i, j, k] # NOTE: this keeps track of the indices of the elements vertices in the vertices list
         self.ET = None
+        self.eta = None
         self.neighbor0 = None
         self.neighbor1 = None
         self.neighbor2 = None
         self.marked = False
+    def jump(self, boundary, vertices, U):
+        # Variable to keep track of the overall sum
+        jump_sum = 0
+        # Vertices of current triangle
+        v_elem = [self.T.p, self.T.q, self.T.r]
+        # Loop through all three edges/sides
+        for i in range(0, 3):
+            # Check if the edge is on the boundary of the domain
+            if(boundary.contains(geometry.Point(v_elem[(i+1)%3].x,v_elem[(i+1)%3].y)) == False 
+               or boundary.contains(geometry.Point(v_elem[(i+2)%3].x,v_elem[(i+2)%3].y)) == False):
+                # Compute the squared volume of the edge
+                vol_S_squared = v_elem[(i+1)%3].distance(v_elem[(i+2)%3])**2
+                # Find the neighbor that shares this edge, should exists if the edge is not on the boundary
+                neighbors = [self.neighbor0, self.neighbor1, self.neighbor2]
+                neighbor = neighbors[i]
+                neighbor_v_elem = [neighbor.T.p, neighbor.T.q, neighbor.T.r]
+                # Find the index of the shared edge for the neighbor
+                _,j = self.T.shared_edges(neighbor.T)
+                # Compute the outer unit normals on the side to the neighbor, then to the current triangle
+                dx1 = v_elem[(i+2)%3].x - v_elem[(i+1)%3].x
+                dy1 = v_elem[(i+2)%3].y - v_elem[(i+1)%3].y
+                length1 = np.sqrt((-dy1)**2 + dx1**2)
+                n1 = [-dy1/length1, dx1/length1]
+                dx2 = neighbor_v_elem[(j+2)%3].x - neighbor_v_elem[(j+1)%3].x
+                dy2 = neighbor_v_elem[(j+2)%3].y - neighbor_v_elem[(j+1)%3].y
+                length2 = np.sqrt((-dy2)**2 + dx2**2)
+                n2 = [-dy2/length2, dx2/length2]
+                # Compute the gradients of the Galerkin solutions evaluted on each triangle, which are simplified in the nodal basis
+                grad_u_self = [0, 0]
+                grad_u_neighbor = [0, 0]
+                for i in range(0, len(vertices)):
+                    k = self.T.vertex_of_t(vertices[i])
+                    l = neighbor.T.vertex_of_t(vertices[i])
+                    if(k > -1):
+                        grad_phi_k = self.T.grad_phi(k)
+                        grad_u_self[0] += U[i]*grad_phi_k[0]
+                        grad_u_self[1] += U[i]*grad_phi_k[1]
+                    if(l > -1):
+                        grad_phi_l = self.T.grad_phi(l)
+                        grad_u_neighbor[0] += U[i]*grad_phi_l[0]
+                        grad_u_neighbor[1] += U[i]*grad_phi_l[1]
+                # Compute the current summand
+                jump_sum += vol_S_squared*( np.absolute( (grad_u_self[0] * n1[0] + grad_u_self[1] * n1[1]) + (grad_u_neighbor[0] * n2[0] + grad_u_neighbor[1] * n2[1]) )**2 )
+        return jump_sum
+    # TODO: This function probabaly is no longer necessary
     def find_refinement_edge(self):
         # NOTE: ET = 0 corresponds to the edge opposite p, ET = 1 edge opposite q, ET = 2 edge opposite r.
         if(np.maximum(self.T.q.distance(self.T.r), np.maximum(self.T.r.distance(self.T.p), self.T.p.distance(self.T.q))) == self.T.q.distance(self.T.r)):
@@ -136,13 +168,13 @@ class Node:
             parents_neighbors = [self.parent.neighbor0, self.parent.neighbor1, self.parent.neighbor2]
             for neighbor in parents_neighbors:
                 if neighbor != None:
-                    if neighbor.left != None:
+                    if neighbor.left != None and neighbor.right != None:
                         children = [neighbor.left, neighbor.right]
                         for child in children:
                             self.update_neighbor(child)
                     else:
                         self.update_neighbor(neighbor)
-    def green_bisect(self, T, vertices, bv, boundary):
+    def bisect(self, T, vertices, bv, boundary):
         # Define a list of vertices of the element
         v_elem = [self.T.p, self.T.q, self.T.r]
         v_indices = [self.P[0], self.P[1], self.P[2]]
@@ -173,8 +205,8 @@ class Node:
         child1.update_neighbor(child2)
         child1.update_neighbors()
         child2.update_neighbors()
-        child1.find_refinement_edge()
-        child2.find_refinement_edge()
+        child1.ET = 2
+        child2.ET = 1
         # Remove the element from the triangulation and add the two new elements
         T.remove(self)
         T.append(child1)
@@ -189,13 +221,18 @@ def refine_recursive(T, elem, vertices, bv, boundary):
     # If FT is not None and has an older generation, then it needs to be refined first
     if(FT != None and FT.GT < elem.GT):
         refine_recursive(T, FT, vertices, bv, boundary)
+    neighbors = [elem.neighbor0, elem.neighbor1, elem.neighbor2]
+    FT = neighbors[elem.ET]
     # Else, we have a compatible refinement patch, so bisect the current element
-    elem.green_bisect(T, vertices, bv, boundary)
+    elem.bisect(T, vertices, bv, boundary)
     # If we just returned from a recursive call, and FT is still None, then just return from this function call
+    #if FT == None or FT.left != None:
     if FT == None:
+        elem.left.update_neighbors()
+        elem.right.update_neighbors()
         return
     # Else, we also need to to bisect FT
-    FT.green_bisect(T, vertices, bv, boundary)
+    FT.bisect(T, vertices, bv, boundary)
     return
 
 def refine(T, vertices, bv, boundary):
@@ -222,7 +259,6 @@ def phi_of_x(T, v, x):
                     [1, points[j].x, points[j].y],
                     [1, points[(j+1)%3].x, points[(j+1)%3].y],
                     [1, points[(j+2)%3].x, points[(j+2)%3].y]]))
-                print(det1/det2)
                 return det1/det2
     return 0
 
@@ -246,9 +282,6 @@ t1 = Triangle(p0,p2,p3)
 # Create a list that keeps track of all the individual vertices in the triangulation
 vertices = [p0, p1, p2, p3]
 
-# Create a conectivity matrix which will be necessary for Galerkin approximation
-#P = [[0, 1, 2], [0, 2, 3]]
-
 # Create a list to keep track of the indices in the vertices list that are on the boundary
 bv = [0, 1, 2, 3]
 
@@ -263,22 +296,32 @@ for i in range(0, len(T)):
         if(i != j):
             T[i].update_neighbor(T[j])
 
+# Our current triangulation requires us to do an initial refinement, which we will do here
+refine(T, vertices, bv, boundary) # NOTE: python will update the lists passed to a function, so no need for a return
+
+# Define parameters for Solve-Estimate->Mark->Refine algorithm
+theta = 0.5 # NOTE: theta in (0,1]
+eps_stop = 0.05 # NOTE: eps_stop > 0
+error_bound = 1 # NOTE: variable for computing the error estimate
+
+
+test = 0
 # Main loop that implements the Solve->Estimate->Mark->Refine algorithm
-for l in range(0,3):
-    # Our current triangulation requires us to do an initial refinement, which we will do here
-    refine(T, vertices, bv, boundary) # NOTE: python will update the lists passed to a function, so no need for a return
+while(error_bound > eps_stop):
+    # Construct the stiffness matrix and f vector
     A = [[0]*len(vertices) for i in range(0, len(vertices))]
     f = [0]*len(vertices)
-    #for k in range(0, len(T)):
+    # Construct the preliminary stiffness matrix my adding up all of the local contributions
     for elem in T:
         for j in range(0, 3):
             for i in range(0, 3):
                 A[elem.P[i]][elem.P[j]] += elem.T.A(i, j)
             f[elem.P[j]] += ((scalar_f * elem.T.vol_t())/3)
-    print("---")
-    for i in range(0, len(A)):
-        print(A[i])
-    print("---")
+    #print("---")
+    #for i in range(0, len(A)):
+    #    print(A[i])
+    #print("---")
+    # After the preliminary matrix has been formed, enforce the boundary conditions
     for i in range(0, len(bv)):
         for j in range(0, len(vertices)):
             if(j == bv[i]):
@@ -287,30 +330,62 @@ for l in range(0,3):
                 A[j][bv[i]] = 0
                 A[bv[i]][j] = 0
         f[bv[i]] = 0
+    # Now with the stiffness matrix and f vector, we can solve for the Galerkin coefficients
     U = np.linalg.solve(np.array(A), np.array(f)).tolist()
-    for v in vertices:
-        print("({},{})".format(v.x, v.y))
-    print("---")
-    for i in range(0, len(A)):
-        print(A[i])
-    print("---")
-    print(U)
-    print("---")
-    print(f)
-    print("---")
+    #for v in vertices:
+    #    print("({},{})".format(v.x, v.y))
+    #print("---")
+    #for i in range(0, len(A)):
+    #    print(A[i])
+    #print("---")
+    #print(U)
+    #print("---")
+    #print(f)
+    #print("---")
+    # With the Galerkin coefficients, we can reconstruct the Galerkin solution at some point in our domain
     galerkin_solution = 0
     for i in range(0, len(vertices)):
         if(U[i] != 0):
             galerkin_solution += U[i] * phi_of_x(T, vertices[i], Point(0.5, 0.5))
     print(galerkin_solution)
-    print("---")
-    for i in range(0, len(T)):
-        T[i].marked = True
+    #print("---")
+    # With the Galerkin coefficients, we now compute the a posteriori error estimator, keeping track of the maximum
+    max_eta = 0
+    etas = []
+    for elem in T:
+        elem.eta = np.sqrt((scalar_f**2)*(elem.T.vol_t()**2) + elem.jump(boundary, vertices, U))
+        etas.append(elem.eta)
+        if(elem.eta > max_eta):
+            max_eta = elem.eta
+    error_bound = 0
+    for eta in etas:
+        error_bound += eta**2
+    error_bound = np.sqrt(error_bound)
+    print(error_bound)
+    for elem in T:
+        if(elem.eta >= theta*max_eta):
+            elem.marked = True
+    test +=1
+    if test == 9:
+        break
+    if(error_bound > eps_stop):
+        refine(T, vertices, bv, boundary)
 
-fig, ax = plt.subplots()
+
+fig, ax = plt.subplots(1, 2, subplot_kw={"projection": "3d"})
 for elem in T:
-    ax.plot([elem.T.p.x,elem.T.q.x],[elem.T.p.y,elem.T.q.y],color='black',linestyle='-')
-    ax.plot([elem.T.q.x,elem.T.r.x],[elem.T.q.y,elem.T.r.y],color='black',linestyle='-')
-    ax.plot([elem.T.r.x,elem.T.p.x],[elem.T.r.y,elem.T.p.y],color='black',linestyle='-')
+    ax[0].plot([elem.T.p.x,elem.T.q.x],[elem.T.p.y,elem.T.q.y],color='black',linestyle='-')
+    ax[0].plot([elem.T.q.x,elem.T.r.x],[elem.T.q.y,elem.T.r.y],color='black',linestyle='-')
+    ax[0].plot([elem.T.r.x,elem.T.p.x],[elem.T.r.y,elem.T.p.y],color='black',linestyle='-')
+ax[0].set_zlim(0)
+triangles = []
+for elem in T:
+    triangles.append((
+        (elem.T.p.x, elem.T.p.y, U[elem.P[0]] * phi_of_x(T, vertices[elem.P[0]], vertices[elem.P[0]])), 
+        (elem.T.q.x, elem.T.q.y, U[elem.P[1]] * phi_of_x(T, vertices[elem.P[1]], vertices[elem.P[1]])), 
+        (elem.T.r.x, elem.T.r.y, U[elem.P[2]] * phi_of_x(T, vertices[elem.P[2]], vertices[elem.P[2]])) 
+    ))
 
+polygon = Poly3DCollection(triangles, edgecolor='black', facecolor='white')
+surf = ax[1].add_collection(polygon)
 plt.show()
