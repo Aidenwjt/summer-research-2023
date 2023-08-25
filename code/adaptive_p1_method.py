@@ -67,7 +67,6 @@ class Triangle:
         points = [self.p, self.q, self.r]
         return ((points[(i+1)%3].y - points[(i+2)%3].y)*(points[(j+1)%3].y - points[(j+2)%3].y) + (points[(i+2)%3].x - points[(i+1)%3].x)*(points[(j+2)%3].x - points[(j+1)%3].x))/(4*self.vol_t())
         """
-        """
         grad_phi_i = self.grad_phi(i)
         grad_phi_j = self.grad_phi(j)
         dot_grads = (grad_phi_i[0] * grad_phi_j[0]) + (grad_phi_i[1] * grad_phi_j[1])
@@ -82,6 +81,7 @@ class Triangle:
         b = [b0, b1, b2]
         c = [c0, c1, c2]
         return (b[i]*b[j] + c[i]*c[j])/(4*self.vol_t())
+        """
     def shared_edges(self, T):
         v0 = [self.p, self.q, self.r]
         v1 = [T.p, T.q, T.r]
@@ -124,7 +124,7 @@ class Node:
                 neighbor_v_elem = [neighbor.T.p, neighbor.T.q, neighbor.T.r]
                 # Find the index of the shared edge for the neighbor
                 _,j = self.T.shared_edges(neighbor.T)
-                # Compute the outer unit normals on the side to the neighbor, then to the current triangle
+                # Compute the outer unit normals on the side, to the neighbor, then to the current triangle
                 dx1 = v_elem[(i+2)%3].x - v_elem[(i+1)%3].x
                 dy1 = v_elem[(i+2)%3].y - v_elem[(i+1)%3].y
                 length1 = np.sqrt((-dy1)**2 + dx1**2)
@@ -136,6 +136,7 @@ class Node:
                 # Compute the gradients of the Galerkin solutions evaluted on each triangle, which are simplified in the nodal basis
                 grad_u_self = [0, 0]
                 grad_u_neighbor = [0, 0]
+
                 for i in range(0, len(vertices)):
                     k = self.T.vertex_of_t(vertices[i])
                     l = neighbor.T.vertex_of_t(vertices[i])
@@ -275,8 +276,45 @@ def phi_of_x(T, v, x):
     return 0
 
 # Define the scalar function f, which will just be constant in our case
-scalar_f = 1
+scalar_f = 2
 
+p0 = Point(0,0)
+p1 = Point(1,0)
+p2 = Point(1,1)
+p3 = Point(0,1)
+p4 = Point(-1,1)
+p5 = Point(-1,0)
+p6 = Point(-1,-1)
+p7 = Point(0,-1)
+domain = geometry.Polygon([(0,0),(1,0),(1,1),(0,1),(-1,1),(-1,0),(-1,-1),(0,-1)])
+boundary = domain.boundary
+
+vertices = [p0, p1, p2, p3, p4, p5, p6, p7]
+bv = [0,1,2,3,4,5,6,7]
+
+t0 = Triangle(p0, p1, p2)
+t1 = Triangle(p0, p2, p3)
+t2 = Triangle(p0, p3, p5)
+t3 = Triangle(p3, p4, p5)
+t4 = Triangle(p5, p6, p0)
+t5 = Triangle(p6, p7, p0)
+
+root0 = Node(t0, 0, 1, 2, 0)
+root1 = Node(t1, 0, 2, 3, 0)
+root2 = Node(t2, 0, 3, 5, 0)
+root3 = Node(t3, 3, 4, 5, 0)
+root4 = Node(t4, 5, 6, 0, 0)
+root5 = Node(t5, 6, 7, 0, 0)
+
+T = [root0, root1, root2, root3, root4, root5]
+for i in range(0, len(T)):
+    T[i].marked = True
+    T[i].find_refinement_edge()
+    for j in range(0, len(T)):
+        if(i != j):
+            T[i].update_neighbor(T[j])
+
+"""
 # Define the points/vertices of the polygonal domain
 p0 = Point(0,0)
 p1 = Point(1,0)
@@ -310,42 +348,94 @@ for i in range(0, len(T)):
 
 # Our current triangulation requires us to do an initial refinement, which we will do here
 refine(T, vertices, bv, boundary) # NOTE: python will update the lists passed to a function, so no need for a return
+p0 = Point(0,0)
+p1 = Point(1,0)
+p2 = Point(0.5,0.5)
+p3 = Point(1,1)
+p4 = Point(0,1)
+
+domain = geometry.Polygon([(0,0),(1,0),(1,1),(0,1)])
+boundary = domain.boundary
+
+vertices = [p0, p1, p2, p3, p4]
+bv = [0,1,3,4]
+
+t0 = Triangle(p0, p1, p2)
+t1 = Triangle(p1, p3, p2)
+t2 = Triangle(p3, p4, p2)
+t3 = Triangle(p4, p0, p2)
+
+root0 = Node(t0, 0, 1, 2, 0)
+root1 = Node(t1, 1, 3, 2, 0)
+root2 = Node(t2, 3, 4, 2, 0)
+root3 = Node(t3, 4, 0, 2, 0)
+T = [root0, root1, root2, root3]
+for i in range(0, len(T)):
+    T[i].marked = True
+    T[i].find_refinement_edge()
+    for j in range(0, len(T)):
+        if(i != j):
+            T[i].update_neighbor(T[j])
+"""
+"""
+NOTE: Proof that the stiffness matrix is updating properly
+p0 = Point(0,0)
+p1 = Point(0,1)
+p2 = Point(0,2)
+p3 = Point(1,0)
+p4 = Point(1,1)
+p5 = Point(1,2)
+p6 = Point(2,0)
+p7 = Point(2,1)
+p8 = Point(2,2)
+p9 = Point(3,0)
+p10 = Point(3,1)
+p11 = Point(3,2)
+vertices= [p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11]
+
+t0 = Triangle(p0, p3, p4)
+t1 = Triangle(p0, p4, p1)
+t2 = Triangle(p1, p4, p5)
+t3 = Triangle(p1, p5, p2)
+t4 = Triangle(p3, p6, p7)
+t5 = Triangle(p3, p7, p4)
+t6 = Triangle(p4, p7, p8)
+t7 = Triangle(p4, p8, p5)
+t8 = Triangle(p6, p9, p10)
+t9 = Triangle(p6, p10, p7)
+t10 = Triangle(p7, p10, p11)
+t11 = Triangle(p7, p11, p8)
+root0 = Node(t0, 0, 3, 4, 0)
+root1 = Node(t1, 0, 4, 1, 0)
+root2 = Node(t2, 1, 4, 5, 0)
+root3 = Node(t3, 1, 5, 2, 0)
+root4 = Node(t4, 3, 6, 7, 0)
+root5 = Node(t5, 3, 7, 4, 0)
+root6 = Node(t6, 4, 7, 8, 0)
+root7 = Node(t7, 4, 8, 5, 0)
+root8 = Node(t8, 6, 9, 10, 0)
+root9 = Node(t9, 6, 10, 7, 0)
+root10 = Node(t10, 7, 10, 11, 0)
+root11 = Node(t11, 7, 11, 8, 0)
+T = [root0, root1, root2, root3, root4, root5, root6, root7, root8, root9, root10, root11]
+"""
 
 # Define parameters for Solve-Estimate->Mark->Refine algorithm
-theta = 0.5 # NOTE: theta in (0,1]
-eps_stop = 0.05 # NOTE: eps_stop > 0
+theta = 0.8 # NOTE: theta in (0,1]
+eps_stop = 0.5 # NOTE: eps_stop > 0
 error_bound = 1 # NOTE: variable for computing the error estimate
 
-test = 0
 # Main loop that implements the Solve->Estimate->Mark->Refine algorithm
 while(error_bound > eps_stop):
     # Construct the stiffness matrix and f vector
     A = [[0]*len(vertices) for i in range(0, len(vertices))]
     f = [0]*len(vertices)
     # Construct the preliminary stiffness matrix my adding up all of the local contributions
-    #for v in vertices:
-    #    print("({},{})".format(v.x,v.y))
     for elem in T:
-        #print("---")
-        #print("(({},{}),({},{}),({},{})".format(elem.T.p.x, elem.T.p.y, elem.T.q.x, elem.T.q.y, elem.T.r.x, elem.T.r.y))
-        #G = np.matmul(np.linalg.inv(np.array([[1,1,1],[elem.T.p.x, elem.T.q.x, elem.T.r.x],[elem.T.p.y, elem.T.q.y, elem.T.r.y]])), np.array([[0,0],[1,0],[0,1]]))
-        #GG_tran = np.matmul(G, np.transpose(G))
-        #for row in GG_tran:
-        #    row[0] *= elem.T.det_X_t()/2
-        #    row[1] *= elem.T.det_X_t()/2
-        #    row[2] *= elem.T.det_X_t()/2
-        #for row in GG_tran:
-        #    print(row)
-        #print("---")
         for j in range(0, 3):
             for i in range(0, 3):
                 A[elem.P[i]][elem.P[j]] = A[elem.P[i]][elem.P[j]] + elem.T.A(i, j)
             f[elem.P[j]] = f[elem.P[j]] + scalar_f*(elem.T.vol_t()/3)
-    #print("---")
-    ##for i in range(0, len(A)):
-    #    print(A[i])
-    #print("---")
-    # After the preliminary matrix has been formed, enforce the boundary conditions
     for i in range(0, len(bv)):
         for j in range(0, len(vertices)):
             if(j == bv[i]):
@@ -354,41 +444,29 @@ while(error_bound > eps_stop):
                 A[j][bv[i]] = 0
                 A[bv[i]][j] = 0
         f[bv[i]] = 0
-    eigenvalues,_ = np.linalg.eig(A)
-    lambda_min = np.amin(eigenvalues)
-    lambda_max = np.amax(eigenvalues)
-    print(lambda_max/lambda_min)
-    #print("---")
-    #for i in range(0, len(A)):
-    #    print(A[i])
-    #print("---")
-    #print(f)
+    # NOTE: Keep this block for error checking
+    #eigenvalues,_ = np.linalg.eig(A)
+    #lambda_min = np.amin(eigenvalues)
+    #lambda_max = np.amax(eigenvalues)
+    #print(np.absolute(lambda_max/lambda_min))
     # Now with the stiffness matrix and f vector, we can solve for the Galerkin coefficients
     U = np.linalg.solve(np.array(A), np.array(f)).tolist()
-    #for v in vertices:
-    #    print("({},{})".format(v.x, v.y))
-    #print("---")
-    #for i in range(0, len(A)):
-    #    print(A[i])
-    #print("---")
-    #print(U)
-    #print("---")
-    #print(f)
-    #print("---")
-    # With the Galerkin coefficients, we can reconstruct the Galerkin solution at some point in our domain
-    galerkin_solution = 0
-    for i in range(0, len(vertices)):
-        if(U[i] != 0):
-            galerkin_solution += U[i] * phi_of_x(T, vertices[i], Point(0.5, 0.5))
-    #print(galerkin_solution)
-    #print("---")
     # With the Galerkin coefficients, we now compute the a posteriori error estimator, keeping track of the maximum
     max_eta = 0
     etas = []
     for elem in T:
-        #elem.eta = np.sqrt((scalar_f**2)*(elem.T.vol_t()**2)) + elem.jump(boundary, vertices, U))
-        #elem.eta = np.sqrt((scalar_f**2)*(elem.T.vol_t()*(elem.T.diam_of_triangle()**2)) + elem.jump(boundary, vertices, U))
-        elem.eta = np.sqrt((scalar_f**2)*((elem.T.vol_t()**2)*(elem.T.diam_of_triangle()**2)) + elem.jump(boundary, vertices, U))
+        left_summand = (scalar_f**2)*(elem.T.vol_t()**2)
+        grads_T = np.linalg.solve(np.array([[1,1,1],[elem.T.p.x,elem.T.q.x,elem.T.r.x],[elem.T.p.y,elem.T.q.y,elem.T.r.y]]), np.array([[0,0],[1,0],[0,1]]))
+        nabla_u_T = np.matmul(np.transpose(grads_T), np.array([U[elem.P[0]], U[elem.P[1]], U[elem.P[2]]]))
+        normal_times_area = np.multiply(-2*elem.T.vol_t(), grads_T)
+        jump_vector = np.matmul(normal_times_area, nabla_u_T)
+        right_summand = 0
+        v_elem = [elem.T.p, elem.T.q, elem.T.r]
+        for i in range(0, len(jump_vector)):
+            if(boundary.contains(geometry.Point(v_elem[(i+1)%3].x,v_elem[(i+1)%3].y)) == False 
+               or boundary.contains(geometry.Point(v_elem[(i+2)%3].x,v_elem[(i+2)%3].y)) == False):
+                right_summand += np.absolute(v_elem[(i+1)%3].distance(v_elem[(i+2)%3])) * np.absolute(jump_vector[i])**2
+        elem.eta = np.sqrt(left_summand + right_summand)
         etas.append(elem.eta)
         if(elem.eta > max_eta):
             max_eta = elem.eta
@@ -396,17 +474,14 @@ while(error_bound > eps_stop):
     for eta in etas:
         error_bound += eta**2
     error_bound = np.sqrt(error_bound)
-    #print(error_bound)
+    print(error_bound)
     for elem in T:
         if(elem.eta >= theta*max_eta):
             elem.marked = True
-    test +=1
-    #if test == 1:
-    #    break
     if(error_bound > eps_stop):
         refine(T, vertices, bv, boundary)
 
-fig, ax = plt.subplots(1, 3, subplot_kw={"projection": "3d"})
+fig, ax = plt.subplots(1, 2, subplot_kw={"projection": "3d"})
 triangles = []
 for elem in T:
     triangles.append((
@@ -415,9 +490,9 @@ for elem in T:
         (elem.T.r.x, elem.T.r.y, 0) 
     ))
 ax[0].add_collection(Poly3DCollection(triangles, edgecolor='black', facecolor='white'))
-ax[0].set_zlim(0)
 ax[0].set_title("2D Mesh")
-
+ax[0].set_xlim(-2, 2)
+ax[0].set_ylim(-2, 2)
 triangles = []
 for elem in T:
     triangles.append((
@@ -428,16 +503,7 @@ for elem in T:
 
 ax[1].add_collection(Poly3DCollection(triangles, edgecolor='black', facecolor='white'))
 ax[1].set_title("3D Mesh")
-
-X = np.linspace(0,1)
-Y = np.linspace(0,1)
-X, Y = np.meshgrid(X, Y)
-Z = X*(1-X) + Y*(1-Y)
-surf = ax[2].plot_surface(X, Y, Z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
-ax[2].set_title("Exact Solution")
-ax[2].set_zlim(0,1)
-
-#fig.colorbar(surf, shrink=0.2, aspect=5)
-
+ax[1].set_xlim(-2, 2)
+ax[1].set_ylim(-2, 2)
 
 plt.show()
