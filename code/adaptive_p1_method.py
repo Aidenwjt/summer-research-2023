@@ -276,8 +276,9 @@ def phi_of_x(T, v, x):
     return 0
 
 # Define the scalar function f, which will just be constant in our case
-scalar_f = 2
+scalar_f = 5
 
+# NOTE: L-shaped polygon example
 p0 = Point(0,0)
 p1 = Point(1,0)
 p2 = Point(1,1)
@@ -314,6 +315,7 @@ for i in range(0, len(T)):
         if(i != j):
             T[i].update_neighbor(T[j])
 
+# NOTE: Unit square example
 """
 # Define the points/vertices of the polygonal domain
 p0 = Point(0,0)
@@ -377,52 +379,10 @@ for i in range(0, len(T)):
         if(i != j):
             T[i].update_neighbor(T[j])
 """
-"""
-NOTE: Proof that the stiffness matrix is updating properly
-p0 = Point(0,0)
-p1 = Point(0,1)
-p2 = Point(0,2)
-p3 = Point(1,0)
-p4 = Point(1,1)
-p5 = Point(1,2)
-p6 = Point(2,0)
-p7 = Point(2,1)
-p8 = Point(2,2)
-p9 = Point(3,0)
-p10 = Point(3,1)
-p11 = Point(3,2)
-vertices= [p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11]
-
-t0 = Triangle(p0, p3, p4)
-t1 = Triangle(p0, p4, p1)
-t2 = Triangle(p1, p4, p5)
-t3 = Triangle(p1, p5, p2)
-t4 = Triangle(p3, p6, p7)
-t5 = Triangle(p3, p7, p4)
-t6 = Triangle(p4, p7, p8)
-t7 = Triangle(p4, p8, p5)
-t8 = Triangle(p6, p9, p10)
-t9 = Triangle(p6, p10, p7)
-t10 = Triangle(p7, p10, p11)
-t11 = Triangle(p7, p11, p8)
-root0 = Node(t0, 0, 3, 4, 0)
-root1 = Node(t1, 0, 4, 1, 0)
-root2 = Node(t2, 1, 4, 5, 0)
-root3 = Node(t3, 1, 5, 2, 0)
-root4 = Node(t4, 3, 6, 7, 0)
-root5 = Node(t5, 3, 7, 4, 0)
-root6 = Node(t6, 4, 7, 8, 0)
-root7 = Node(t7, 4, 8, 5, 0)
-root8 = Node(t8, 6, 9, 10, 0)
-root9 = Node(t9, 6, 10, 7, 0)
-root10 = Node(t10, 7, 10, 11, 0)
-root11 = Node(t11, 7, 11, 8, 0)
-T = [root0, root1, root2, root3, root4, root5, root6, root7, root8, root9, root10, root11]
-"""
 
 # Define parameters for Solve-Estimate->Mark->Refine algorithm
-theta = 0.8 # NOTE: theta in (0,1]
-eps_stop = 0.5 # NOTE: eps_stop > 0
+theta = 0.5 # NOTE: theta in (0,1]
+eps_stop = 0.80 # NOTE: eps_stop > 0
 error_bound = 1 # NOTE: variable for computing the error estimate
 
 # Main loop that implements the Solve->Estimate->Mark->Refine algorithm
@@ -456,6 +416,7 @@ while(error_bound > eps_stop):
     etas = []
     for elem in T:
         left_summand = (scalar_f**2)*(elem.T.vol_t()**2)
+        #left_summand = (scalar_f)*(elem.T.vol_t()**2)
         grads_T = np.linalg.solve(np.array([[1,1,1],[elem.T.p.x,elem.T.q.x,elem.T.r.x],[elem.T.p.y,elem.T.q.y,elem.T.r.y]]), np.array([[0,0],[1,0],[0,1]]))
         nabla_u_T = np.matmul(np.transpose(grads_T), np.array([U[elem.P[0]], U[elem.P[1]], U[elem.P[2]]]))
         normal_times_area = np.multiply(-2*elem.T.vol_t(), grads_T)
@@ -482,26 +443,26 @@ while(error_bound > eps_stop):
         refine(T, vertices, bv, boundary)
 
 fig, ax = plt.subplots(1, 2, subplot_kw={"projection": "3d"})
-triangles = []
+triangles1 = []
+triangles2 = []
 for elem in T:
-    triangles.append((
+    triangles1.append((
         (elem.T.p.x, elem.T.p.y, 0), 
         (elem.T.q.x, elem.T.q.y, 0), 
         (elem.T.r.x, elem.T.r.y, 0) 
     ))
-ax[0].add_collection(Poly3DCollection(triangles, edgecolor='black', facecolor='white'))
-ax[0].set_title("2D Mesh")
-ax[0].set_xlim(-2, 2)
-ax[0].set_ylim(-2, 2)
-triangles = []
-for elem in T:
-    triangles.append((
+    triangles2.append((
         (elem.T.p.x, elem.T.p.y, U[elem.P[0]] * phi_of_x(T, vertices[elem.P[0]], vertices[elem.P[0]])), 
         (elem.T.q.x, elem.T.q.y, U[elem.P[1]] * phi_of_x(T, vertices[elem.P[1]], vertices[elem.P[1]])), 
         (elem.T.r.x, elem.T.r.y, U[elem.P[2]] * phi_of_x(T, vertices[elem.P[2]], vertices[elem.P[2]])) 
     ))
 
-ax[1].add_collection(Poly3DCollection(triangles, edgecolor='black', facecolor='white'))
+ax[0].add_collection(Poly3DCollection(triangles1, edgecolor='black', facecolor='white'))
+ax[0].set_title("2D Mesh")
+ax[0].set_xlim(-2, 2)
+ax[0].set_ylim(-2, 2)
+
+ax[1].add_collection(Poly3DCollection(triangles2, edgecolor='black', facecolor='white'))
 ax[1].set_title("3D Mesh")
 ax[1].set_xlim(-2, 2)
 ax[1].set_ylim(-2, 2)
