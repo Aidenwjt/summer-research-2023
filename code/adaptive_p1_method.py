@@ -13,34 +13,44 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 #   - Comment everything
 
 class Point:
+    """ 2-dimensional point object. """
     def __init__(self, x, y):
         self.x = x
         self.y = y
     def equals(self, q):
+        """ Compares two points to see if they have the same coordinates. """
         if(self.x == q.x and self.y == q.y):
             return True
         return False
     def midpoint(self, q):
+        """ Computes the midpoints between two given points. """
         return Point((q.x + self.x)/2, (q.y + self.y)/2)
     def distance(self, q):
+        """ Computes the distance between two given points. """
         return np.sqrt((q.x - self.x)**2 + (q.y - self.y)**2)
 
 class Triangle:
+    """ Triangle object. """
     def __init__(self, p, q, r):
         self.p = p
         self.q = q
         self.r = r
     def diam_of_T(self):
+        """ Computes the diameter of a triangle, i.e. the longest edge. """
         return np.maximum(np.maximum(self.p.distance(self.q),self.q.distance(self.r)),self.r.distance(self.p))
     def det_X_T(self):
+        """ Computes the determinant of the Jacobian of a triangle, given the vertices of said triangle. """
         return np.linalg.det(np.array([[1, self.p.x, self.p.y], [1, self.q.x, self.q.y], [1, self.r.x, self.r.y]]))
     def vol_T(self):
+        """ Computes the volume of a triangle. """
         return self.det_X_T()/2
     def grad_phi(self, j):
+        """ Computes the gradient of the j-th vertex in a triangle. """
         points = [self.p, self.q, self.r]
         return [(points[(j+1)%3].y - points[(j+2)%3].y)/(self.det_X_T()),
                 (points[(j+2)%3].x - points[(j+1)%3].x)/(self.det_X_T())]
     def contained_in_T(self, x):
+        """ Checks if a point is contained in the closure of a triangle using barycentric coordinates. """
         a = ( ((self.q.y - self.r.y)*(x.x - self.r.x) + (self.r.x - self.q.x)*(x.y - self.r.y)) / 
              ((self.q.y - self.r.y)*(self.p.x - self.r.x) + (self.r.x - self.q.x)*(self.p.y - self.r.y)) )
         b = ( ((self.r.y - self.p.y)*(x.x - self.r.x) + (self.p.x - self.r.x)*(x.y - self.r.y)) / 
@@ -50,17 +60,20 @@ class Triangle:
             return True
         return False
     def vertex_of_T(self, s):
+        """ Checks if a point is a vertex of a triangle. """
         points = [self.p, self.q, self.r]
         for i in range(0, 3):
             if(points[i].equals(s)):
                 return i
         return False
     def A(self, i, j):
+        """ Computes the ij-th entry in the local stiffness matrix of a triangular element. """
         grad_phi_i = self.grad_phi(i)
         grad_phi_j = self.grad_phi(j)
         dot_grads = (grad_phi_i[0] * grad_phi_j[0]) + (grad_phi_i[1] * grad_phi_j[1])
         return dot_grads * self.vol_T()
     def shared_edges(self, other_T):
+        """ Checks if two given triangles share an edge. """
         v0 = [self.p, self.q, self.r]
         v1 = [other_T.p, other_T.q, other_T.r]
         for i in range(0,3):
@@ -71,6 +84,7 @@ class Triangle:
         return None
 
 class Node:
+    """ Nodal object used to store all the information of an element. """
     def __init__(self, T, P, GT):
         self.parent = None
         self.left = None
@@ -94,6 +108,7 @@ class Node:
         if(np.maximum(self.T.q.distance(self.T.r), np.maximum(self.T.r.distance(self.T.p), self.T.p.distance(self.T.q))) == self.T.p.distance(self.T.q)):
             self.ET = 2
     def update_neighbor(self, elem):
+        """ Updates the relationship between two given elements, based on whether or not they share an edge. """
         edges = self.T.shared_edges(elem.T)
         if(edges != None):
             i,j = edges
@@ -110,6 +125,7 @@ class Node:
             if(j == 2):
                 elem.neighbor2 = self
     def update_neighbors(self):
+        """ Checks all possible neighbor candidates, then attempts to update the neighbor relations. """
         if self.parent != None:
             parents_neighbors = [self.parent.neighbor0, self.parent.neighbor1, self.parent.neighbor2]
             for neighbor in parents_neighbors:
@@ -121,6 +137,7 @@ class Node:
                     else:
                         self.update_neighbor(neighbor)
     def bisect(self, mesh, vertices, boundary_vertices, boundary):
+        """ Bisects a triangular element by its longest edge. """
         # Define a list of vertices of the element
         v_elem = [self.T.p, self.T.q, self.T.r]
         v_indices = [self.P[0], self.P[1], self.P[2]]
@@ -160,6 +177,7 @@ class Node:
         return
 
 def refine_recursive(mesh, elem, vertices, boundary_vertices, boundary):
+    """ Implementation of the refine recursive algorithm, used to check for chains of refinements. """
     # Create a list of the elements neighbors
     neighbors = [elem.neighbor0, elem.neighbor1, elem.neighbor2]
     # Create a reference to the neighbors sharing its refinement edge
@@ -181,7 +199,9 @@ def refine_recursive(mesh, elem, vertices, boundary_vertices, boundary):
     FT.bisect(mesh, vertices, boundary_vertices, boundary)
     return
 
+# TODO: This may be an unnescessary function
 def refine(mesh, vertices, boundary_vertices, boundary):
+    """ Main refinement function to refine all marked elements. """ 
     # Create a shallow copy of T as we will be removing elements from it
     mesh_copy = mesh.copy()
     # Loop through all the elements
@@ -191,6 +211,7 @@ def refine(mesh, vertices, boundary_vertices, boundary):
             refine_recursive(mesh, elem, vertices, boundary_vertices, boundary)
 
 def phi_of_x(mesh, v, x):
+    """ Function used to evaluate the Galerkin solution at some point x in the domain. """
     for elem in mesh:
         j = elem.T.vertex_of_T(v)
         if(j is not False):
@@ -249,7 +270,7 @@ def main():
     # Define a list of all the elements so they can be iterates through
     mesh = [root0, root1, root2, root3, root4, root5]
 
-    # Update the elements neighbors
+    # Update the element neighbors
     for i in range(0, len(mesh)):
         mesh[i].find_refinement_edge()
         for j in range(0, len(mesh)):
@@ -288,7 +309,6 @@ def main():
         max_eta = 0
         etas = []
         for elem in mesh:
-            # 
             left_summand = (f**2)*(elem.T.vol_T()**2)
             #left_summand = (f)*(elem.T.vol_T()**2)
             grads_T = np.linalg.solve(np.array([[1,1,1],[elem.T.p.x,elem.T.q.x,elem.T.r.x],[elem.T.p.y,elem.T.q.y,elem.T.r.y]]), np.array([[0,0],[1,0],[0,1]]))
